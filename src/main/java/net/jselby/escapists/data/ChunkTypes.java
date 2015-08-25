@@ -97,6 +97,7 @@ public enum ChunkTypes {
 
     /**
      * Returns this chunk's ID.
+     *
      * @return A chunk ID
      */
     public int getID() {
