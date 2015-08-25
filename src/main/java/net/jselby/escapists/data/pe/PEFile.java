@@ -38,29 +38,30 @@ public class PEFile {
         machineType = buf.getShort();
         int sectionCount = buf.getShort();
 
-        buf.position(buf.position() + 14);
+        buf.position(buf.position() + 12);
+        int optionalHeaderSize = buf.getShort();
         peCharacteristics = buf.getShort();
 
         // Grab data from the optional header
         bitCount = buf.getShort();
-        buf.position(buf.position() + 134);
+        buf.position(buf.position() - 2 + optionalHeaderSize);
 
         // Read sections
         sections = new PESection[sectionCount];
         for (int i = 0; i < sectionCount; i++) {
             byte[] nameBytes = new byte[8];
-            String sectionName = new String(nameBytes).trim();
             buf.get(nameBytes);
+            String sectionName = new String(nameBytes).trim();
 
             // Read virtual sizes
             int virtualSizeRVA = buf.getInt();
             int virtualAddressRVA = buf.getInt();
 
             // Read physical sizes
-            buf.position(buf.position() + 8);
-
             int sectionSize = buf.getInt();
             int sectionPointer = buf.getInt();
+
+            buf.position(buf.position() + 16);
 
             sections[i] = new PESection(sectionName, virtualSizeRVA,
                     virtualAddressRVA, sectionSize, sectionPointer);
@@ -70,10 +71,19 @@ public class PEFile {
     }
 
     /**
-     * Get definitions for which
-     * @return
+     * Get definitions for which sections correspond to file locations, and other section metadata.
+     *
+     * @return A section array.
      */
     public PESection[] getSections() {
         return sections;
+    }
+
+    /**
+     * Returns the MachineType that this executable was compiled for.
+     * @return A MachineType, or null if unknown.
+     */
+    public MachineType getMachineType() {
+        return MachineType.getMachineTypeByID(machineType);
     }
 }
