@@ -6,7 +6,7 @@ package net.jselby.escapists.data;
  * @author matpow2
  * @url https://github.com/matpow2/anaconda
  */
-public enum ChunkTypes {
+public enum ChunkType {
     // Vitalize chunks (0x11)
     VitalizePreview(4386), // Preview
     // Application chunks (0x22)
@@ -91,7 +91,7 @@ public enum ChunkTypes {
 
     private int id;
 
-    ChunkTypes(int id) {
+    ChunkType(int id) {
         this.id = id;
     }
 
@@ -104,8 +104,8 @@ public enum ChunkTypes {
         return id;
     }
 
-    public static ChunkTypes getTypeForID(int id) {
-        for (ChunkTypes types : ChunkTypes.values()) {
+    public static ChunkType getTypeForID(int id) {
+        for (ChunkType types : ChunkType.values()) {
             if (types.getID() == id) {
                 return types;
             }

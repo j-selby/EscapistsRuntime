@@ -1,6 +1,7 @@
 package net.jselby.escapists;
 
 import com.google.common.io.Files;
+import net.jselby.escapists.data.ChunkType;
 import net.jselby.escapists.data.pe.PEFile;
 import net.jselby.escapists.data.pe.PESection;
 
@@ -16,6 +17,7 @@ import java.util.Arrays;
  * @author j_selby
  */
 public class EscapistsRuntime {
+    private static byte[] UNICODE_GAME_HEADER = "PAMU".getBytes();
     private static byte[] PACK_HEADER = new byte[]{119, 119, 119, 119, 73, -121, 71, 18};
 
     public static void main(String[] args) throws IOException {
@@ -49,12 +51,59 @@ public class EscapistsRuntime {
         // Pack metadata
         int formatVersion = buf.getInt();
         if (buf.getInt() != 0 || buf.getInt() != 0) {
-            System.out.println("Bad pack header Padding.");
+            System.out.println("Bad pack header padding.");
             return;
         }
         int packCount = buf.getInt();
 
-        System.out.printf("Pack format version: %d.\n", formatVersion);
+        for (int i = 0; i < packCount; i++) {
+            int packedFileNameLength = buf.getShort();
+            byte[] fileNameBytes = new byte[packedFileNameLength * 2]; // * 2 'cos unicode
+            buf.get(fileNameBytes);
+            String fileName = new String(fileNameBytes).trim();
+
+            buf.getInt(); // Magic
+
+            int packedFileCompLength = buf.getInt();
+            byte[] data = new byte[packedFileCompLength];
+            buf.get(data);
+
+            System.out.printf("Discovered packed file %s of length %d.\n", fileName, packedFileCompLength);
+        }
+
+        System.out.printf("Pack format hash: %d.\n", formatVersion);
+
+        // -- GAME DATA READING
+        byte[] gameDataHeaderMagic = new byte[4];
+        buf.get(gameDataHeaderMagic);
+        if (!Arrays.equals(gameDataHeaderMagic, UNICODE_GAME_HEADER)) {
+            System.out.println("Bad game header.");
+            return;
+        }
+
+        int runtimeVersion = buf.getShort();
+        if (runtimeVersion != 0x0302) {
+            System.out.printf("Unknown runtime version \"%d\", has the game been updated?\n", runtimeVersion);
+        }
+        int runtimeSubversion = buf.getShort();
+        int productVersion = buf.getInt();
+        int productBuild = buf.getInt();
+
+        System.out.printf("Game version %d, build %d.\n", productVersion, productBuild);
+
+        // Chunk reading
+        while(true) {
+            int id = buf.getShort();
+            ChunkType type = ChunkType.getTypeForID(id);
+            int flags = buf.getShort();
+            int size = buf.getInt();
+            System.out.println(type + " (" + id + ") of size " + size + " bytes.");
+            byte[] data = new byte[size];
+            buf.get(data);
+            if (type == ChunkType.Last) {
+                break;
+            }
+        }
 
     }
 
