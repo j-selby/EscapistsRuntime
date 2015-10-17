@@ -1,15 +1,15 @@
 package net.jselby.escapists;
 
-import com.google.common.io.Files;
 import net.jselby.escapists.data.ChunkType;
 import net.jselby.escapists.data.pe.PEFile;
 import net.jselby.escapists.data.pe.PESection;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Arrays;
+import java.util.zip.DataFormatException;
+import java.util.zip.Inflater;
 
 /**
  * The primary Escapists runtime.
@@ -21,7 +21,18 @@ public class EscapistsRuntime {
     private static byte[] PACK_HEADER = new byte[]{119, 119, 119, 119, 73, -121, 71, 18};
 
     public static void main(String[] args) throws IOException {
-        ByteBuffer buf = Files.map(new File("TheEscapists_eur.exe")).order(ByteOrder.LITTLE_ENDIAN);
+
+
+        FileInputStream fileIn = new FileInputStream(new File("TheEscapists_eur.exe"));
+        ByteArrayOutputStream fileOut = new ByteArrayOutputStream();
+        byte[] fileBuf = new byte[8192];
+        int fileLen;
+        while((fileLen = fileIn.read(fileBuf)) > 0) {
+            fileOut.write(fileBuf, 0, fileLen);
+        }
+        fileIn.close();
+
+        ByteBuffer buf = ByteBuffer.wrap(fileOut.toByteArray()).order(ByteOrder.LITTLE_ENDIAN);
         PEFile file = new PEFile(buf);
 
         // Find the last section, and the content after it
@@ -31,6 +42,7 @@ public class EscapistsRuntime {
         int afterSectionPointer = lastPeSection.getSectionPointer() + lastPeSection.getSectionSize();
         buf.position(afterSectionPointer);
 
+        Inflater inflater = new Inflater();
         // -- PACK READING
         // Verify header
         byte[] packHeaderMagic = new byte[8];
@@ -57,6 +69,7 @@ public class EscapistsRuntime {
         int packCount = buf.getInt();
 
         for (int i = 0; i < packCount; i++) {
+
             int packedFileNameLength = buf.getShort();
             byte[] fileNameBytes = new byte[packedFileNameLength * 2]; // * 2 'cos unicode
             buf.get(fileNameBytes);
@@ -65,10 +78,23 @@ public class EscapistsRuntime {
             buf.getInt(); // Magic
 
             int packedFileCompLength = buf.getInt();
+
             byte[] data = new byte[packedFileCompLength];
             buf.get(data);
 
-            System.out.printf("Discovered packed file %s of length %d.\n", fileName, packedFileCompLength);
+            try {
+                byte[] decompData = new byte[packedFileCompLength * 16];
+                inflater.reset();
+                inflater.setInput(data);
+                int len = inflater.inflate(decompData);
+                byte[] arrayCopy = new byte[len];
+                System.arraycopy(decompData, 0, arrayCopy, 0, len);
+                data = arrayCopy;
+
+                //System.out.printf("Discovered packed file %s of length %d (compressed: %d).\n", fileName, len, packedFileCompLength);
+            } catch (DataFormatException e) {
+                System.out.printf("Failed to inflate packed file %s: %s.\n", fileName, e.getMessage());
+            }
         }
 
         System.out.printf("Pack format hash: %d.\n", formatVersion);
@@ -92,29 +118,7 @@ public class EscapistsRuntime {
         System.out.printf("Game version %d, build %d.\n", productVersion, productBuild);
 
         // Chunk reading
-        while(true) {
-            int id = buf.getShort();
-            ChunkType type = ChunkType.getTypeForID(id);
-            int flags = buf.getShort();
-            int size = buf.getInt();
-            System.out.println(type + " (" + id + ") of size " + size + " bytes.");
-            byte[] data = new byte[size];
-            buf.get(data);
-            if (type == ChunkType.Last) {
-                break;
-            }
-        }
+        ChunkDecoder.decodeChunk(buf);
 
-    }
-
-    public static void dumpBytes(ByteBuffer buf, int length) {
-        for (int i = 1; i <= length; i++) {
-            int num = buf.get();
-            System.out.printf("%s(%d) ", Integer.toHexString(num), num);
-            if (i % 8 == 0) {
-                System.out.println();
-            }
-        }
-        System.out.println();
     }
 }
