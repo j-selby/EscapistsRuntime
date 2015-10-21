@@ -1,16 +1,13 @@
 package net.jselby.escapists;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-
 /**
  * Static methods to help with Chunk transformations.
  */
 public class ChunkTransforms {
-    public static final int TRANS_START = 99;
 
     // Generated from create_transform(), fed through C function
-    public static final byte[] key = {-14, -30, 48, 99, 104, -24, -76, 16, -19, -101, 4, 68, 114, -2, -102, 39, -44, -85,
+    public static final int TRANS_START = 99;
+    public static final byte[] KEY = {-14, -30, 48, 99, 104, -24, -76, 16, -19, -101, 4, 68, 114, -2, -102, 39, -44, -85,
             7, 66, 116, -3, -102, 55, -39, -67, 76, 115, 104, -18, -89, 19, -40, -85, 24, 69, 71, -39, -82, 6, -12,
             -85, 15, 87, 107, -28, -75, 23, -62, -121, 85, 105, 81, -8, -88, 6, -18, -23, 89, 24, 118, -21, -89, 55,
             -39, -67, 76, 115, 104, -18, -89, 19, -40, -85, 24, 69, 41, -67, -9, 86, -111, -107, 3, 67, 119, -23, -65,
@@ -18,8 +15,8 @@ public class ChunkTransforms {
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
             0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,0,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    public static final int[] key2 = {20, 126, 220, 248, 171, 0, 5, 10, 99, 79, 41, 11, 196, 43, 211, 88, 102, 157, 22, 85,
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    public static final int[] KEY_D = {20, 126, 220, 248, 171, 0, 5, 10, 99, 79, 41, 11, 196, 43, 211, 88, 102, 157, 22, 85,
             119, 250, 188, 42, 235, 19, 181, 95, 55, 194, 241, 208, 89, 48, 123, 40, 226, 136, 160, 44, 138, 252, 129,
             244, 164, 58, 130, 63, 232, 238, 192, 174, 251, 165, 73, 229, 124, 207, 69, 140, 80, 115, 108, 182, 215,
             135, 142, 46, 109, 72, 93, 254, 219, 64, 149, 83, 227, 105, 101, 183, 121, 106, 71, 15, 170, 143, 94, 213,
@@ -32,87 +29,12 @@ public class ChunkTransforms {
             187, 49, 234, 178, 223, 14, 177, 169, 186, 65, 92, 193, 155, 168, 122, 222, 23, 118, 77, 96, 7, 39, 114, 45,
             0, 0};
 
-    static {
-        System.out.println(key.length);
-    }
-    /*static {
-        try {
-            FileInputStream in = new FileInputStream("keydump");
-            key = IOUtils.toByteArray(in);
-            in.close();
-            System.out.println("Key length: " + key.length);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public static byte[] transform(byte[] data) {
+        // Make us a copy of KEY_D, as we modify it during execution.
+        int[] d = new int[KEY_D.length];
+        System.arraycopy(KEY_D, 0, d, 0, d.length);
 
-        System.out.println(Arrays.toString(key));
-    }*/
-
-    private static int[] z(int[] a, byte[] b, byte c){
-        int d;
-        byte e;
-        byte[] f;
-        int g;
-        int h;
-        char i;
-        int j;
-        int k;
-        int l;
-        byte m;
-        byte n=c;
-
-        for(int o=0; o<256; o++) {
-            a[o]=o;
-        }
-        d=0;
-        k=1;
-        e=c;
-        a[256]=0;
-        a[257]=0;
-        f=b;
-        g=0;
-        m=0;
-        l=0;
-        do{
-            e= (byte) ((e<<7)+(e>>1));
-            h=k;
-            if(k > 0) {
-                n+=((e&1)+2)*f[g];
-                h=k;
-            }
-            i= (char) (e^f[g]);
-            if(e==f[g]){
-                if(h > 0)
-                    d=n==f[g+1] ? 1 : 0;
-                e= (byte) ((c>>1)+(c<<7));
-                g=0;
-                k=0;
-
-                i = (char) (e ^ f[0]);
-                //i=e^*f;
-            }
-            j=a[l];
-            m= (byte) (i+j+m);
-            a[l]=a[m & 0xFF];
-            ++g;
-            a[m & 0xFF]=j;
-            f=b;
-            ++l;
-        } while(l<256);
-        return a;
-    }
-
-    private static byte[] transform(byte[] a, int b, byte[] c) {
-        int[] d = new int[key2.length];
-        
-        //IntBuffer buffer = IntBuffer.wrap(d);
-        ///Chunk_cmLibrary.z(buffer, ByteBuffer.wrap(c), (byte) TRANS_START);
-        //d = buffer.array();
-        //System.out.println(Arrays.toString(d));
-        //z(d, c, (byte) TRANS_START
-
-        System.arraycopy(key2, 0, d, 0, key2.length);
-
+        // Below is modified from chunk_cm.cpp, from https://github.com/matpow2/anaconda
         int[] e;
         int f;
         int g;
@@ -121,44 +43,41 @@ public class ChunkTransforms {
         int j;
         int k;
         int l;
-        e=d;
-        f=d[256];
-        g=d[257];
-        h=0;
+        e = d;
+        f = d[256];
+        g = d[257];
+        h = 0;
 
-        if(b<=0){
-            d[256]=f;
-            d[257]=g;
+        if (data.length <= 0) {
+            d[256] = f;
+            d[257] = g;
         } else {
-            while(true) {
-                f=(byte)(f+1);
+            while (true) {
+                f = (byte) (f + 1);
                 ++h;
-                i=e[f & 0xFF];
-                j=(byte)(i+g);
-                l=j;
-                k=e[j & 0xFF];
-                e[f & 0xFF]=k;
-                e[l & 0xFF]=i;
-                a[h-1]^=e[(byte)(i+k) & 0xFF]&0xFF;
-                if(h>=b)
+                i = e[f & 0xFF];
+                j = (byte) (i + g);
+                l = j;
+                k = e[j & 0xFF];
+                e[f & 0xFF] = k;
+                e[l & 0xFF] = i;
+                data[h - 1] ^= e[(byte) (i + k) & 0xFF] & 0xFF;
+                if (h >= data.length) {
                     break;
-                g=l&0xFF;
+                }
+                g = l & 0xFF;
             }
-            e[257]=l;
-            e[256]=f;
+            e[257] = l;
+            e[256] = f;
         }
 
-        return a;
+        return data;
     }
 
-    public static byte[] transform(byte[] data) {
-        // transform(unsigned char * data, int size, unsigned char * trans)
-        //ByteBuffer buf = ByteBuffer.wrap(data);
-        /*Chunk_cmLibrary.*/return transform(data, data.length, key);
-        //return buf.array();
-    }
-
-    public static byte[] create_transform_part(byte[] data) {
+    // Below code has not been implemented correctly (yet).
+    // TODO: Implement z() (from C code)
+    // TODO: Implement prepare_transform()
+    /*public static byte[] create_transform_part(byte[] data) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
         //byte > char > short?
@@ -203,7 +122,7 @@ public class ChunkTransforms {
         cdef unsigned char * ret_c = ret_arr
         prepare_transform(ret_arr, l)*/
 
-        return ret;
+       /* return ret;
     }
 
     public static byte[] create_transform() throws IOException {
@@ -218,5 +137,5 @@ public class ChunkTransforms {
         byteArrayOutputStream.write(new byte[]{(byte)0xFF,(byte)0xFE});
         byteArrayOutputStream.write(string.getBytes("UTF-16LE"));
         return byteArrayOutputStream.toByteArray();
-    }
+    }*/
 }

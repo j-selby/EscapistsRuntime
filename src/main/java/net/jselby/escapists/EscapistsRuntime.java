@@ -7,6 +7,7 @@ import net.jselby.escapists.data.pe.PESection;
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.channels.FileChannel;
 import java.util.Arrays;
 import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
@@ -17,22 +18,27 @@ import java.util.zip.Inflater;
  * @author j_selby
  */
 public class EscapistsRuntime {
-    private static byte[] UNICODE_GAME_HEADER = "PAMU".getBytes();
-    private static byte[] PACK_HEADER = new byte[]{119, 119, 119, 119, 73, -121, 71, 18};
+    private static final String VERSION = "0.1";
+
+    private static final byte[] UNICODE_GAME_HEADER = "PAMU".getBytes();
+    private static final byte[] PACK_HEADER = new byte[]{119, 119, 119, 119, 73, -121, 71, 18};
 
     public static void main(String[] args) throws IOException {
+        System.out.printf("jselby's EscapistRuntime, v%s\n", VERSION);
 
-
+        // Read into a ByteBuffer
+        // TODO: Detect Steam installations, and use their Escapists build.
         FileInputStream fileIn = new FileInputStream(new File("TheEscapists_eur.exe"));
-        ByteArrayOutputStream fileOut = new ByteArrayOutputStream();
-        byte[] fileBuf = new byte[8192];
-        int fileLen;
-        while((fileLen = fileIn.read(fileBuf)) > 0) {
-            fileOut.write(fileBuf, 0, fileLen);
-        }
+        FileChannel channel = fileIn.getChannel();
+
+        ByteBuffer buf = ByteBuffer.allocate((int) channel.size()).order(ByteOrder.LITTLE_ENDIAN);
+        channel.read(buf);
+        buf.rewind();
+
+        channel.close();
         fileIn.close();
 
-        ByteBuffer buf = ByteBuffer.wrap(fileOut.toByteArray()).order(ByteOrder.LITTLE_ENDIAN);
+        // Parse the Windows Portable Executable file
         PEFile file = new PEFile(buf);
 
         // Find the last section, and the content after it
@@ -48,16 +54,18 @@ public class EscapistsRuntime {
         byte[] packHeaderMagic = new byte[8];
         buf.get(packHeaderMagic);
         if (!Arrays.equals(packHeaderMagic, PACK_HEADER)) {
-            System.out.println("Invalid pack header.");
+            System.out.println("Invalid pack header. Is this the correct Escapists file (TheEscapists_eur.exe)?");
             return;
         }
 
         // Read pack
         int packStart = buf.position() - 8;
         if (buf.getInt() != 32) { // Pack header size
-            System.out.println("Bad pack header size.");
+            System.out.println("Bad pack header size. Is this the correct Escapists file (TheEscapists_eur.exe)?");
             return;
         }
+
+        System.out.println("Game header and size validated.");
 
         buf.position(packStart + 16);
         // Pack metadata
@@ -118,6 +126,7 @@ public class EscapistsRuntime {
         System.out.printf("Game version %d, build %d.\n", productVersion, productBuild);
 
         // Chunk reading
+        System.out.println("Parsing chunks...");
         ChunkDecoder.decodeChunk(buf);
 
     }
