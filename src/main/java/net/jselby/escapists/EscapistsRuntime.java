@@ -120,7 +120,5 @@ public class EscapistsRuntime {
         // Chunk reading
         ChunkDecoder.decodeChunk(buf);
 
-        System.out.println(Arrays.toString(ChunkTransforms.create_transform()));
-
     }
 }
