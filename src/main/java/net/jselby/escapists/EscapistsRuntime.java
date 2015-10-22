@@ -1,6 +1,8 @@
 package net.jselby.escapists;
 
+import net.jselby.escapists.data.Chunk;
 import net.jselby.escapists.data.ChunkType;
+import net.jselby.escapists.data.StringChunk;
 import net.jselby.escapists.data.pe.PEFile;
 import net.jselby.escapists.data.pe.PESection;
 
@@ -9,6 +11,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.util.Arrays;
+import java.util.List;
 import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
 
@@ -127,7 +130,10 @@ public class EscapistsRuntime {
 
         // Chunk reading
         System.out.println("Parsing chunks...");
-        ChunkDecoder.decodeChunk(buf);
+        List<Chunk> chunks = ChunkDecoder.decodeChunk(buf);
+        chunks.stream()
+                .filter(chunk -> chunk instanceof StringChunk)
+                .forEach(chunk -> System.out.println(chunk.getClass().getSimpleName() + " > " + chunk.toString()));
 
     }
 }

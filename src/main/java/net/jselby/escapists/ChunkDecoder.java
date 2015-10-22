@@ -3,6 +3,10 @@ package net.jselby.escapists;
 import net.jselby.escapists.data.Chunk;
 import net.jselby.escapists.data.ChunkType;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
@@ -16,6 +20,11 @@ import java.util.zip.Inflater;
  * @author j_selby
  */
 public class ChunkDecoder {
+    /**
+     * Decodes a series of Chunks.
+     * @param buf The buffer to read from
+     * @return A parsed list of Chunks
+     */
     public static List<Chunk> decodeChunk(ByteBuffer buf) {
         Inflater inflater = new Inflater();
         ArrayList<Chunk> chunks = new ArrayList<>();
@@ -65,18 +74,21 @@ public class ChunkDecoder {
             // Attempt to find a copy
             try {
                 Class<?> potentialChunkDef = Class.forName("net.jselby.escapists.data.chunks." + type.name());
-                if (potentialChunkDef.getGenericSuperclass() == Chunk.class) {
-                    // Create a instance of this, it worked out!
-                    Chunk chunk = potentialChunkDef.asSubclass(Chunk.class).newInstance();
-                    chunk.init(ByteBuffer.wrap(data).order(ByteOrder.LITTLE_ENDIAN), data.length);
-                    chunks.add(chunk);
-                } else {
-                    throw new ClassNotFoundException();
-                }
+
+                Chunk chunk = potentialChunkDef.asSubclass(Chunk.class).newInstance();
+                chunk.init(ByteBuffer.wrap(data).order(ByteOrder.LITTLE_ENDIAN), data.length);
+                chunks.add(chunk);
             } catch (ClassNotFoundException e) {
-                System.err.printf("Failed to find a chunk representation for \"%s\".\n", type.name());
+                System.err.printf("Failed to find a chunk representation for \"%s\" (ID: %d).\n", type.name(), id);
+                try {
+                    FileOutputStream out = new FileOutputStream("Sections" + File.separator + type.name());
+                    out.write(data);
+                    out.close();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
             } catch (InstantiationException | IllegalAccessException e) {
-                System.err.printf("Failed to create chunk representation for \"%s\": ", type.name());
+                System.err.printf("Failed to create chunk representation for \"%s\" (ID: %d): ", type.name(), id);
                 e.printStackTrace();
             }
         }
