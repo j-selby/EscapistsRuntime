@@ -1,6 +1,7 @@
 package net.jselby.escapists.data.chunks;
 
 import net.jselby.escapists.data.Chunk;
+import net.jselby.escapists.util.ByteReader;
 
 import java.nio.ByteBuffer;
 
@@ -32,12 +33,11 @@ public class AppHeader extends Chunk {
 
     /**
      * Initialises this chunk with a ByteBuffer.
-     *
-     * @param buffer A NIO ByteBuffer in Little-Endian mode
+     *  @param buffer A NIO ByteBuffer in Little-Endian mode
      * @param length Length of the buffer
      */
     @Override
-    public void init(ByteBuffer buffer, int length) {
+    public void init(ByteReader buffer, int length) {
         int size = buffer.getInt();
 
         flags1 = buffer.getShort() & 0xFFFF;
@@ -104,7 +104,7 @@ public class AppHeader extends Chunk {
          * Reads a Control section from a AppHeader
          * @param buf The buffer to read from.
          */
-        private Controls(ByteBuffer buf) {
+        private Controls(ByteReader buf) {
             up = buf.getShort();
             down = buf.getShort();
             left = buf.getShort();

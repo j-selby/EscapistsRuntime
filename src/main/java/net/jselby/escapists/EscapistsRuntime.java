@@ -5,6 +5,7 @@ import net.jselby.escapists.data.ChunkType;
 import net.jselby.escapists.data.StringChunk;
 import net.jselby.escapists.data.pe.PEFile;
 import net.jselby.escapists.data.pe.PESection;
+import net.jselby.escapists.util.ByteReader;
 
 import java.io.*;
 import java.nio.ByteBuffer;
@@ -34,9 +35,10 @@ public class EscapistsRuntime {
         FileInputStream fileIn = new FileInputStream(new File("TheEscapists_eur.exe"));
         FileChannel channel = fileIn.getChannel();
 
-        ByteBuffer buf = ByteBuffer.allocate((int) channel.size()).order(ByteOrder.LITTLE_ENDIAN);
-        channel.read(buf);
-        buf.rewind();
+        ByteBuffer bufIn = ByteBuffer.allocate((int) channel.size()).order(ByteOrder.LITTLE_ENDIAN);
+        channel.read(bufIn);
+        bufIn.rewind();
+        ByteReader buf = new ByteReader(bufIn);
 
         channel.close();
         fileIn.close();
@@ -54,8 +56,7 @@ public class EscapistsRuntime {
         Inflater inflater = new Inflater();
         // -- PACK READING
         // Verify header
-        byte[] packHeaderMagic = new byte[8];
-        buf.get(packHeaderMagic);
+        byte[] packHeaderMagic = buf.getBytes(8);
         if (!Arrays.equals(packHeaderMagic, PACK_HEADER)) {
             System.out.println("Invalid pack header. Is this the correct Escapists file (TheEscapists_eur.exe)?");
             return;
@@ -82,16 +83,14 @@ public class EscapistsRuntime {
         for (int i = 0; i < packCount; i++) {
 
             int packedFileNameLength = buf.getShort();
-            byte[] fileNameBytes = new byte[packedFileNameLength * 2]; // * 2 'cos unicode
-            buf.get(fileNameBytes);
+            byte[] fileNameBytes = buf.getBytes(packedFileNameLength * 2); // * 2 'cos unicode
             String fileName = new String(fileNameBytes).trim();
 
             buf.getInt(); // Magic
 
             int packedFileCompLength = buf.getInt();
 
-            byte[] data = new byte[packedFileCompLength];
-            buf.get(data);
+            byte[] data = buf.getBytes(packedFileCompLength);
 
             try {
                 byte[] decompData = new byte[packedFileCompLength * 16];
@@ -111,8 +110,7 @@ public class EscapistsRuntime {
         System.out.printf("Pack format hash: %d.\n", formatVersion);
 
         // -- GAME DATA READING
-        byte[] gameDataHeaderMagic = new byte[4];
-        buf.get(gameDataHeaderMagic);
+        byte[] gameDataHeaderMagic = buf.getBytes(4);
         if (!Arrays.equals(gameDataHeaderMagic, UNICODE_GAME_HEADER)) {
             System.out.println("Bad game header.");
             return;

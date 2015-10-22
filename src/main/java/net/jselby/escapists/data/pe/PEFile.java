@@ -1,5 +1,7 @@
 package net.jselby.escapists.data.pe;
 
+import net.jselby.escapists.util.ByteReader;
+
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 
@@ -17,12 +19,11 @@ public class PEFile {
     private int bitCount;
     private PESection[] sections;
 
-    public PEFile(ByteBuffer buf) throws InvalidFileException {
+    public PEFile(ByteReader buf) throws InvalidFileException {
         // Firstly, check that this file matches the default Windows executable magic, 'MZ'
         int startPos = buf.position();
 
-        byte[] exeHeader = new byte[2];
-        buf.get(exeHeader);
+        byte[] exeHeader = buf.getBytes(2);
         if (!Arrays.equals(exeHeader, EXE_HEADER)) {
             // Failed this check
             throw new InvalidFileException("EXE header not found.");
@@ -34,7 +35,7 @@ public class PEFile {
 
         // Grab data from the PE header
         buf.position(peHeaderOffset);
-        buf.get(peSignature);
+        buf.getBytes(peSignature);
         machineType = buf.getShort();
         int sectionCount = buf.getShort();
 
@@ -49,8 +50,7 @@ public class PEFile {
         // Read sections
         sections = new PESection[sectionCount];
         for (int i = 0; i < sectionCount; i++) {
-            byte[] nameBytes = new byte[8];
-            buf.get(nameBytes);
+            byte[] nameBytes = buf.getBytes(8);
             String sectionName = new String(nameBytes).trim();
 
             // Read virtual sizes

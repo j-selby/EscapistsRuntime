@@ -2,6 +2,7 @@ package net.jselby.escapists;
 
 import net.jselby.escapists.data.Chunk;
 import net.jselby.escapists.data.ChunkType;
+import net.jselby.escapists.util.ByteReader;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -25,7 +26,7 @@ public class ChunkDecoder {
      * @param buf The buffer to read from
      * @return A parsed list of Chunks
      */
-    public static List<Chunk> decodeChunk(ByteBuffer buf) {
+    public static List<Chunk> decodeChunk(ByteReader buf) {
         Inflater inflater = new Inflater();
         ArrayList<Chunk> chunks = new ArrayList<>();
 
@@ -35,8 +36,7 @@ public class ChunkDecoder {
             int flags = buf.getShort();
             int size = buf.getInt();
 
-            byte[] data = new byte[size];
-            buf.get(data);
+            byte[] data = buf.getBytes(size);
 
             if (type == ChunkType.Last) {
                 break;
@@ -76,10 +76,14 @@ public class ChunkDecoder {
                 Class<?> potentialChunkDef = Class.forName("net.jselby.escapists.data.chunks." + type.name());
 
                 Chunk chunk = potentialChunkDef.asSubclass(Chunk.class).newInstance();
-                chunk.init(ByteBuffer.wrap(data).order(ByteOrder.LITTLE_ENDIAN), data.length);
+                chunk.init(new ByteReader(ByteBuffer.wrap(data).order(ByteOrder.LITTLE_ENDIAN)), data.length);
                 chunks.add(chunk);
             } catch (ClassNotFoundException e) {
-                System.err.printf("Failed to find a chunk representation for \"%s\" (ID: %d).\n", type.name(), id);
+                if (type == ChunkType.Unknown) {
+                    System.err.printf("Failed to find a chunk representation for ID: %d.\n", id);
+                } else {
+                    System.err.printf("Failed to find a chunk representation for \"%s\" (ID: %d).\n", type.name(), id);
+                }
                 try {
                     FileOutputStream out = new FileOutputStream("Sections" + File.separator + type.name());
                     out.write(data);
