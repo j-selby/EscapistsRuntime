@@ -26,6 +26,7 @@ public class EscapistsRuntime {
 
     private static final byte[] UNICODE_GAME_HEADER = "PAMU".getBytes();
     private static final byte[] PACK_HEADER = new byte[]{119, 119, 119, 119, 73, -121, 71, 18};
+    private static final String[] UNCOMPRESSED_PACKED_FILES = {"mmfs2.dll"};
 
     public static void main(String[] args) throws IOException {
         System.out.printf("jselby's EscapistRuntime, v%s\n", VERSION);
@@ -48,7 +49,9 @@ public class EscapistsRuntime {
 
         // Find the last section, and the content after it
         PESection[] peSections = file.getSections();
-        System.out.printf("Found %d sections in PE file.\n", peSections.length);
+        if (peSections.length != 5) {
+            System.out.println("Invalid PE file section count. Is this the correct Escapists file (TheEscapists_eur.exe)?");
+        }
         PESection lastPeSection = peSections[peSections.length - 1];
         int afterSectionPointer = lastPeSection.getSectionPointer() + lastPeSection.getSectionSize();
         buf.position(afterSectionPointer);
@@ -83,8 +86,11 @@ public class EscapistsRuntime {
         for (int i = 0; i < packCount; i++) {
 
             int packedFileNameLength = buf.getShort();
-            byte[] fileNameBytes = buf.getBytes(packedFileNameLength * 2); // * 2 'cos unicode
-            String fileName = new String(fileNameBytes).trim();
+            StringBuilder builder = new StringBuilder();
+            for (int ii = 0; ii < packedFileNameLength; ii++) {
+                builder.append(buf.getChar());
+            }
+            String fileName = builder.toString().trim();
 
             buf.getInt(); // Magic
 
@@ -92,22 +98,30 @@ public class EscapistsRuntime {
 
             byte[] data = buf.getBytes(packedFileCompLength);
 
-            try {
-                byte[] decompData = new byte[packedFileCompLength * 16];
-                inflater.reset();
-                inflater.setInput(data);
-                int len = inflater.inflate(decompData);
-                byte[] arrayCopy = new byte[len];
-                System.arraycopy(decompData, 0, arrayCopy, 0, len);
-                data = arrayCopy;
-
-                //System.out.printf("Discovered packed file %s of length %d (compressed: %d).\n", fileName, len, packedFileCompLength);
-            } catch (DataFormatException e) {
-                System.out.printf("Failed to inflate packed file %s: %s.\n", fileName, e.getMessage());
+            boolean uncompressed = false;
+            for (String uncPack : UNCOMPRESSED_PACKED_FILES) {
+                if (uncPack.equals(fileName)) {
+                    uncompressed = true;
+                    break;
+                }
             }
-        }
 
-        System.out.printf("Pack format hash: %d.\n", formatVersion);
+            if (!uncompressed) {
+                try {
+                    byte[] decompData = new byte[packedFileCompLength * 16];
+                    inflater.reset();
+                    inflater.setInput(data);
+                    int len = inflater.inflate(decompData);
+                    byte[] arrayCopy = new byte[len];
+                    System.arraycopy(decompData, 0, arrayCopy, 0, len);
+                    data = arrayCopy;
+                } catch (DataFormatException e) {
+                    System.out.printf("Failed to inflate packed file %s: %s.\n", fileName, e.getMessage());
+                }
+            }
+
+            //System.out.printf("Discovered packed file %s of length %d (compressed: %d).\n", fileName, len, !uncompressed);
+        }
 
         // -- GAME DATA READING
         byte[] gameDataHeaderMagic = buf.getBytes(4);
@@ -124,14 +138,16 @@ public class EscapistsRuntime {
         int productVersion = buf.getInt();
         int productBuild = buf.getInt();
 
-        System.out.printf("Game version %d, build %d.\n", productVersion, productBuild);
+        //System.out.printf("Game version %d, build %d.\n", productVersion, productBuild);
 
         // Chunk reading
-        System.out.println("Parsing chunks...");
         List<Chunk> chunks = ChunkDecoder.decodeChunk(buf);
-        chunks.stream()
+        /*chunks.stream()
                 .filter(chunk -> chunk instanceof StringChunk)
-                .forEach(chunk -> System.out.println(chunk.getClass().getSimpleName() + " > " + chunk.toString()));
+                .forEach(chunk -> System.out.println(chunk.getClass().getSimpleName() + " > " + chunk.toString()));*/
+        while(true) {
+            chunks.equals(chunks);
+        }
 
     }
 }
