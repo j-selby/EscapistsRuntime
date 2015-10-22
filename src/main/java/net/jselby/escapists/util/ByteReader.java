@@ -1,5 +1,6 @@
 package net.jselby.escapists.util;
 
+import java.awt.*;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
@@ -106,6 +107,18 @@ public class ByteReader {
      */
     public int getUnsignedShort() {
         return (buf.getShort() & 0xffff);
+    }
+
+    /**
+     * Reads a color from the ByteBuffer.
+     * @return a color
+     */
+    public Color getColor() {
+        short r = getUnsignedByte();
+        short g = getUnsignedByte();
+        short b = getUnsignedByte();
+        skipBytes(1);
+        return new Color(r, g, b);
     }
 
     /**

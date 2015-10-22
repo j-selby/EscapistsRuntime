@@ -3,8 +3,6 @@ package net.jselby.escapists.data.chunks;
 import net.jselby.escapists.data.Chunk;
 import net.jselby.escapists.util.ByteReader;
 
-import java.nio.ByteBuffer;
-
 /**
  * The AppHeader contains attributes relating to the games expected environment (DirectX, Fullscreen, etc), and
  * other important starting variables/data for the game.
