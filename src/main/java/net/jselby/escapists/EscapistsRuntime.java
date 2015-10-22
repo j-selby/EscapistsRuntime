@@ -145,9 +145,6 @@ public class EscapistsRuntime {
         /*chunks.stream()
                 .filter(chunk -> chunk instanceof StringChunk)
                 .forEach(chunk -> System.out.println(chunk.getClass().getSimpleName() + " > " + chunk.toString()));*/
-        while(true) {
-            chunks.equals(chunks);
-        }
 
     }
 }
