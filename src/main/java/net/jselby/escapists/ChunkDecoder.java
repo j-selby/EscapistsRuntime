@@ -84,13 +84,13 @@ public class ChunkDecoder {
                 } else {
                     System.err.printf("Failed to find a chunk representation for \"%s\" (ID: %d).\n", type.name(), id);
                 }
-                try {
+                /*try {
                     FileOutputStream out = new FileOutputStream("Sections" + File.separator + type.name());
                     out.write(data);
                     out.close();
                 } catch (IOException e1) {
                     e1.printStackTrace();
-                }
+                }*/
             } catch (InstantiationException | IllegalAccessException e) {
                 System.err.printf("Failed to create chunk representation for \"%s\" (ID: %d): ", type.name(), id);
                 e.printStackTrace();

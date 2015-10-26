@@ -3,9 +3,18 @@ package net.jselby.escapists;
 import net.jselby.escapists.data.Chunk;
 import net.jselby.escapists.data.ChunkType;
 import net.jselby.escapists.data.StringChunk;
+import net.jselby.escapists.data.chunks.AppHeader;
+import net.jselby.escapists.data.chunks.AppIcon;
+import net.jselby.escapists.data.chunks.Frame;
 import net.jselby.escapists.data.pe.PEFile;
 import net.jselby.escapists.data.pe.PESection;
+import net.jselby.escapists.graphics.EscapistsGame;
 import net.jselby.escapists.util.ByteReader;
+import net.jselby.escapists.util.ChunkUtils;
+import org.lwjgl.opengl.Display;
+import org.newdawn.slick.AppGameContainer;
+import org.newdawn.slick.ScalableGame;
+import org.newdawn.slick.SlickException;
 
 import java.io.*;
 import java.nio.ByteBuffer;
@@ -142,9 +151,22 @@ public class EscapistsRuntime {
 
         // Chunk reading
         List<Chunk> chunks = ChunkDecoder.decodeChunk(buf);
-        /*chunks.stream()
-                .filter(chunk -> chunk instanceof StringChunk)
-                .forEach(chunk -> System.out.println(chunk.getClass().getSimpleName() + " > " + chunk.toString()));*/
+        try {
+            AppGameContainer container = new AppGameContainer(new EscapistsGame(chunks));
+            AppHeader header = (AppHeader) ChunkUtils.getChunk(chunks, AppHeader.class);
+            System.out.println(header.windowWidth + ":" + header.windowHeight);
+            container.setDisplayMode((int) (header.windowWidth * 2.5f),
+                    (int) (header.windowHeight * 2.5), false);
+           // container.setDisplayMode(944, 681, false); // What a weird screen resolution
+            container.setClearEachFrame(false);
+            container.setSmoothDeltas(false);
+            container.setShowFPS(false);
+            container.setAlwaysRender(true);
+            Display.setResizable(true);
+            container.start();
+        } catch (SlickException e) {
+            e.printStackTrace();
+        }
 
     }
 }

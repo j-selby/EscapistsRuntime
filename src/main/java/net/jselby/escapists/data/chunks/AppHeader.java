@@ -3,31 +3,35 @@ package net.jselby.escapists.data.chunks;
 import net.jselby.escapists.data.Chunk;
 import net.jselby.escapists.util.ByteReader;
 
+import java.awt.*;
+
 /**
  * The AppHeader contains attributes relating to the games expected environment (DirectX, Fullscreen, etc), and
  * other important starting variables/data for the game.
  */
 public class AppHeader extends Chunk {
     // The flags are a bitset of various attributes.
-    private int flags1;
-    private int flags2;
-    private int flags3;
+    public int flags1;
+    public int flags2;
+    public int flags3;
 
     // The mode is the graphics mode of the game. See included ENUM below.
-    private int mode;
+    public int mode;
 
     // The windowWidth/windowHeight fields correspond to the initial dimensions of the game.
-    private int windowWidth;
-    private int windowHeight;
+    public int windowWidth;
+    public int windowHeight;
 
     // Various variables used by the game engine
-    private int initialScore;
-    private int initialLives;
-    private long numberOfFrames;
-    private long frameRate;
+    public long initialScore;
+    public long initialLives;
+    public long numberOfFrames;
+    public long frameRate;
 
     // The controls used by this Application
-    private Controls[] controls;
+    public Controls[] controls;
+
+    public Color borderColor;
 
     /**
      * Initialises this chunk with a ByteBuffer.
@@ -38,27 +42,29 @@ public class AppHeader extends Chunk {
     public void init(ByteReader buffer, int length) {
         int size = buffer.getInt();
 
-        flags1 = buffer.getShort() & 0xFFFF;
-        flags2 = buffer.getShort() & 0xFFFF;
+        flags1 = buffer.getUnsignedShort();
+        flags2 = buffer.getUnsignedShort();
         mode = buffer.getShort();
-        flags3 = buffer.getShort() & 0xFFFF;
+        flags3 = buffer.getUnsignedShort();
 
         windowWidth = buffer.getShort() & 0xFFFF;
         windowHeight = buffer.getShort() & 0xFFFF;
 
-        initialScore = buffer.getInt();
-        initialLives = buffer.getInt();
+        initialScore = ~buffer.getUnsignedInt();
+        initialLives = ~buffer.getUnsignedInt();
 
         controls = new Controls[4];
         for (int i = 0; i < controls.length; i++) {
             controls[i] = new Controls(buffer);
         }
+        for (int i = 0; i < controls.length; i++) {
+            controls[i].readKeys(buffer);
+        }
 
-        // TODO: Read Color here - Global reader implementation on ByteBuffer?
-        buffer.position(buffer.position() + 4);
+        borderColor = buffer.getColor();
 
-        numberOfFrames = (long) buffer.getInt();
-        frameRate = (long) buffer.getInt();
+        numberOfFrames = buffer.getUnsignedInt();
+        frameRate = buffer.getUnsignedInt();
     }
 
     public enum GraphicsMode {
@@ -89,20 +95,27 @@ public class AppHeader extends Chunk {
     }
 
     public class Controls {
-        public final short up;
-        public final short down;
-        public final short left;
-        public final short right;
-        public final short button1;
-        public final short button2;
-        public final short button3;
-        public final short button4;
+        private final short controlType;
+
+        public short up;
+        public short down;
+        public short left;
+        public short right;
+        public short button1;
+        public short button2;
+        public short button3;
+        public short button4;
 
         /**
          * Reads a Control section from a AppHeader
          * @param buf The buffer to read from.
          */
         private Controls(ByteReader buf) {
+            controlType = buf.getShort();
+
+        }
+
+        public void readKeys(ByteReader buf) {
             up = buf.getShort();
             down = buf.getShort();
             left = buf.getShort();

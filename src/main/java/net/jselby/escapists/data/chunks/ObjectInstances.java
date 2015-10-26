@@ -7,7 +7,7 @@ import net.jselby.escapists.util.ByteReader;
  * The ObjectInstances chunk is a chunk of instances belonging to a frame.
  */
 public class ObjectInstances extends Chunk {
-    private ObjectInstance[] instances;
+    public ObjectInstance[] instances;
 
     @Override
     public void init(ByteReader buffer, int length) {
@@ -22,16 +22,16 @@ public class ObjectInstances extends Chunk {
     /**
      * A ObjectInstance is a instance of a object within the game world.
      */
-    private class ObjectInstance {
-        private final int handle;
-        private final int objectInfo;
+    public class ObjectInstance {
+        public final int handle;
+        public final int objectInfo;
 
-        private final int x;
-        private final int y;
+        public final int x;
+        public final int y;
 
-        private final short parentType;
-        private final short parentHandle;
-        private final short layer;
+        public final short parentType;
+        public final short parentHandle;
+        public final short layer;
 
         public ObjectInstance(ByteReader buffer) {
             handle = buffer.getUnsignedShort();
@@ -41,6 +41,14 @@ public class ObjectInstances extends Chunk {
             parentType = buffer.getShort();
             parentHandle = buffer.getShort(); // Object info
             layer = buffer.getShort();
+            buffer.skipBytes(2);
+        }
+
+        @Override
+        public String toString() {
+            return "ObjectInstance{x=" + x + ",y=" + y + ",handle=" + handle + ",objectInfo="
+                    + objectInfo + ",parentType=" + parentType + ",parentHandle=" + parentHandle
+                    + ",layer=" + layer + "}";
         }
     }
 }

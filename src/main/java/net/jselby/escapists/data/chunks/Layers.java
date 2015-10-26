@@ -7,7 +7,7 @@ import net.jselby.escapists.util.ByteReader;
  * The Layers object represents different visual layers in a frame.
  */
 public class Layers extends Chunk {
-    private Layer[] layers;
+    public Layer[] layers;
 
     @Override
     public void init(ByteReader buffer, int length) {
@@ -20,7 +20,7 @@ public class Layers extends Chunk {
     /**
      * A Layer is a layer within a set of Layers.
      */
-    private class Layer {
+    public class Layer {
         public final long flags;
 
         public final float xCoefficient;

@@ -17,11 +17,11 @@ public abstract class StringChunk extends Chunk {
      */
     @Override
     public void init(ByteReader buffer, int length) {
-        try {
-            content = new String(buffer.getBytes(length), getEncodingType());
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < length / 2; i++) {
+            builder.append(buffer.getChar());
         }
+        content = builder.toString();
     }
 
     /**
@@ -31,12 +31,6 @@ public abstract class StringChunk extends Chunk {
     public String getContent() {
         return content;
     }
-
-    /**
-     * Returns the encoding type of this Chunk.
-     * @return The encoding type.
-     */
-    protected abstract String getEncodingType();
 
     @Override
     public String toString() {

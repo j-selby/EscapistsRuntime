@@ -19,7 +19,7 @@ import java.util.zip.Inflater;
  * A ImageBank is a store of images.
  */
 public class ImageBank extends Chunk {
-    private ImageItem[] images;
+    public ImageItem[] images;
 
     @Override
     public void init(ByteReader buffer, int length) {
@@ -34,7 +34,7 @@ public class ImageBank extends Chunk {
     /**
      * A ImageItem is a Image from a ImageBank.
      */
-    private class ImageItem {
+    public class ImageItem {
         private final int checksum;
         private final int references;
 
@@ -52,7 +52,7 @@ public class ImageBank extends Chunk {
         private final short actionY;
 
         private final Color transparent;
-        private final BufferedImage image;
+        public final BufferedImage image;
 
         public int handle;
 
@@ -117,9 +117,14 @@ public class ImageBank extends Chunk {
             }
             pad = (int) Math.ceil(pad / (float)3);
             int i = 0;
+            int n = 0;
             BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+
+            int originalPos = buffer.position();
+
             for (int y = 0; y < height; y++) {
                 for (int x = 0; x < width; x++) {
+                    buffer.position(originalPos + n);
                     int b = buffer.getUnsignedByte();
                     int g = buffer.getUnsignedByte();
                     int r = buffer.getUnsignedByte();
@@ -127,16 +132,20 @@ public class ImageBank extends Chunk {
                     if (!buf[i].equals(transparent)) {
                         image.setRGB(x, y, buf[i].getRGB());
                     }
-                    // TODO: Handle padding (needed?)
+
                     i++;
+                    n += 3;
                 }
+                n += 3 * pad;
             }
+
+            //buffer.position(originalPos + (height * width * 3));
 
             /*if (alpha) { // Alpha
                 i = 0;
                 for (int y = 0; y < height; y++) {
                     for (int x = 0; x < width; x++) {
-                        // TODO: Implement padding
+                        // TODO: Implement alpha, if needed
                         int a = buffer.getUnsignedByte();
                         buf[i] = new Color(buf[i].getRed(), buf[i].getGreen(), buf[i].getBlue(), a);
                         image.setRGB(x, y, buf[i].getRGB());
@@ -144,15 +153,13 @@ public class ImageBank extends Chunk {
                 }
             }*/
 
-            try {
+            /*try {
                 ImageIO.write(image, "png", new File("images/" + handle + ".png"));
             } catch (IOException e) {
                 e.printStackTrace();
-            }
+            }*/
 
             this.image = image;
-
-            handle--;
         }
     }
 }

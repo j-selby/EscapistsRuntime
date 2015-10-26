@@ -9,10 +9,10 @@ import java.awt.*;
  * The FrameHeader is a set of basic properties relating to a games frame.
  */
 public class FrameHeader extends Chunk {
-    private int width;
-    private int height;
-    private Color background;
-    private long flags;
+    public int width;
+    public int height;
+    public Color background;
+    public long flags;
 
     @Override
     public void init(ByteReader buffer, int length) {
