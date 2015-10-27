@@ -5,8 +5,8 @@ import net.jselby.escapists.util.ByteReader;
 
 /**
  * Shaders are lists of graphics instructions that tell a renderer how to render stuff.
-    */
-    public class Shaders extends Chunk {
+ */
+public class Shaders extends Chunk {
     private Shader[] shaders;
 
     @Override
@@ -23,6 +23,7 @@ import net.jselby.escapists.util.ByteReader;
         for (int i = 0; i < offsets.length; i++) {
             buffer.position(initialPosition + offsets[i]);
             // TODO: Fix buffer underflow - garbage data?
+            //    \_ Anaconda documentation appears wrong here
             //shaders[i] = new Shader(buffer);
         }
     }

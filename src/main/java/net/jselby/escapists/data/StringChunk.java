@@ -21,7 +21,7 @@ public abstract class StringChunk extends Chunk {
         for (int i = 0; i < length / 2; i++) {
             builder.append(buffer.getChar());
         }
-        content = builder.toString();
+        content =builder.toString();
     }
 
     /**
@@ -34,6 +34,6 @@ public abstract class StringChunk extends Chunk {
 
     @Override
     public String toString() {
-        return content;
+        return  "{" + getClass().getSimpleName() + "=\"" + content + "\"}";
     }
 }

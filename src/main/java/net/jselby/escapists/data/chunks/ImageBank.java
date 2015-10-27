@@ -6,6 +6,7 @@ import net.jselby.escapists.util.ByteReader;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.WritableRaster;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -104,7 +105,9 @@ public class ImageBank extends Chunk {
             actionY = buffer.getShort();
 
             transparent = buffer.getColor();
-            boolean alpha = (flags & ((short) Math.pow(2, /* index */ 4))) != 0;
+            int transparentVal = transparent.getRGB();
+            //System.out.println(Long.toBinaryString(flags) + ":" + flags);
+            boolean alpha = ((flags >> 4) & 1) != 0;
 
             if (graphicMode != 4) {
                 throw new IllegalStateException("Unimplemented: Graphics mode != 4 (" + graphicMode + ")");
@@ -121,16 +124,17 @@ public class ImageBank extends Chunk {
             BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 
             int originalPos = buffer.position();
-
             for (int y = 0; y < height; y++) {
                 for (int x = 0; x < width; x++) {
                     buffer.position(originalPos + n);
                     int b = buffer.getUnsignedByte();
                     int g = buffer.getUnsignedByte();
                     int r = buffer.getUnsignedByte();
-                    buf[i] = new Color(r, g, b);
-                    if (!buf[i].equals(transparent)) {
-                        image.setRGB(x, y, buf[i].getRGB());
+                    int val =  new Color(r, g, b).getRGB();
+                    if (val != transparentVal && !alpha) {
+                        image.setRGB(x, y,val);
+                    } else {
+                        buf[i] = new Color(r, g, b);
                     }
 
                     i++;
@@ -139,19 +143,21 @@ public class ImageBank extends Chunk {
                 n += 3 * pad;
             }
 
-            //buffer.position(originalPos + (height * width * 3));
+            buffer.position(originalPos + (height * width * 3));
 
-            /*if (alpha) { // Alpha
+            if (alpha) { // Alpha
                 i = 0;
                 for (int y = 0; y < height; y++) {
                     for (int x = 0; x < width; x++) {
                         // TODO: Implement alpha, if needed
                         int a = buffer.getUnsignedByte();
-                        buf[i] = new Color(buf[i].getRed(), buf[i].getGreen(), buf[i].getBlue(), a);
-                        image.setRGB(x, y, buf[i].getRGB());
+                        int val = (a << 24) | (buf[i].getRed() << 16) | (buf[i].getGreen() << 8) | buf[i].getBlue();
+                        if (!buf[i].equals(transparent)) {
+                            image.setRGB(x, y, val);
+                        }
                     }
                 }
-            }*/
+            }
 
             /*try {
                 ImageIO.write(image, "png", new File("images/" + handle + ".png"));

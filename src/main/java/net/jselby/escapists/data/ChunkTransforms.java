@@ -1,4 +1,4 @@
-package net.jselby.escapists;
+package net.jselby.escapists.data;
 
 /**
  * Static methods to help with Chunk transformations.

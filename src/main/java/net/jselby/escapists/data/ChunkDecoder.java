@@ -1,13 +1,7 @@
-package net.jselby.escapists;
+package net.jselby.escapists.data;
 
-import net.jselby.escapists.data.Chunk;
-import net.jselby.escapists.data.ChunkType;
 import net.jselby.escapists.util.ByteReader;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;

@@ -6,6 +6,8 @@ import net.jselby.escapists.util.ByteReader;
  * The header of an animation.
  */
 public class AnimationHeader {
+    public final Animation[] loadedAnimations;
+
     public AnimationHeader(ByteReader buffer) {
         int position = buffer.position();
 
@@ -17,17 +19,24 @@ public class AnimationHeader {
             offsets[i] = buffer.getShort();
         }
 
-        // TODO: Finish animations
-        /*
-        self.loadedAnimations = animationDict = {}
-        for index, offset in enumerate(offsets):
-            if offset != 0:
-                reader.seek(currentPosition + offset)
-                animationDict[index] = self.new(Animation, reader,
-                    index = index)
+        loadedAnimations = new Animation[count];
+        for (int i = 0; i < count; i++) {
+            if (offsets[i] != 0) {
+                buffer.position(position + offsets[i]);
+                loadedAnimations[i] = new Animation(buffer);
+            }
+        }
 
+        // TODO: GetClosestAnimation
+        /*
         for index in xrange(count):
             self.items.append(getClosestAnimation(index, animationDict, count))
          */
+    }
+
+    private class Animation {
+        public Animation(ByteReader buffer) {
+            // TODO: Implement animation class
+        }
     }
 }

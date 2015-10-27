@@ -110,9 +110,6 @@ public class ObjectCommon extends ObjectDefinitionProperties {
         }
 
         if (animationsOffset != 0) {
-            if (type == ObjectProperties.ObjectTypes.Active) {
-                System.out.println("Active, calling Animations");
-            }
             buffer.position(currentPosition + animationsOffset);
             animations = new AnimationHeader(buffer);
         }

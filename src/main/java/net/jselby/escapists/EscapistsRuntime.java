@@ -1,19 +1,18 @@
 package net.jselby.escapists;
 
 import net.jselby.escapists.data.Chunk;
-import net.jselby.escapists.data.ChunkType;
-import net.jselby.escapists.data.StringChunk;
+import net.jselby.escapists.data.ChunkDecoder;
 import net.jselby.escapists.data.chunks.AppHeader;
-import net.jselby.escapists.data.chunks.AppIcon;
-import net.jselby.escapists.data.chunks.Frame;
 import net.jselby.escapists.data.pe.PEFile;
 import net.jselby.escapists.data.pe.PESection;
+import net.jselby.escapists.game.Application;
+import net.jselby.escapists.graphics.EngineThread;
 import net.jselby.escapists.graphics.EscapistsGame;
+import net.jselby.escapists.util.AssetConverter;
 import net.jselby.escapists.util.ByteReader;
 import net.jselby.escapists.util.ChunkUtils;
 import org.lwjgl.opengl.Display;
 import org.newdawn.slick.AppGameContainer;
-import org.newdawn.slick.ScalableGame;
 import org.newdawn.slick.SlickException;
 
 import java.io.*;
@@ -37,9 +36,30 @@ public class EscapistsRuntime {
     private static final byte[] PACK_HEADER = new byte[]{119, 119, 119, 119, 73, -121, 71, 18};
     private static final String[] UNCOMPRESSED_PACKED_FILES = {"mmfs2.dll"};
 
-    public static void main(String[] args) throws IOException {
-        System.out.printf("jselby's EscapistRuntime, v%s\n", VERSION);
+    private EngineThread manager;
+    private EscapistsGame game;
+    private AppGameContainer gameContainer;
 
+    public void start() throws IOException {
+        AssetConverter.setRuntime(this);
+
+        // Start the user frontend ASAP, so we can show progress
+        try {
+            game = new EscapistsGame();
+            gameContainer = new AppGameContainer(game);
+            gameContainer.setDisplayMode(944, 684, false); // What a weird screen resolution
+            gameContainer.setClearEachFrame(false);
+            gameContainer.setSmoothDeltas(false);
+            gameContainer.setShowFPS(false);
+            gameContainer.setAlwaysRender(true);
+            Display.setResizable(true);
+            manager = new EngineThread(gameContainer, game);
+            manager.start();
+        } catch (SlickException e) {
+            e.printStackTrace();
+        }
+
+        // Alright, lets get cracking!
         // Read into a ByteBuffer
         // TODO: Detect Steam installations, and use their Escapists build.
         FileInputStream fileIn = new FileInputStream(new File("TheEscapists_eur.exe"));
@@ -151,22 +171,20 @@ public class EscapistsRuntime {
 
         // Chunk reading
         List<Chunk> chunks = ChunkDecoder.decodeChunk(buf);
-        try {
-            AppGameContainer container = new AppGameContainer(new EscapistsGame(chunks));
-            AppHeader header = (AppHeader) ChunkUtils.getChunk(chunks, AppHeader.class);
-            System.out.println("Game resolution: " + header.windowWidth + ":" + header.windowHeight);
-            container.setDisplayMode((int) (header.windowWidth * 2.5f),
-                    (int) (header.windowHeight * 2.5), false);
-           // container.setDisplayMode(944, 681, false); // What a weird screen resolution
-            container.setClearEachFrame(false);
-            container.setSmoothDeltas(false);
-            container.setShowFPS(false);
-            container.setAlwaysRender(true);
-            Display.setResizable(true);
-            container.start();
-        } catch (SlickException e) {
-            e.printStackTrace();
-        }
+        Application app = new Application(this, chunks);
+        manager.setApplication(app);
+
+    }
+
+    public EngineThread getEngineThread() {
+        return manager;
+    }
+
+    public static void main(String[] args) throws IOException {
+        System.out.printf("jselby's EscapistRuntime, v%s\n", VERSION);
+
+        EscapistsRuntime runtime = new EscapistsRuntime();
+        runtime.start();
 
     }
 }

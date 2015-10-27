@@ -7,6 +7,7 @@ import net.jselby.escapists.data.chunks.Frame;
 import net.jselby.escapists.data.objects.Backdrop;
 import net.jselby.escapists.data.objects.ObjectCommon;
 import net.jselby.escapists.data.objects.sections.Text;
+import net.jselby.escapists.game.Application;
 import net.jselby.escapists.util.ChunkUtils;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
@@ -27,6 +28,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import static org.lwjgl.opengl.GL11.glTexParameteri;
 
@@ -36,33 +39,24 @@ import static org.lwjgl.opengl.GL11.glTexParameteri;
  * @author j_selby
  */
 public class EscapistsGame extends BasicGame {
-    private final List<Chunk> chunks;
-
-    private final AppHeader chunkHeader;
-    private final ImageBank chunkImages;
-    private final ObjectDefinition[] objectDefs;
+    public Application app;
 
     private Frame currentFrame;
-
-    private Map<Integer, Image> images;
 
     private int oldWidth;
     private int oldHeight;
 
-    public EscapistsGame(List<Chunk> chunks) {
-        super(((AppName) ChunkUtils.getChunk(chunks, AppName.class)).getContent());
-        this.chunks = chunks;
+    // Cross-thread stuff
+    public boolean appNeedsUpdate = false;
+    private boolean initialFrameDrawn = false;
 
-        // Pop important chunks
-        chunkHeader = ((AppHeader) ChunkUtils.getChunk(chunks, AppHeader.class));
-        chunkImages = ((ImageBank) ChunkUtils.getChunk(chunks, ImageBank.class));
-        objectDefs = ((FrameItems) ChunkUtils.getChunk(chunks, FrameItems.class)).info;
-
+    public EscapistsGame() {
+        super("The Escapists"); // AppName not available at this point, will update later
     }
 
     @Override
     public void init(GameContainer container) throws SlickException {
-        oldWidth = container.getWidth();
+        /*oldWidth = container.getWidth();
         oldHeight = container.getHeight();
 
         // Get the app icon
@@ -86,103 +80,123 @@ public class EscapistsGame extends BasicGame {
             for (int i = 0; i < imageItems.length; i++) {
                 ImageBank.ImageItem imageItem = imageItems[i];
 
-                Texture texture = BufferedImageUtil.getTexture("", imageItem.image);
-                Image slickImage = new Image(texture.getImageWidth(), texture.getImageHeight());
-                slickImage.setTexture(texture);
-                slickImage.setFilter(Image.FILTER_NEAREST);
-                images.put(imageItem.handle, slickImage);
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         System.out.println("Encode done!");
 
-        ChunkUtils.popChunk(chunks, Frame.class);
+        //ChunkUtils.popChunk(chunks, Frame.class);
         ChunkUtils.popChunk(chunks, Frame.class);
 
-        loadFrame(container, (Frame) ChunkUtils.getChunk(chunks, Frame.class));
+        loadFrame(container, (Frame) ChunkUtils.getChunk(chunks, Frame.class));*/
     }
 
     @Override
     public void update(GameContainer container, int i) throws SlickException {
+        // Resising
         if(oldWidth != Display.getWidth() || oldHeight != Display.getHeight()) {
             GL11.glViewport(0, 0, Display.getWidth(), Display.getHeight());
             oldWidth = Display.getWidth();
             oldHeight = Display.getHeight();
         }
+
+        // Updating
+        if (appNeedsUpdate && initialFrameDrawn) {
+            try {
+                app.init();
+            } catch (IOException e) {
+                throw new SlickException(e.getMessage());
+            }
+            appNeedsUpdate = false;
+
+            // Now that we are ready, prepare first scene
+            loadFrame(container, app.frames.get(1));
+        }
     }
 
     @Override
     public void render(GameContainer container, Graphics g) throws SlickException {
-        g.setColor(awtToSlickColor(currentFrame.background));
-        g.fillRect(0, 0, container.getWidth(), container.getHeight());
-        g.scale(((float) container.getWidth()) / ((float) chunkHeader.windowWidth),
-               ((float) container.getHeight()) / ((float) chunkHeader.windowHeight));
+        if (app == null) {
+            g.clear();
+            g.setColor(Color.white);
+            g.drawString("Loading... Please wait...", 10, 10);
+        } else {
+            g.setColor(awtToSlickColor(currentFrame.background));
+            g.fillRect(0, 0, container.getWidth(), container.getHeight());
+            g.scale(((float) container.getWidth()) / ((float) app.getWindowWidth()),
+                    ((float) container.getHeight()) / ((float) app.getWindowHeight()));
 
 
-        int mouseX = container.getInput().getMouseX();
-        int mouseY = container.getInput().getMouseY();
+            int mouseX = container.getInput().getMouseX();
+            int mouseY = container.getInput().getMouseY();
 
-        Layers.Layer[] layers = currentFrame.layers.layers;
-        for (int i = 0; i < layers.length; i++) {
-            Layers.Layer layer = layers[i];
-            //System.out.printf("Name: %s, %s:%s, %s, %s.\n", layer.name, layer.xCoefficient,
-            //        layer.yCoefficient, layer.flags, layer.backgroundIndex);
-            //if (layer.backgroundIndex != 0) {
-            //    g.drawImage(images[layer. - 1], 0, 0);
-            //}
-
-
-            //System.out.println(layer.backgroundIndex + ":" + layer.numberOfBackgrounds);
-
-
-            for (ObjectInstances.ObjectInstance instance : currentFrame.objects.instances) {
-                if (instance.layer == i) {
-                    //handle
-                    float x = instance.x;
-                    float y = instance.y;
-                    int targetId = instance.objectInfo;
-
-                    ObjectDefinition objectDef = objectDefs[instance.objectInfo];
-                    ObjectProperties.ObjectTypes type = objectDef.properties.objectType;
-
-                    if (type == ObjectProperties.ObjectTypes.Text) {
-                        ObjectCommon common = (ObjectCommon) objectDef.properties.properties;
-
-                        Text text = common.partText;
-                        for (Text.Paragraph paragraph : text.paragraphs) {
-                            g.setColor(awtToSlickColor(paragraph.color));
-                            g.drawString(paragraph.value, x, y);
-                            y += 10;
-                        }
-                    } else if (type == ObjectProperties.ObjectTypes.Backdrop) {
-                        Backdrop backdrop = (Backdrop) objectDef.properties.properties;
-                        Image image = images.get((int) backdrop.image + 1);
-                        if (image != null) {
-                            g.drawImage(image, x, y);
-                        }
-                    } else if (type == ObjectProperties.ObjectTypes.Active) {
-                        // Animation
-                    }
+            Layers.Layer[] layers = currentFrame.layers.layers;
+            for (int i = 0; i < layers.length; i++) {
+                Layers.Layer layer = layers[i];
+                if (((layer.flags >> 17) & 1) != 0) { // "IsShow" flag
+                    continue;
                 }
 
+                for (ObjectInstances.ObjectInstance instance : currentFrame.objects.instances) {
+                    if (instance.layer == i) {
+                        //handle
+                        float x = instance.x;
+                        float y = instance.y;
+                        int targetId = instance.objectInfo;
+
+                        ObjectDefinition objectDef = objectDefs[instance.objectInfo];
+                        ObjectProperties.ObjectTypes type = objectDef.properties.objectType;
+
+                        if (type == ObjectProperties.ObjectTypes.Text) {
+                            ObjectCommon common = (ObjectCommon) objectDef.properties.properties;
+
+                            Text text = common.partText;
+                            for (Text.Paragraph paragraph : text.paragraphs) {
+                                g.setColor(awtToSlickColor(paragraph.color));
+                                g.drawString(paragraph.value, x, y);
+                                y += 10;
+                            }
+                        } else if (type == ObjectProperties.ObjectTypes.Backdrop) {
+                            Backdrop backdrop = (Backdrop) objectDef.properties.properties;
+                            Image image = images.get((int) backdrop.image + 1);
+                            if (image != null) {
+                                g.drawImage(image, x, y);
+                            }
+                        } else if (type == ObjectProperties.ObjectTypes.Active) {
+                            // Animation
+                            if (instance.handle == 6) {
+                                ObjectCommon common = (ObjectCommon) objectDef.properties.properties;
+                                //System.out.println(common.identifier);
+                            }
+                        }
+                    }
+
+                }
             }
+
+            g.resetTransform();
+            g.setColor(Color.white);
+
+            for (ObjectInstances.ObjectInstance instance : currentFrame.objects.instances) {
+                if (instance.layer > 0) {
+                    continue;
+                }
+                float x = instance.x * ((float) container.getWidth()) / ((float) chunkHeader.windowWidth);
+                float y = instance.y * ((float) container.getHeight()) / ((float) chunkHeader.windowHeight);
+                //System.out.println(instance);
+                ObjectDefinition objectDefsInstance = objectDefs[instance.objectInfo];
+
+                //g.drawString(objectDefsInstance.name + ":" +
+                //        ObjectProperties.ObjectTypes.getById(objectDefsInstance.objectType) + ":" + instance.handle, x, y);
+            }
+
+            g.drawString("FPS: " + container.getFPS(), 5, 5);
         }
 
-        g.resetTransform();
-        g.setColor(Color.white);
-
-        for (ObjectInstances.ObjectInstance instance : currentFrame.objects.instances) {
-            float x = instance.x * ((float) container.getWidth()) / ((float) chunkHeader.windowWidth);
-            float y = instance.y * ((float) container.getHeight()) / ((float) chunkHeader.windowHeight);
-            //System.out.println(instance);
-            ObjectDefinition objectDefsInstance = objectDefs[instance.objectInfo];
-
-            g.drawString(objectDefsInstance.name + ":" +
-                    ObjectProperties.ObjectTypes.getById(objectDefsInstance.objectType) + ":" + instance.handle, x, y);
+        if (!initialFrameDrawn) {
+            initialFrameDrawn = true;
         }
-
-        g.drawString("FPS: " + container.getFPS(), 5, 5);
     }
 
     private static ByteBuffer loadIconInstance(BufferedImage image, int dimension)
