@@ -7,8 +7,8 @@ import net.jselby.escapists.util.ByteReader;
  * The effects of an object
  */
 public class ObjectEffects extends Chunk {
-    private long id;
-    private byte[][] data;
+    public long id;
+    public byte[][] data;
 
     @Override
     public void init(ByteReader buffer, int length) {

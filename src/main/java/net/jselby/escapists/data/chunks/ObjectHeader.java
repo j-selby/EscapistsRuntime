@@ -7,14 +7,14 @@ import net.jselby.escapists.util.ByteReader;
  * The header properties of an object.
  */
 public class ObjectHeader extends Chunk {
-    private short handle;
-    private short objectType;
+    public short handle;
+    public short objectType;
 
-    private int flags;
-    private short reserved;
+    public int flags;
+    public short reserved;
 
-    private long inkEffect;
-    private long inkEffectParameter;
+    public long inkEffect;
+    public long inkEffectParameter;
 
     @Override
     public void init(ByteReader buffer, int length) {

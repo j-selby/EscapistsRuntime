@@ -1,6 +1,7 @@
 package net.jselby.escapists.graphics;
 
 import net.jselby.escapists.data.Chunk;
+import net.jselby.escapists.data.ObjectDefinition;
 import net.jselby.escapists.data.chunks.*;
 import net.jselby.escapists.data.chunks.Frame;
 import net.jselby.escapists.util.ChunkUtils;
@@ -36,6 +37,8 @@ public class EscapistsGame extends BasicGame {
 
     private final AppHeader chunkHeader;
     private final ImageBank chunkImages;
+    private final ObjectDefinition[] objectDefs;
+
     private Frame currentFrame;
 
     private Map<Integer, Image> images;
@@ -50,6 +53,7 @@ public class EscapistsGame extends BasicGame {
         // Pop important chunks
         chunkHeader = ((AppHeader) ChunkUtils.getChunk(chunks, AppHeader.class));
         chunkImages = ((ImageBank) ChunkUtils.getChunk(chunks, ImageBank.class));
+        objectDefs = ((FrameItems) ChunkUtils.getChunk(chunks, FrameItems.class)).info;
 
     }
 
@@ -89,7 +93,7 @@ public class EscapistsGame extends BasicGame {
         }
 
         ChunkUtils.popChunk(chunks, Frame.class);
-        //ChunkUtils.popChunk(chunks, Frame.class);
+        ChunkUtils.popChunk(chunks, Frame.class);
 
         loadFrame(container, (Frame) ChunkUtils.getChunk(chunks, Frame.class));
     }
@@ -158,7 +162,7 @@ public class EscapistsGame extends BasicGame {
             float x = instance.x * ((float) container.getWidth()) / ((float) chunkHeader.windowWidth);
             float y = instance.y * ((float) container.getHeight()) / ((float) chunkHeader.windowHeight);
             //System.out.println(instance);
-            g.drawString(instance.x + ":" + instance.y + ":" + instance.layer + ":" + instance.handle + ":" + instance.objectInfo, x, y);
+            g.drawString(instance.x + ":" + instance.y + ":" + objectDefs[instance.objectInfo], x, y);
         }
 
         g.drawString("FPS: " + container.getFPS(), 5, 5);
