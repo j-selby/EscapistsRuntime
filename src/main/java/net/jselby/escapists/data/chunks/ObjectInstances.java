@@ -6,7 +6,8 @@ import net.jselby.escapists.util.ByteReader;
 /**
  * The ObjectInstances chunk is a chunk of instances belonging to a frame.
  */
-public class ObjectInstances extends Chunk {
+public class
+        ObjectInstances extends Chunk {
     public ObjectInstance[] instances;
 
     @Override

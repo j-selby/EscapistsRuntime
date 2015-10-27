@@ -154,7 +154,7 @@ public class EscapistsRuntime {
         try {
             AppGameContainer container = new AppGameContainer(new EscapistsGame(chunks));
             AppHeader header = (AppHeader) ChunkUtils.getChunk(chunks, AppHeader.class);
-            System.out.println(header.windowWidth + ":" + header.windowHeight);
+            System.out.println("Game resolution: " + header.windowWidth + ":" + header.windowHeight);
             container.setDisplayMode((int) (header.windowWidth * 2.5f),
                     (int) (header.windowHeight * 2.5), false);
            // container.setDisplayMode(944, 681, false); // What a weird screen resolution

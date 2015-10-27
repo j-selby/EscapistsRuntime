@@ -48,7 +48,6 @@ public class Frame extends Chunk {
         objects = (ObjectInstances) ChunkUtils.popChunk(chunks, ObjectInstances.class);
         layers = (Layers) ChunkUtils.popChunk(chunks, Layers.class);
 
-        System.out.println(chunks);
         /*
 
         newHeader = newChunks.popChunk(FrameHeader)
