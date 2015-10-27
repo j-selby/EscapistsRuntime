@@ -4,6 +4,9 @@ import net.jselby.escapists.data.Chunk;
 import net.jselby.escapists.data.ObjectDefinition;
 import net.jselby.escapists.data.chunks.*;
 import net.jselby.escapists.data.chunks.Frame;
+import net.jselby.escapists.data.objects.Backdrop;
+import net.jselby.escapists.data.objects.ObjectCommon;
+import net.jselby.escapists.data.objects.sections.Text;
 import net.jselby.escapists.util.ChunkUtils;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
@@ -74,6 +77,7 @@ public class EscapistsGame extends BasicGame {
 
         container.setTargetFrameRate((int) chunkHeader.frameRate);
 
+        System.out.println("Encoding game assets for LWJGL...");
         // Convert images to Slick format
         try {
             ImageBank.ImageItem[] imageItems = chunkImages.images;
@@ -91,6 +95,7 @@ public class EscapistsGame extends BasicGame {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        System.out.println("Encode done!");
 
         ChunkUtils.popChunk(chunks, Frame.class);
         ChunkUtils.popChunk(chunks, Frame.class);
@@ -137,19 +142,28 @@ public class EscapistsGame extends BasicGame {
                     float x = instance.x;
                     float y = instance.y;
                     int targetId = instance.objectInfo;
-                    //if (targetId == 24) {
-                    //    targetId = 61;
-                    //} else {
-                    //    continue;
-                    //}
-                    //if (instance.objectInfo == 62) {
-                        //System.out.printf("%d:%d, %d, %d, %d, %d (layer %d).\n", instance.x, instance.y, instance.objectInfo,
-                        //        instance.handle, instance.parentHandle, instance.parentType, i);
-                        if (images.containsKey(targetId)) {
 
-                            g.drawImage(images.get(targetId), x, y);
+                    ObjectDefinition objectDef = objectDefs[instance.objectInfo];
+                    ObjectProperties.ObjectTypes type = objectDef.properties.objectType;
+
+                    if (type == ObjectProperties.ObjectTypes.Text) {
+                        ObjectCommon common = (ObjectCommon) objectDef.properties.properties;
+
+                        Text text = common.partText;
+                        for (Text.Paragraph paragraph : text.paragraphs) {
+                            g.setColor(awtToSlickColor(paragraph.color));
+                            g.drawString(paragraph.value, x, y);
+                            y += 10;
                         }
-                    //}
+                    } else if (type == ObjectProperties.ObjectTypes.Backdrop) {
+                        Backdrop backdrop = (Backdrop) objectDef.properties.properties;
+                        Image image = images.get((int) backdrop.image + 1);
+                        if (image != null) {
+                            g.drawImage(image, x, y);
+                        }
+                    } else if (type == ObjectProperties.ObjectTypes.Active) {
+                        // Animation
+                    }
                 }
 
             }
@@ -162,7 +176,10 @@ public class EscapistsGame extends BasicGame {
             float x = instance.x * ((float) container.getWidth()) / ((float) chunkHeader.windowWidth);
             float y = instance.y * ((float) container.getHeight()) / ((float) chunkHeader.windowHeight);
             //System.out.println(instance);
-            g.drawString(instance.x + ":" + instance.y + ":" + objectDefs[instance.objectInfo], x, y);
+            ObjectDefinition objectDefsInstance = objectDefs[instance.objectInfo];
+
+            g.drawString(objectDefsInstance.name + ":" +
+                    ObjectProperties.ObjectTypes.getById(objectDefsInstance.objectType) + ":" + instance.handle, x, y);
         }
 
         g.drawString("FPS: " + container.getFPS(), 5, 5);

@@ -22,7 +22,7 @@ public class Shape {
     private Color color2;
     private short image;
 
-    public Shape(ByteReader buffer, int length) {
+    public Shape(ByteReader buffer) {
         borderSize = buffer.getShort();
         borderColor = buffer.getColor();
         shape = ShapeTypes.getTypeById(buffer.getShort());

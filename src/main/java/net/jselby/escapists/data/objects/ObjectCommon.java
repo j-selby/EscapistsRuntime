@@ -1,5 +1,7 @@
 package net.jselby.escapists.data.objects;
 
+import net.jselby.escapists.data.chunks.ObjectProperties;
+import net.jselby.escapists.data.objects.sections.*;
 import net.jselby.escapists.util.ByteReader;
 
 import java.awt.*;
@@ -9,33 +11,45 @@ import java.util.ArrayList;
  * An ObjectCommon is a object definition's properties that is declared as generic.
  */
 public class ObjectCommon extends ObjectDefinitionProperties {
-    private short version;
-    private long flags;
+    private int objectType;
 
-    private ArrayList<Short> qualifiers;
+    public short version;
+    public long flags;
 
-    private int newFlags;
-    private int preferences;
+    public ArrayList<Short> qualifiers;
 
-    private int identifier;
-    private Color backColour;
+    public int newFlags;
+    public int preferences;
 
-    private int fadeInOffset;
-    private int fadeOutOffset;
+    public int identifier;
+    public Color backColour;
 
-    private Movements[] movements;
-    private AnimationHeader animations;
-    private Counter counter;
+    public int fadeInOffset;
+    public int fadeOutOffset;
 
-    private short extensionOldFlags;
-    private short extensionVersion;
-    private int extensionId;
-    private int extensionPrivate;
-    private byte[] extensionData;
+    public Movements[] movements;
+    public AnimationHeader animations;
+    public Counter counter;
+    public AlterableValues values;
+    public AlterableStrings strings;
+
+    public short extensionOldFlags;
+    public int extensionVersion;
+    public int extensionId;
+    public int extensionPrivate;
+    public byte[] extensionData;
+
+    public Text partText;
+
+    public ObjectCommon(int objectType) {
+        this.objectType = objectType;
+    }
 
     @Override
     public void read(ByteReader buffer, int length) {
         int currentPosition = buffer.position();
+
+        int size = buffer.getInt();
 
         short animationsOffset = buffer.getShort();
         short movementsOffset = buffer.getShort();
@@ -76,6 +90,8 @@ public class ObjectCommon extends ObjectDefinitionProperties {
         fadeInOffset = buffer.getInt();
         fadeOutOffset = buffer.getInt();
 
+        ObjectProperties.ObjectTypes type = ObjectProperties.ObjectTypes.getById(objectType);
+
         if (movementsOffset != 0) {
             buffer.position(currentPosition + movementsOffset);
             movements = new Movements[] { new Movements(buffer) };
@@ -84,10 +100,19 @@ public class ObjectCommon extends ObjectDefinitionProperties {
         }
 
         if (valuesOffset != 0) {
-            System.out.println("values");
+            buffer.position(currentPosition + valuesOffset);
+            values = new AlterableValues(buffer);
+        }
+
+        if (stringsOffset != 0) {
+            buffer.position(currentPosition + stringsOffset);
+            strings = new AlterableStrings(buffer);
         }
 
         if (animationsOffset != 0) {
+            if (type == ObjectProperties.ObjectTypes.Active) {
+                System.out.println("Active, calling Animations");
+            }
             buffer.position(currentPosition + animationsOffset);
             animations = new AnimationHeader(buffer);
         }
@@ -98,31 +123,43 @@ public class ObjectCommon extends ObjectDefinitionProperties {
         }
 
         if (extensionOffset != 0) {
-            System.out.println("Extension!");
             buffer.position(currentPosition + extensionOffset);
-            int dataSize = buffer.getShort() - 8;
-            buffer.skipBytes(2);
-            extensionOldFlags = buffer.getShort();
-            extensionVersion = buffer.getShort();
-            extensionId = 0;
-            extensionPrivate = 0;
+            int dataSize = buffer.getInt() - 20;
+            buffer.skipBytes(4);
+
+            extensionVersion = buffer.getInt();
+            extensionId = buffer.getInt();
+            extensionPrivate = buffer.getInt();
+
             if (dataSize != 0) {
                 extensionData = buffer.getBytes(dataSize);
             }
         }
 
         if (fadeInOffset != 0) {
-            System.out.println("fadein");
+            // TODO: Fade in
         }
 
         if (fadeOutOffset != 0) {
-            System.out.println("fadeout");
+            // TODO: Fade out
         }
 
         if (systemObjectOffset != 0) {
             buffer.position(currentPosition + systemObjectOffset);
 
-            objectType = well, i'm fucked.
+            if (type == ObjectProperties.ObjectTypes.Text || type == ObjectProperties.ObjectTypes.Question) {
+                // Text
+                partText = new Text(buffer);
+            } else if (type == ObjectProperties.ObjectTypes.Score || type == ObjectProperties.ObjectTypes.Lives
+                    || type == ObjectProperties.ObjectTypes.Counter) {
+                // Counters
+            } else if (type == ObjectProperties.ObjectTypes.RTF) {
+                // RTFObject
+            } else if (type == ObjectProperties.ObjectTypes.SubApplication) {
+                // Subapplication
+            } else {
+                System.out.printf("Unknown type: %s (%d).\n", type, objectType);
+            }
         }
         /*
 
@@ -142,22 +179,5 @@ public class ObjectCommon extends ObjectDefinitionProperties {
                 print 'native noo', objectType
 
          */
-    }
-
-    private class Movements {
-        public Movements(ByteReader buffer) {
-
-        }
-    }
-
-    private class AnimationHeader {
-        public AnimationHeader(ByteReader buffer) {
-
-        }
-    }
-
-    private class Counter {
-        public Counter(ByteReader buffer) {
-        }
     }
 }

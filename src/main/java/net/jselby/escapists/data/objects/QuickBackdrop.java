@@ -23,6 +23,6 @@ public class QuickBackdrop extends ObjectDefinitionProperties {
         collisionMode = buffer.getShort();
         width = buffer.getInt();
         height = buffer.getInt();
-        shape = new Shape(buffer, length);
+        shape = new Shape(buffer);
     }
 }

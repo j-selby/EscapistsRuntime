@@ -6,15 +6,15 @@ import net.jselby.escapists.util.ByteReader;
  * A backdrop is a image in the background.
  */
 public class Backdrop extends ObjectDefinitionProperties {
-    private int size;
+    public int size;
 
-    private short obstacleType;
-    private short collisionMode;
+    public short obstacleType;
+    public short collisionMode;
 
-    private int width;
-    private int height;
+    public int width;
+    public int height;
 
-    private short image;
+    public short image;
 
 
     @Override

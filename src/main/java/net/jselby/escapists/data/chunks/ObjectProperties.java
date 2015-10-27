@@ -17,7 +17,7 @@ public class ObjectProperties extends Chunk {
     public boolean isCommon = false;
     public ObjectTypes objectType;
 
-    private ObjectDefinitionProperties properties;
+    public ObjectDefinitionProperties properties;
 
     @Override
     public void init(ByteReader buffer, int length) {
@@ -34,7 +34,7 @@ public class ObjectProperties extends Chunk {
             properties = new Backdrop();
         } else {
             isCommon = true;
-            properties = new ObjectCommon();
+            properties = new ObjectCommon(objectTypeRaw);
         }
 
         properties.read(buffer, bufferLength);

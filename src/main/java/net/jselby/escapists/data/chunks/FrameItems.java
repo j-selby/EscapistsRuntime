@@ -54,7 +54,8 @@ public class FrameItems extends Chunk {
                     def.headerReserved = header.reserved;
                     def.inkEffect = header.inkEffect;
                     def.inkEffectParameter = header.inkEffectParameter;
-
+                    def.transparent = (def.inkEffect & ((short) Math.pow(2, /* index */ 28))) != 0;
+                    def.inkEffect = def.inkEffect & 0xFFFF;
                     /*
                      self.transparent = byteflag.getFlag(inkEffect, 28)
                      self.antialias = byteflag.getFlag(inkEffect, 29)
@@ -65,7 +66,7 @@ public class FrameItems extends Chunk {
                 } else if (chunk instanceof ObjectProperties) {
                     ObjectProperties prop = (ObjectProperties) chunk;
                     prop.load(def.objectType);
-                    // TODO: Copy properties
+                    def.properties = prop;
                 } else if (chunk instanceof ObjectEffects) {
                     ObjectEffects effects = (ObjectEffects) chunk;
                     def.shaderId = effects.id;
