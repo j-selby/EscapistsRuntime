@@ -2,10 +2,12 @@ package net.jselby.escapists;
 
 import net.jselby.escapists.data.Chunk;
 import net.jselby.escapists.data.ChunkDecoder;
+import net.jselby.escapists.data.ObjectDefinition;
 import net.jselby.escapists.data.chunks.AppHeader;
 import net.jselby.escapists.data.pe.PEFile;
 import net.jselby.escapists.data.pe.PESection;
 import net.jselby.escapists.game.Application;
+import net.jselby.escapists.game.Scene;
 import net.jselby.escapists.graphics.EngineThread;
 import net.jselby.escapists.graphics.EscapistsGame;
 import net.jselby.escapists.util.AssetConverter;
@@ -35,13 +37,19 @@ public class EscapistsRuntime {
     private static final byte[] UNICODE_GAME_HEADER = "PAMU".getBytes();
     private static final byte[] PACK_HEADER = new byte[]{119, 119, 119, 119, 73, -121, 71, 18};
     private static final String[] UNCOMPRESSED_PACKED_FILES = {"mmfs2.dll"};
+    private static EscapistsRuntime runtime;
 
     private EngineThread manager;
     private EscapistsGame game;
     private AppGameContainer gameContainer;
+    private Application application;
+
+    public static EscapistsRuntime getRuntime() {
+        return runtime;
+    }
 
     public void start() throws IOException {
-        AssetConverter.setRuntime(this);
+        EscapistsRuntime.runtime = this;
 
         // Start the user frontend ASAP, so we can show progress
         try {
@@ -171,9 +179,8 @@ public class EscapistsRuntime {
 
         // Chunk reading
         List<Chunk> chunks = ChunkDecoder.decodeChunk(buf);
-        Application app = new Application(this, chunks);
-        manager.setApplication(app);
-
+        application = new Application(this, chunks);
+        manager.setApplication(application);
     }
 
     public EngineThread getEngineThread() {
@@ -186,5 +193,9 @@ public class EscapistsRuntime {
         EscapistsRuntime runtime = new EscapistsRuntime();
         runtime.start();
 
+    }
+
+    public Application getApplication() {
+        return application;
     }
 }

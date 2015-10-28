@@ -8,15 +8,15 @@ import net.jselby.escapists.util.ByteReader;
  */
 public class ExtendedHeader extends Chunk {
     // Boolean matrix
-    private int flags;
+    public int flags;
 
     // Build fields
-    private long buildType;
-    private long buildFlags;
+    public long buildType;
+    public long buildFlags;
 
     // Screen properties
-    private short screenRatioTolerance;
-    private short screenAngle;
+    public short screenRatioTolerance;
+    public short screenAngle;
 
     @Override
     public void init(ByteReader buffer, int length) {

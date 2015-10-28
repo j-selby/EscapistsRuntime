@@ -1,6 +1,7 @@
 package net.jselby.escapists.util;
 
 import net.jselby.escapists.EscapistsRuntime;
+import org.newdawn.slick.Color;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.opengl.Texture;
@@ -39,7 +40,16 @@ public class AssetConverter {
     }
 
     /**
-     * Callback from
+     * Converts a java.awt color to a Slick color
+     * @param color A java.awt color
+     * @return A slick color
+     */
+    public static Color awtToSlickColor(java.awt.Color color) {
+        return new Color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
+    }
+
+    /**
+     * Callback from the main class
      * @param runtime The runtime main.
      */
     public static void setRuntime(EscapistsRuntime runtime) {
@@ -48,4 +58,5 @@ public class AssetConverter {
         }
         AssetConverter.runtime = runtime;
     }
+
 }

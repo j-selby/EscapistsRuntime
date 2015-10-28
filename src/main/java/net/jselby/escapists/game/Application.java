@@ -2,14 +2,17 @@ package net.jselby.escapists.game;
 
 import net.jselby.escapists.EscapistsRuntime;
 import net.jselby.escapists.data.Chunk;
+import net.jselby.escapists.data.ObjectDefinition;
 import net.jselby.escapists.data.chunks.*;
 import net.jselby.escapists.util.AssetConverter;
 import net.jselby.escapists.util.ChunkUtils;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -36,11 +39,16 @@ public class Application {
 
     private String name;
     private String author;
-    private Image icon;
+    private BufferedImage icon;
     private String copyright;
 
-    public List<Frame> frames;
-    private Image[] images;
+    public List<Scene> frames;
+    public Image[] images;
+    public ObjectDefinition[] objectDefs;
+
+    private int width;
+    private int height;
+    private int targetFPS;
 
     public Application(EscapistsRuntime runtime, List<Chunk> chunks) {
         this.runtime = runtime;
@@ -62,13 +70,6 @@ public class Application {
         GlobalStrings globalStringsChunk = (GlobalStrings) ChunkUtils.popChunk(chunks, GlobalStrings.class);
         FrameItems frameItemsChunk = (FrameItems) ChunkUtils.popChunk(chunks, FrameItems.class);
 
-        // Get frames
-        frames = new ArrayList<>();
-        Frame frame;
-        while((frame = (Frame) ChunkUtils.popChunk(chunks, Frame.class)) != null) {
-            frames.add(frame);
-        }
-
         // Get remaining chunks
         ImageBank imageBankChunk = (ImageBank) ChunkUtils.popChunk(chunks, ImageBank.class);
 
@@ -77,11 +78,18 @@ public class Application {
         assert appIconChunk != null;
         assert copyrightChunk != null;
         assert imageBankChunk != null;
+        assert frameItemsChunk != null;
+        assert appHeader != null;
 
         name = nameChunk.getContent();
         author = authorChunk.getContent();
-        icon = AssetConverter.awtToSlickImage(appIconChunk.image);
+        icon = appIconChunk.image;
         copyright = copyrightChunk.getContent();
+
+        width = appHeader.windowWidth;
+        height = appHeader.windowHeight;
+        objectDefs = frameItemsChunk.info;
+        targetFPS = (int) appHeader.frameRate;
 
         // Discover highest handle
         int highestHandle = 0;
@@ -97,6 +105,13 @@ public class Application {
             images[imageItem.handle] = AssetConverter.awtToSlickImage(imageItem.image);
         }
 
+        // Get frames
+        frames = new ArrayList<>();
+        Frame frame;
+        while((frame = (Frame) ChunkUtils.popChunk(chunks, Frame.class)) != null) {
+            frames.add(new Scene(runtime, frame));
+        }
+
         // Remove bad/unknown chunks
         for (Chunk chunk : chunks.toArray(new Chunk[chunks.size()])) {
             for (Class classDef : IGNORED_CHUNKS) {
@@ -109,10 +124,25 @@ public class Application {
 
         if (chunks.size() > 0) {
             // Unknown param?
-            String list = "";
             throw new IllegalStateException("Unhandled chunks: " + chunks);
         }
 
         chunks = null; // Dereference
+    }
+
+    public int getWindowWidth() {
+        return width;
+    }
+
+    public int getWindowHeight() {
+        return height;
+    }
+
+    public int getTargetFPS() {
+        return targetFPS;
+    }
+
+    public BufferedImage getAppIcon() {
+        return icon;
     }
 }

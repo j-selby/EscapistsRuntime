@@ -8,6 +8,8 @@ import net.jselby.escapists.data.objects.Backdrop;
 import net.jselby.escapists.data.objects.ObjectCommon;
 import net.jselby.escapists.data.objects.sections.Text;
 import net.jselby.escapists.game.Application;
+import net.jselby.escapists.game.Layer;
+import net.jselby.escapists.game.Scene;
 import net.jselby.escapists.util.ChunkUtils;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
@@ -41,7 +43,7 @@ import static org.lwjgl.opengl.GL11.glTexParameteri;
 public class EscapistsGame extends BasicGame {
     public Application app;
 
-    private Frame currentFrame;
+    private Scene currentFrame;
 
     private int oldWidth;
     private int oldHeight;
@@ -56,18 +58,13 @@ public class EscapistsGame extends BasicGame {
 
     @Override
     public void init(GameContainer container) throws SlickException {
+        oldWidth = container.getWidth();
+        oldHeight = container.getHeight();
         /*oldWidth = container.getWidth();
         oldHeight = container.getHeight();
 
         // Get the app icon
-        AppIcon icon = (AppIcon) ChunkUtils.getChunk(chunks, AppIcon.class);
-        ImageIOImageData data = new ImageIOImageData();
-        ByteBuffer[] list = new ByteBuffer[] {
-            loadIconInstance(icon.image, 16),
-            loadIconInstance(icon.image, 24),
-            loadIconInstance(icon.image, 32)
-        };
-        Display.setIcon(list);
+
 
         container.setTargetFrameRate((int) chunkHeader.frameRate);
 
@@ -111,85 +108,42 @@ public class EscapistsGame extends BasicGame {
             appNeedsUpdate = false;
 
             // Now that we are ready, prepare first scene
-            loadFrame(container, app.frames.get(1));
+            loadFrame(container, app.frames.get(2));
+
+            // Set up environment
+            container.setTargetFrameRate(app.getTargetFPS());
+            ByteBuffer[] list = new ByteBuffer[] {
+                    loadIconInstance(app.getAppIcon(), 16),
+                    loadIconInstance(app.getAppIcon(), 24),
+                    loadIconInstance(app.getAppIcon(), 32)
+            };
+            Display.setIcon(list);
         }
     }
 
     @Override
     public void render(GameContainer container, Graphics g) throws SlickException {
-        if (app == null) {
+        if (app == null || currentFrame == null) {
             g.clear();
             g.setColor(Color.white);
             g.drawString("Loading... Please wait...", 10, 10);
         } else {
-            g.setColor(awtToSlickColor(currentFrame.background));
+            g.setColor(currentFrame.getBackground());
             g.fillRect(0, 0, container.getWidth(), container.getHeight());
             g.scale(((float) container.getWidth()) / ((float) app.getWindowWidth()),
                     ((float) container.getHeight()) / ((float) app.getWindowHeight()));
 
-
-            int mouseX = container.getInput().getMouseX();
-            int mouseY = container.getInput().getMouseY();
-
-            Layers.Layer[] layers = currentFrame.layers.layers;
-            for (int i = 0; i < layers.length; i++) {
-                Layers.Layer layer = layers[i];
-                if (((layer.flags >> 17) & 1) != 0) { // "IsShow" flag
+            for (Layer layer : currentFrame.getLayers()) {
+                if (!layer.isVisible()) { // "IsShow" flag
                     continue;
                 }
 
-                for (ObjectInstances.ObjectInstance instance : currentFrame.objects.instances) {
-                    if (instance.layer == i) {
-                        //handle
-                        float x = instance.x;
-                        float y = instance.y;
-                        int targetId = instance.objectInfo;
+                layer.draw(container, g);
 
-                        ObjectDefinition objectDef = objectDefs[instance.objectInfo];
-                        ObjectProperties.ObjectTypes type = objectDef.properties.objectType;
-
-                        if (type == ObjectProperties.ObjectTypes.Text) {
-                            ObjectCommon common = (ObjectCommon) objectDef.properties.properties;
-
-                            Text text = common.partText;
-                            for (Text.Paragraph paragraph : text.paragraphs) {
-                                g.setColor(awtToSlickColor(paragraph.color));
-                                g.drawString(paragraph.value, x, y);
-                                y += 10;
-                            }
-                        } else if (type == ObjectProperties.ObjectTypes.Backdrop) {
-                            Backdrop backdrop = (Backdrop) objectDef.properties.properties;
-                            Image image = images.get((int) backdrop.image + 1);
-                            if (image != null) {
-                                g.drawImage(image, x, y);
-                            }
-                        } else if (type == ObjectProperties.ObjectTypes.Active) {
-                            // Animation
-                            if (instance.handle == 6) {
-                                ObjectCommon common = (ObjectCommon) objectDef.properties.properties;
-                                //System.out.println(common.identifier);
-                            }
-                        }
-                    }
-
-                }
             }
 
             g.resetTransform();
             g.setColor(Color.white);
-
-            for (ObjectInstances.ObjectInstance instance : currentFrame.objects.instances) {
-                if (instance.layer > 0) {
-                    continue;
-                }
-                float x = instance.x * ((float) container.getWidth()) / ((float) chunkHeader.windowWidth);
-                float y = instance.y * ((float) container.getHeight()) / ((float) chunkHeader.windowHeight);
-                //System.out.println(instance);
-                ObjectDefinition objectDefsInstance = objectDefs[instance.objectInfo];
-
-                //g.drawString(objectDefsInstance.name + ":" +
-                //        ObjectProperties.ObjectTypes.getById(objectDefsInstance.objectType) + ":" + instance.handle, x, y);
-            }
 
             g.drawString("FPS: " + container.getFPS(), 5, 5);
         }
@@ -251,17 +205,9 @@ public class EscapistsGame extends BasicGame {
         return ByteBuffer.wrap(imageBuffer);
     }
 
-    private Color awtToSlickColor(java.awt.Color color) {
-        return new Color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
-    }
-
-    private void loadFrame(GameContainer container, Frame frame) {
+    private void loadFrame(GameContainer container, Scene frame) {
         currentFrame = frame;
 
-        System.out.println("Launching frame: " + currentFrame.name);
-        for (Layers.Layer layer : frame.layers.layers) {
-            System.out.printf("Name: %s, %s:%s, %s, %s.\n", layer.name, layer.xCoefficient,
-                    layer.yCoefficient, layer.flags, layer.backgroundIndex);
-        }
+        System.out.println("Launching frame: " + currentFrame.getName());
     }
 }
