@@ -36,7 +36,9 @@ public class EscapistsGame extends BasicGame {
 
     @Override
     public void update(float delta) {
-
+        for (Layer layer : currentFrame.getLayers()) {
+            layer.tick(this);
+        }
     }
     
     @Override
