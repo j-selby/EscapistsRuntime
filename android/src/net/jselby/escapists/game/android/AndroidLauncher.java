@@ -14,6 +14,7 @@ public class AndroidLauncher extends AndroidMini2DxGame {
         super.onCreate(savedInstanceState);
         AndroidMini2DxConfig config = new AndroidMini2DxConfig(EscapistsGame.GAME_IDENTIFIER);
         config.targetFPS = 45;
+        config.useImmersiveMode = true;
         initialize(new EscapistsGame(), config);
     }
 }
