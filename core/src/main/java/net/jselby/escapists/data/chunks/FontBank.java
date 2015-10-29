@@ -91,7 +91,7 @@ public class FontBank extends Chunk {
         //public Font awtFont;
 
         public LogFont(ByteReader buffer) {
-            height = -buffer.getInt();
+            height = buffer.getInt();
             width = buffer.getInt();
 
             escapement = buffer.getInt();
@@ -113,14 +113,14 @@ public class FontBank extends Chunk {
             pitchAndFamily = buffer.getByte();
 
             faceName = buffer.getString(32);
-            System.out.println("Loading: " + "assets/fonts/" + faceName + ".ttf");
 
             if (faceName.equalsIgnoreCase("Small Fonts")) {
                 faceName = "Escapists";
             }
             FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/" + faceName + ".ttf"));
             FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-            parameter.size = height;
+            parameter.size = Math.abs(height);
+            parameter.flip = height < 0;
 
             font = generator.generateFont(parameter); // font size 12 pixels
             generator.dispose();

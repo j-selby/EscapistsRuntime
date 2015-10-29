@@ -2,8 +2,6 @@ package net.jselby.escapists.data.chunks;
 
 import net.jselby.escapists.data.StringChunk;
 
-import java.nio.ByteBuffer;
-
 /**
  * The AppName is the name of the application.
  */

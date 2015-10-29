@@ -40,9 +40,33 @@ public class Text {
         public Paragraph(ByteReader buffer) {
             font = buffer.getUnsignedShort();
             flags = buffer.getUnsignedShort();
+
+            /*
+            PARAGRAPH_FLAGS = BitDict(
+    'HorizontalCenter',
+    'RightAligned',
+    'VerticalCenter',
+    'BottomAligned',
+    None, None, None, None,
+    'Correct',
+    'Relief'
+)
+             */
+
             color = buffer.getColor();
             value = buffer.getString();
-            System.out.println(value + ":" + color);
+        }
+
+        public boolean isCentered() {
+            return (flags & 1) != 0;
+        }
+
+        public boolean isVerticallyCentered() {
+            return ((flags >> 2) & 1) != 0;
+        }
+
+        public boolean isRightAligned() {
+            return ((flags >> 1) & 1) != 0;
         }
     }
 }

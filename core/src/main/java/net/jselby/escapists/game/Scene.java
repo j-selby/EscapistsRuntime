@@ -6,6 +6,7 @@ import net.jselby.escapists.data.ObjectDefinition;
 import net.jselby.escapists.data.chunks.Frame;
 import net.jselby.escapists.data.chunks.Layers;
 import net.jselby.escapists.data.chunks.ObjectInstances;
+import net.jselby.escapists.game.objects.Active;
 import net.jselby.escapists.game.objects.Backdrop;
 import net.jselby.escapists.game.objects.Text;
 
@@ -76,6 +77,7 @@ public class Scene {
                     newInstance = new Backdrop(objectInfo, originalDef);
                     break;
                 case Active:
+                    newInstance = new Active(objectInfo, originalDef);
                     break;
                 case Text:
                     newInstance = new Text(objectInfo, originalDef);

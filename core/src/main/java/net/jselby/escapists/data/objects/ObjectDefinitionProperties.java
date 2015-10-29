@@ -2,8 +2,6 @@ package net.jselby.escapists.data.objects;
 
 import net.jselby.escapists.util.ByteReader;
 
-import java.nio.ByteBuffer;
-
 /**
  * The properties of an object, implemented by the appropiate ObjectType.
  *

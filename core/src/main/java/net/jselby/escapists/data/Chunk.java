@@ -2,8 +2,6 @@ package net.jselby.escapists.data;
 
 import net.jselby.escapists.util.ByteReader;
 
-import java.nio.ByteBuffer;
-
 /**
  * A Chunk is a dump of a Chunk from the game files.
  *

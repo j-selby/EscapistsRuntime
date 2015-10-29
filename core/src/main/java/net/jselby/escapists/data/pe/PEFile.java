@@ -2,7 +2,6 @@ package net.jselby.escapists.data.pe;
 
 import net.jselby.escapists.util.ByteReader;
 
-import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 /**

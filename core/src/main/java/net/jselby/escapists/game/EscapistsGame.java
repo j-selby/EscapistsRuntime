@@ -2,6 +2,7 @@ package net.jselby.escapists.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import net.jselby.escapists.EscapistsRuntime;
 import org.mini2Dx.core.game.BasicGame;
 import org.mini2Dx.core.graphics.Graphics;
@@ -45,6 +46,8 @@ public class EscapistsGame extends BasicGame {
     
     @Override
     public void render(Graphics g) {
+        BitmapFont baseFont = g.getFont();
+
         g.setColor(currentFrame.getBackground());
         g.fillRect(0, 0, g.getCurrentWidth(), g.getCurrentHeight());
         g.scale(((float) g.getCurrentWidth()) / ((float) app.getWindowWidth()),
@@ -62,6 +65,9 @@ public class EscapistsGame extends BasicGame {
         g.scale(1f / g.getScaleX(), 1f / g.getScaleY());
         g.setColor(Color.WHITE);
 
-        g.drawString("FPS: " + Gdx.graphics.getFramesPerSecond(), 5, 5);
+        int usedMem = (int) (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024 / 1024;
+
+        g.setFont(baseFont);
+        g.drawString("FPS: " + Gdx.graphics.getFramesPerSecond() + ", Mem: " + usedMem + " MB", 5, 5);
     }
 }

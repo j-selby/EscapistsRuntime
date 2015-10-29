@@ -9,7 +9,10 @@ import net.jselby.escapists.game.EscapistsGame;
 import net.jselby.escapists.util.ByteReader;
 import org.apache.commons.io.IOUtils;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Arrays;
@@ -45,7 +48,6 @@ public class EscapistsRuntime {
         // TODO: Detect Steam installations, and use their Escapists build.
         InputStream fileIn = getClass().getResourceAsStream("/assets/TheEscapists_eur.exe");
         if (fileIn == null) {
-            System.out.println(new File("TheEscapists_eur.exe").getAbsolutePath());
             if (!new File("TheEscapists_eur.exe").exists()) {
                 System.err.println("Panicing, couldn't find Escapists in application archive.");
                 throw new IllegalStateException("Null resource");

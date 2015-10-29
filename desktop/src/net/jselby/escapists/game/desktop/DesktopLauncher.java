@@ -9,6 +9,7 @@ import net.jselby.escapists.game.EscapistsGame;
 public class DesktopLauncher {
 	public static void main (String[] arg) {
 		DesktopMini2DxConfig config = new DesktopMini2DxConfig(EscapistsGame.GAME_IDENTIFIER);
+        config.title = "The Escapists";
         config.foregroundFPS = 45;
         config.backgroundFPS = 45;
         config.targetFPS = 45; // Games framerate, don't blame me

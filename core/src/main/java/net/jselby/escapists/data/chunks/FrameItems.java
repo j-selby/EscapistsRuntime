@@ -1,7 +1,7 @@
 package net.jselby.escapists.data.chunks;
 
-import net.jselby.escapists.data.ChunkDecoder;
 import net.jselby.escapists.data.Chunk;
+import net.jselby.escapists.data.ChunkDecoder;
 import net.jselby.escapists.data.ObjectDefinition;
 import net.jselby.escapists.util.ByteReader;
 

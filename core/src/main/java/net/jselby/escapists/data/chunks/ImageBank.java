@@ -1,6 +1,8 @@
 package net.jselby.escapists.data.chunks;
 
-import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import net.jselby.escapists.data.Chunk;
 import net.jselby.escapists.util.ByteReader;
 import net.jselby.escapists.util.CompressionUtils;
@@ -79,7 +81,7 @@ public class ImageBank extends Chunk {
             actionY = buffer.getShort();
 
             transparent = buffer.getColor();
-            int transparentVal = transparent.toIntBits();
+            int transparentVal = Color.rgba8888(transparent);
             //System.out.println(Long.toBinaryString(flags) + ":" + flags);
             boolean alpha = ((flags >> 4) & 1) != 0;
 
