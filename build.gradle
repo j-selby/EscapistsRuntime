@@ -42,7 +42,7 @@ project(":core") {
     dependencies {
         compile "org.mini2Dx:mini2Dx-core:$mini2DxVersion"
         compile 'commons-io:commons-io:2.4'
-
+        compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
     }
 }
 
@@ -55,6 +55,7 @@ project(":desktop") {
     dependencies {
         compile project(":core")
         compile "org.mini2Dx:mini2Dx-desktop:$mini2DxVersion"
+        compile "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
     }
     parcl {
         exe {
@@ -88,6 +89,11 @@ project(":android") {
         natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi"
         natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi-v7a"
         natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86"
+
+        compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
+        natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-armeabi"
+        natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-armeabi-v7a"
+        natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-x86"
     }
 }
 

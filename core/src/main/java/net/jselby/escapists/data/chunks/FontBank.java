@@ -1,5 +1,9 @@
 package net.jselby.escapists.data.chunks;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.BitmapFontCache;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import net.jselby.escapists.data.Chunk;
 import net.jselby.escapists.util.ByteReader;
 import net.jselby.escapists.util.CompressionUtils;
@@ -79,7 +83,10 @@ public class FontBank extends Chunk {
 
         public final byte pitchAndFamily;
 
-        public final String faceName;
+        public String faceName;
+
+        public final BitmapFont font;
+        public final BitmapFontCache fontCache;
 
         //public Font awtFont;
 
@@ -106,7 +113,20 @@ public class FontBank extends Chunk {
             pitchAndFamily = buffer.getByte();
 
             faceName = buffer.getString(32);
-            System.out.println(faceName + ":" + height + ":" + width);
+            System.out.println("Loading: " + "assets/fonts/" + faceName + ".ttf");
+
+            if (faceName.equalsIgnoreCase("Small Fonts")) {
+                faceName = "Escapists";
+            }
+            FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/" + faceName + ".ttf"));
+            FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+            parameter.size = height;
+
+            font = generator.generateFont(parameter); // font size 12 pixels
+            generator.dispose();
+
+            // Also create a cache for this font
+            fontCache = new BitmapFontCache(font);
 
             // Convert to a slick font
             //if (faceName.equalsIgnoreCase("Escapists")) {
