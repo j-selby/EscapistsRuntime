@@ -68,5 +68,9 @@ public class Text {
         public boolean isRightAligned() {
             return ((flags >> 1) & 1) != 0;
         }
+
+        public boolean isBottomAligned() {
+            return ((flags >> 3) & 1) != 0;
+        }
     }
 }

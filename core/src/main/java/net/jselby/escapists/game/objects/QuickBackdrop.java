@@ -31,6 +31,10 @@ public class QuickBackdrop extends ObjectInstance {
 
     @Override
     public void draw(EscapistsGame container, Graphics g) {
+        if (!isVisible()) {
+            return;
+        }
+
         if (image != null) {
             g.drawSprite(image, getX(), getY());
         }

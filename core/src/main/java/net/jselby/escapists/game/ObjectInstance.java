@@ -2,6 +2,7 @@ package net.jselby.escapists.game;
 
 import net.jselby.escapists.data.ObjectDefinition;
 import net.jselby.escapists.data.chunks.ObjectInstances;
+import net.jselby.escapists.data.objects.ObjectCommon;
 import org.mini2Dx.core.graphics.Graphics;
 
 /**
@@ -14,8 +15,10 @@ public abstract class ObjectInstance {
     private final int id;
     private final int layerId;
 
-    private final int x;
-    private final int y;
+    private int x;
+    private int y;
+
+    private boolean isVisible = true;
 
     public ObjectInstance(ObjectDefinition definition, ObjectInstances.ObjectInstance instance) {
         this.name = definition.name;
@@ -23,6 +26,10 @@ public abstract class ObjectInstance {
         this.layerId = instance.layer;
         this.x = instance.x;
         this.y = instance.y;
+
+        if (definition.properties.isCommon) {
+            isVisible = ((ObjectCommon) definition.properties.properties).isVisibleAtStart();
+        }
     }
 
     /**
@@ -69,4 +76,12 @@ public abstract class ObjectInstance {
      * @param g The graphics instance to draw stuff onto.
      */
     public abstract void draw(EscapistsGame container, Graphics g);
+
+    public boolean isVisible() {
+        return isVisible;
+    }
+
+    public void setIsVisible(boolean isVisible) {
+        this.isVisible = isVisible;
+    }
 }

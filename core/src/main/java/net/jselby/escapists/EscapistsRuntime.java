@@ -41,6 +41,7 @@ public class EscapistsRuntime {
     }
 
     public void start() throws IOException {
+        System.out.printf("Escapists Runtime, v%s by jselby.\n", VERSION);
         EscapistsRuntime.runtime = this;
 
         // Alright, lets get cracking!
@@ -161,7 +162,7 @@ public class EscapistsRuntime {
         List<Chunk> chunks = ChunkDecoder.decodeChunk(buf);
         application = new Application(this, chunks);
 
-        System.out.println("Chunk parse done");
+        System.out.println("Chunk parse completed successfully.");
     }
 
     public Application getApplication() {

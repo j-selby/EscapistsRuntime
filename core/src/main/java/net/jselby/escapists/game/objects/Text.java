@@ -42,6 +42,10 @@ public class Text extends ObjectInstance {
 
     @Override
     public void draw(EscapistsGame container, Graphics g) {
+        if (!isVisible()) {
+            return;
+        }
+
         int adjY = 0;
 
         //SpriteBatch batch = new SpriteBatch();
@@ -61,6 +65,8 @@ public class Text extends ObjectInstance {
             float drawYAdd = 0;
             if (paragraph.isVerticallyCentered()) {
                 drawYAdd = rawType.height / 2 - height / 2;
+            } else if (paragraph.isBottomAligned()) {
+                drawYAdd = rawType.height - height;
             }
 
             BitmapFont font = EscapistsRuntime.getRuntime()

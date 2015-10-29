@@ -31,7 +31,7 @@ public class EscapistsGame extends BasicGame {
     private void loadFrame(Scene scene) {
         currentFrame = scene;
 
-        System.out.println("Launching frame: " + currentFrame.getName());
+        System.out.println("Launching frame: " + currentFrame.getName().trim());
     }
 
     @Override

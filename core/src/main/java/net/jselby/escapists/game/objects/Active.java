@@ -17,6 +17,7 @@ import org.mini2Dx.core.graphics.Sprite;
  */
 public class Active extends ObjectInstance {
     private final AnimationHeader animations;
+    private int frame;
 
     public Active(ObjectDefinition definition,
                   ObjectInstances.ObjectInstance instance) {
@@ -28,11 +29,16 @@ public class Active extends ObjectInstance {
 
     @Override
     public void tick(EscapistsGame container) {
-
+        // TODO: Animation implementation
+        //frame++;
     }
 
     @Override
     public void draw(EscapistsGame container, Graphics g) {
+        if (!isVisible()) {
+            return;
+        }
+
         // TODO: Please no hack
 
         // Find first applicable direction
@@ -51,7 +57,7 @@ public class Active extends ObjectInstance {
         for (AnimationHeader.AnimationDirection dir
                 : animation.localDirections) {
             if (dir != null && dir.frames != null) {
-                frame = dir.frames[0];
+                frame = dir.frames[this.frame];
             }
         }
 

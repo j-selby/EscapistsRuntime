@@ -176,4 +176,8 @@ public class ObjectCommon extends ObjectDefinitionProperties {
 
          */
     }
+
+    public boolean isVisibleAtStart() {
+        return ((newFlags >> 3) & 1) != 0;
+    }
 }
