@@ -41,39 +41,6 @@ public class Layer {
         for (ObjectInstance instance : objects) {
             instance.draw(game, g);
         }
-        // TODO: Draw objects
-        /*
-        //handle
-                        float x = instance.x;
-                        float y = instance.y;
-                        int targetId = instance.objectInfo;
-
-                        ObjectDefinition objectDef = app.objectDefs[instance.objectInfo];
-                        ObjectProperties.ObjectTypes type = objectDef.properties.objectType;
-
-                        if (type == ObjectProperties.ObjectTypes.Text) {
-                            ObjectCommon common = (ObjectCommon) objectDef.properties.properties;
-
-                            Text text = common.partText;
-                            for (Text.Paragraph paragraph : text.paragraphs) {
-                                g.setColor(awtToSlickColor(paragraph.color));
-                                g.drawString(paragraph.value, x, y);
-                                y += 10;
-                            }
-                        } else if (type == ObjectProperties.ObjectTypes.Backdrop) {
-                            Backdrop backdrop = (Backdrop) objectDef.properties.properties;
-                            Image image = app.images[(int) backdrop.image + 1];
-                            if (image != null) {
-                                g.drawImage(image, x, y);
-                            }
-                        } else if (type == ObjectProperties.ObjectTypes.Active) {
-                            // Animation
-                            if (instance.handle == 6) {
-                                ObjectCommon common = (ObjectCommon) objectDef.properties.properties;
-                                //System.out.println(common.identifier);
-                            }
-                        }
-         */
     }
 
     /**
