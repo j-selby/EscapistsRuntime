@@ -1,5 +1,7 @@
 ## Java
 
+gradle-wrapper.jar
+*.exe
 *.class
 *.war
 *.ear
