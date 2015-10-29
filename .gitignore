@@ -1,7 +1,10 @@
-## Java
 
+## Escapists
 gradle-wrapper.jar
 *.exe
+Escapists.ttf
+
+## Java
 *.class
 *.war
 *.ear
