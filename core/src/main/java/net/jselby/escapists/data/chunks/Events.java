@@ -1,6 +1,7 @@
 package net.jselby.escapists.data.chunks;
 
 import net.jselby.escapists.data.Chunk;
+import net.jselby.escapists.data.events.ParameterNames;
 import net.jselby.escapists.util.ByteReader;
 
 import java.util.ArrayList;
@@ -16,14 +17,14 @@ public class Events extends Chunk {
     private static byte[] EVENTGROUP_DATA = "ERev".getBytes();
     private static byte[] END = "<<ER".getBytes();
 
-    private int maxObjects;
-    private short maxObjectInfo;
+    public int maxObjects;
+    public short maxObjectInfo;
 
-    private short numberOfPlayers;
-    private short[] numberOfConditions;
+    public short numberOfPlayers;
+    public short[] numberOfConditions;
 
-    private Qualifier[] qualifiers;
-    private EventGroup[] groups;
+    public Qualifier[] qualifiers;
+    public EventGroup[] groups;
 
     @Override
     public void init(ByteReader buffer, int length) {
@@ -70,6 +71,11 @@ public class Events extends Chunk {
         }
     }
 
+    @Override
+    public String toString() {
+        return "Events={"  + Arrays.toString(groups) + "}";
+    }
+
     /**
      * A Qualifier is a object qualifier.
      */
@@ -81,7 +87,7 @@ public class Events extends Chunk {
         public Qualifier(ByteReader buffer) {
             objectInfo = buffer.getUnsignedShort();
             type = buffer.getShort();
-            qualifier = objectInfo; // TODO: Binary & 0x11111111111
+            qualifier = objectInfo & 0x7ff; // TODO: Binary & 0b11111111111
         }
     }
 
@@ -120,6 +126,10 @@ public class Events extends Chunk {
             buffer.position(initialPosition + size);
         }
 
+        @Override
+        public String toString() {
+            return "EventGroup={{" + Arrays.toString(conditions) + "},{" + Arrays.toString(actions) + "}}\n";
+        }
     }
 
     /**
@@ -138,7 +148,8 @@ public class Events extends Chunk {
         private final byte defType;
         private final short identifier;
 
-        private final Parameter[] items;
+        public final String name;
+        public final Parameter[] items;
 
         public Condition(ByteReader buffer) {
             int currentPosition = buffer.position();
@@ -156,12 +167,20 @@ public class Events extends Chunk {
             defType = buffer.getByte();
             identifier = buffer.getShort(); // Event identifier
 
+            name = ParameterNames.getByID(objectType, num);
+
             items = new Parameter[paramCount];
             for (int i = 0; i < paramCount; i++) {
                 items[i] = new Parameter(buffer);
             }
 
             buffer.position(currentPosition + size);
+        }
+
+        @Override
+        public String toString() {
+            // DefType = 0? always? Identifier = uniqueId for object
+            return "Condition:" + objectInfoList + ":" + num + ":" + objectType + ":" + objectInfo + "(" + name + ")";
         }
     }
 
@@ -205,6 +224,11 @@ public class Events extends Chunk {
             }
 
             buffer.position(currentPosition + size);
+        }
+
+        @Override
+        public String toString() {
+            return "Action:" + defType + ":" + num + ":" + objectType + ":" + objectInfo;
         }
     }
 

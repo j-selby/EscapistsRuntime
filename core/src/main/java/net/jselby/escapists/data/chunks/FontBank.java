@@ -116,8 +116,6 @@ public class FontBank extends Chunk {
 
             faceName = buffer.getString(32);
 
-            System.out.println(faceName + ":" + weight);
-
             if (faceName.equalsIgnoreCase("Small Fonts")) {
                 faceName = "Escapists";
             }

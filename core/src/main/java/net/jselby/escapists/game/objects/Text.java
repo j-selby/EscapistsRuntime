@@ -48,8 +48,6 @@ public class Text extends ObjectInstance {
 
         int adjY = 0;
 
-        //SpriteBatch batch = new SpriteBatch();
-        //batch.begin();
         for (int i = 0; i < rawType.paragraphs.length; i++) {
             net.jselby.escapists.data.objects.sections.Text.Paragraph paragraph = rawType.paragraphs[i];
 

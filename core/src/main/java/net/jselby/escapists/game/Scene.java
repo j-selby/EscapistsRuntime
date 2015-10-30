@@ -1,6 +1,7 @@
 package net.jselby.escapists.game;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import net.jselby.escapists.EscapistsRuntime;
 import net.jselby.escapists.data.ObjectDefinition;
 import net.jselby.escapists.data.chunks.Events;
@@ -13,6 +14,7 @@ import net.jselby.escapists.game.objects.Text;
 import org.mini2Dx.core.graphics.Graphics;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -41,7 +43,6 @@ public class Scene {
         objectInstanceDefs = frame.objects.instances;
         layerDefinitions = frame.layers.layers;
         events = frame.events;
-        create();
     }
 
     /**
@@ -115,6 +116,12 @@ public class Scene {
         }
     }
 
+    public void init(EscapistsGame game) {
+        create();
+
+        System.out.println(Arrays.toString(events.groups));
+    }
+
     public void tick(EscapistsGame game) {
         for (Layer layer : getLayers()) {
             if (!layer.isVisible()) { // "IsShow" flag
@@ -133,7 +140,6 @@ public class Scene {
             }
 
             layer.draw(game, g);
-
         }
     }
 

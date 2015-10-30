@@ -14,9 +14,6 @@ public class EscapistsGame extends BasicGame {
     private Application app;
     private Scene currentFrame;
 
-    private int frame = 0;
-    private int timer = 0;
-
     @Override
     public void initialise() {
         EscapistsRuntime runtime = new EscapistsRuntime();
@@ -25,31 +22,23 @@ public class EscapistsGame extends BasicGame {
             app = runtime.getApplication();
             app.init();
             System.out.println("Callback from app, all assets prepared.");
-            loadFrame(app.frames.get(frame));
+            loadFrame(app.frames.get(2)); // 2 = title screen, 6 = game
         } catch (IOException e) {
             e.printStackTrace();
         }
+        System.gc();
     }
 
     private void loadFrame(Scene scene) {
         currentFrame = scene;
+        scene.init(this);
 
         System.out.println("Launching frame: " + currentFrame.getName().trim());
     }
 
     @Override
     public void update(float delta) {
-       currentFrame.tick(this);
-
-        timer++;
-        if (timer > 150) {
-            frame++;
-            if (frame >= 12) {
-                frame = 0;
-            }
-            loadFrame(app.frames.get(frame));
-            timer = 0;
-        }
+        currentFrame.tick(this);
     }
     
     @Override
