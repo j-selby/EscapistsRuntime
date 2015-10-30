@@ -222,4 +222,13 @@ public class ExpressionNames {
         tempMap.put(-2, "EndParenthesis");
         map.put(-1, tempMap);
     }
+
+
+    public static String getByID(int categoryID, int itemID) {
+        if (map.containsKey(categoryID) && map.get(categoryID).containsKey(itemID)) {
+            return map.get(categoryID).get(itemID);
+        } else {
+            return null;
+        }
+    }
 }

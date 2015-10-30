@@ -1,8 +1,6 @@
 package net.jselby.escapists.data.events;
 
-import com.badlogic.gdx.graphics.Color;
 import net.jselby.escapists.util.ByteReader;
-import org.mini2Dx.core.exception.NotYetImplementedException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -203,7 +201,7 @@ public abstract class ParameterValue {
         }
     }
 
-    public static class Color extends ParameterValue {
+    public static class Colour extends ParameterValue {
         private com.badlogic.gdx.graphics.Color value;
 
         @Override
@@ -345,7 +343,7 @@ public abstract class ParameterValue {
         }
     }
 
-    public static ParameterValue getParameter(String name, ByteReader buffer) {
+    public static ParameterValue getParameter(java.lang.String name, ByteReader buffer) {
         try {
             @SuppressWarnings("unchecked")
             Class<? extends ParameterValue> parameterClass

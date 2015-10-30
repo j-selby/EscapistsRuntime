@@ -234,7 +234,7 @@ public class Events extends Chunk {
 
         @Override
         public String toString() {
-            return "Action:" + defType + ":" + num + ":" + objectType + ":" + objectInfo + "(" + name + ")";
+            return "Action:" + name + ":" + Arrays.toString(items);
         }
     }
 
@@ -265,7 +265,7 @@ public class Events extends Chunk {
 
         @Override
         public String toString() {
-            return name;
+            return name + ":" + value;
         }
     }
 

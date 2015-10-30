@@ -9,6 +9,11 @@ public class Expression {
     public final short objectType;
     public final short num;
 
+    public ParameterValue value;
+
+    private int objectInfo;
+    private short objectInfoList;
+
     public Expression(ByteReader buffer) {
         int currentPosition = buffer.position();
         objectType = buffer.getShort();
@@ -18,9 +23,17 @@ public class Expression {
         }
 
         int size = buffer.getUnsignedShort();
-        if (ExpressionNames.getByID(objectType, num)) {
+        /*
+        if (ExpressionNames.getByID(objectType, num) != null) {
+            value = ParameterValue.getParameter(ExpressionNames.getByID(objectType, num), buffer);
+        } else if (objectType >= 2 || objectType == -7) {
+            objectInfo = buffer.getUnsignedShort();
+            objectInfoList = buffer.getShort();
 
-        }
+            // TODO: Extension expression
+        }*/
+
+        buffer.position(currentPosition + size);
     }
     /*
     cdef int currentPosition = reader.tell()
