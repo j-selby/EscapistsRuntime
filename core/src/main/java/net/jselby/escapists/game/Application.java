@@ -6,7 +6,6 @@ import net.jselby.escapists.data.Chunk;
 import net.jselby.escapists.data.ObjectDefinition;
 import net.jselby.escapists.data.chunks.*;
 import net.jselby.escapists.util.ChunkUtils;
-import org.mini2Dx.core.graphics.Sprite;
 
 import java.io.IOException;
 import java.util.ArrayList;

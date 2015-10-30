@@ -9,7 +9,6 @@ import net.jselby.escapists.data.objects.sections.AnimationHeader;
 import net.jselby.escapists.game.EscapistsGame;
 import net.jselby.escapists.game.ObjectInstance;
 import org.mini2Dx.core.graphics.Graphics;
-import org.mini2Dx.core.graphics.Sprite;
 
 /**
  * A Active object is a object that is actively changing within the world.

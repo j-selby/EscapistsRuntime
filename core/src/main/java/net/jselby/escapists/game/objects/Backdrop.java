@@ -7,7 +7,6 @@ import net.jselby.escapists.data.chunks.ObjectInstances;
 import net.jselby.escapists.game.EscapistsGame;
 import net.jselby.escapists.game.ObjectInstance;
 import org.mini2Dx.core.graphics.Graphics;
-import org.mini2Dx.core.graphics.Sprite;
 
 /**
  * A backdrop is a static image in the background/foreground.
