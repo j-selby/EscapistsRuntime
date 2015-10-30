@@ -1,7 +1,8 @@
 package net.jselby.escapists.data.chunks;
 
 import net.jselby.escapists.data.Chunk;
-import net.jselby.escapists.data.events.ParameterNames;
+import net.jselby.escapists.data.events.ActionNames;
+import net.jselby.escapists.data.events.ConditionNames;
 import net.jselby.escapists.util.ByteReader;
 
 import java.util.ArrayList;
@@ -167,7 +168,7 @@ public class Events extends Chunk {
             defType = buffer.getByte();
             identifier = buffer.getShort(); // Event identifier
 
-            name = ParameterNames.getByID(objectType, num);
+            name = ConditionNames.getByID(objectType, num);
 
             items = new Parameter[paramCount];
             for (int i = 0; i < paramCount; i++) {
@@ -180,7 +181,7 @@ public class Events extends Chunk {
         @Override
         public String toString() {
             // DefType = 0? always? Identifier = uniqueId for object
-            return "Condition:" + objectInfoList + ":" + num + ":" + objectType + ":" + objectInfo + "(" + name + ")";
+            return "Condition:" + identifier + ":" + (name == null ? (num + ":" + objectType) : name) + ":" + Arrays.toString(items);
         }
     }
 
@@ -200,7 +201,8 @@ public class Events extends Chunk {
 
         private final byte defType;
 
-        private final Parameter[] items;
+        public final String name;
+        public final Parameter[] items;
 
         public Action(ByteReader buffer) {
             int currentPosition = buffer.position();
@@ -218,6 +220,8 @@ public class Events extends Chunk {
             int paramCount = buffer.getByte();
             defType = buffer.getByte();
 
+            name = ActionNames.getByID(objectType, num);
+
             items = new Parameter[paramCount];
             for (int i = 0; i < paramCount; i++) {
                 items[i] = new Parameter(buffer);
@@ -228,7 +232,7 @@ public class Events extends Chunk {
 
         @Override
         public String toString() {
-            return "Action:" + defType + ":" + num + ":" + objectType + ":" + objectInfo;
+            return "Action:" + defType + ":" + num + ":" + objectType + ":" + objectInfo + "(" + name + ")";
         }
     }
 
