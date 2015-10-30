@@ -14,6 +14,9 @@ public class EscapistsGame extends BasicGame {
     private Application app;
     private Scene currentFrame;
 
+    private int frame = 0;
+    private int timer = 0;
+
     @Override
     public void initialise() {
         EscapistsRuntime runtime = new EscapistsRuntime();
@@ -22,7 +25,7 @@ public class EscapistsGame extends BasicGame {
             app = runtime.getApplication();
             app.init();
             System.out.println("Callback from app, all assets prepared.");
-            loadFrame(app.frames.get(2));
+            loadFrame(app.frames.get(frame));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -36,8 +39,16 @@ public class EscapistsGame extends BasicGame {
 
     @Override
     public void update(float delta) {
-        for (Layer layer : currentFrame.getLayers()) {
-            layer.tick(this);
+       currentFrame.tick(this);
+
+        timer++;
+        if (timer > 150) {
+            frame++;
+            if (frame >= 12) {
+                frame = 0;
+            }
+            loadFrame(app.frames.get(frame));
+            timer = 0;
         }
     }
     
@@ -55,14 +66,7 @@ public class EscapistsGame extends BasicGame {
         g.scale(((float) g.getCurrentWidth()) / ((float) app.getWindowWidth()),
                 ((float) g.getCurrentHeight()) / ((float) app.getWindowHeight()));
 
-        for (Layer layer : currentFrame.getLayers()) {
-            if (!layer.isVisible()) { // "IsShow" flag
-                continue;
-            }
-
-            layer.draw(this, g);
-
-        }
+        currentFrame.draw(this, g);
 
         g.scale(1f / g.getScaleX(), 1f / g.getScaleY());
         g.setColor(Color.WHITE);

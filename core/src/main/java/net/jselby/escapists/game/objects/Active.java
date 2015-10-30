@@ -2,6 +2,7 @@ package net.jselby.escapists.game.objects;
 
 import net.jselby.escapists.EscapistsRuntime;
 import net.jselby.escapists.data.ObjectDefinition;
+import net.jselby.escapists.data.chunks.ImageBank;
 import net.jselby.escapists.data.chunks.ObjectInstances;
 import net.jselby.escapists.data.objects.ObjectCommon;
 import net.jselby.escapists.data.objects.sections.AnimationHeader;
@@ -43,12 +44,7 @@ public class Active extends ObjectInstance {
 
         // Find first applicable direction
         int frame = -1;
-        AnimationHeader.Animation animation = null;
-        for (AnimationHeader.Animation animationTest : animations.loadedAnimations) {
-            if (animationTest != null && animationTest.localDirections != null) {
-                animation = animationTest;
-            }
-        }
+        AnimationHeader.Animation animation = animations.loadedAnimations[0];
 
         if (animation == null) {
             return;
@@ -57,16 +53,16 @@ public class Active extends ObjectInstance {
         for (AnimationHeader.AnimationDirection dir
                 : animation.localDirections) {
             if (dir != null && dir.frames != null) {
-                frame = dir.frames[this.frame];
+                frame = dir.frames[0];
             }
         }
 
-        if (frame == -1) {
+        if (frame == 0) {
             // Nope. Nope. Nope.
             return;
         }
 
-        Sprite image = EscapistsRuntime.getRuntime().getApplication().images[frame + 1];
-        g.drawSprite(image, getX(), getY());
+        ImageBank.ImageItem image = EscapistsRuntime.getRuntime().getApplication().images[frame + 1];
+        g.drawSprite(image.image, getX() - image.xHotspot, getY() - image.yHotspot);
     }
 }

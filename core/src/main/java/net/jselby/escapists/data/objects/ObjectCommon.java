@@ -1,5 +1,6 @@
 package net.jselby.escapists.data.objects;
 
+import com.badlogic.gdx.graphics.Color;
 import net.jselby.escapists.data.chunks.ObjectProperties;
 import net.jselby.escapists.data.objects.sections.*;
 import net.jselby.escapists.util.ByteReader;
@@ -21,7 +22,7 @@ public class ObjectCommon extends ObjectDefinitionProperties {
     public int preferences;
 
     public int identifier;
-    public com.badlogic.gdx.graphics.Color backColour;
+    public Color backColour;
 
     public int fadeInOffset;
     public int fadeOutOffset;

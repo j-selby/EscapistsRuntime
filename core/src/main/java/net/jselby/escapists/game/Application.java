@@ -41,7 +41,7 @@ public class Application {
     private String copyright;
 
     public List<Scene> frames;
-    public Sprite[] images;
+    public ImageBank.ImageItem[] images;
     public ObjectDefinition[] objectDefs;
 
     private int width;
@@ -102,9 +102,9 @@ public class Application {
         }
 
         // Update images
-        images = new Sprite[highestHandle + 1];
+        images = new ImageBank.ImageItem[highestHandle + 1];
         for (ImageBank.ImageItem imageItem : imageBankChunk.images) {
-            images[imageItem.handle] = imageItem.image;
+            images[imageItem.handle] = imageItem;
         }
 
         // Get frames

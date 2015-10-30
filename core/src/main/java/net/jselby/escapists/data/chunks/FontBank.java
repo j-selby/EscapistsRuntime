@@ -1,6 +1,8 @@
 package net.jselby.escapists.data.chunks;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.BitmapFontCache;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
@@ -114,12 +116,17 @@ public class FontBank extends Chunk {
 
             faceName = buffer.getString(32);
 
+            System.out.println(faceName + ":" + weight);
+
             if (faceName.equalsIgnoreCase("Small Fonts")) {
                 faceName = "Escapists";
             }
             FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/" + faceName + ".ttf"));
             FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+            parameter.minFilter = Texture.TextureFilter.Nearest;
+            parameter.magFilter = Texture.TextureFilter.MipMapLinearNearest;
             parameter.size = Math.abs(height);
+            parameter.genMipMaps = false;
             parameter.flip = height < 0;
 
             font = generator.generateFont(parameter); // font size 12 pixels

@@ -38,11 +38,11 @@ public class ImageBank extends Chunk {
 
         private final short flags;
 
-        private final short xHotspot;
-        private final short yHotspot;
+        public final short xHotspot;
+        public final short yHotspot;
 
-        private final short actionX;
-        private final short actionY;
+        public final short actionX;
+        public final short actionY;
 
         private final com.badlogic.gdx.graphics.Color transparent;
         public final org.mini2Dx.core.graphics.Sprite image;

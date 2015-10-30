@@ -17,12 +17,16 @@ public class Frame extends Chunk {
     public ObjectInstances objects;
     public VirtualSize virtualSize;
     public Layers layers;
+    private FadeIn fadeIn;
+    private FadeOut fadeOut;
+    public Events events;
 
     public String name;
     public int width;
     public int height;
     public com.badlogic.gdx.graphics.Color background;
     public long flags;
+
 
     @Override
     public void init(ByteReader buffer, int length) {
@@ -47,6 +51,9 @@ public class Frame extends Chunk {
         objects = (ObjectInstances) ChunkUtils.popChunk(chunks, ObjectInstances.class);
         layers = (Layers) ChunkUtils.popChunk(chunks, Layers.class);
 
+        fadeIn = (FadeIn) ChunkUtils.popChunk(chunks, FadeIn.class);
+        fadeOut = (FadeOut) ChunkUtils.popChunk(chunks, FadeOut.class);
+        events = (Events) ChunkUtils.popChunk(chunks, Events.class);
         /*
 
         newHeader = newChunks.popChunk(FrameHeader)

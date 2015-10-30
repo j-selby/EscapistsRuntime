@@ -3,12 +3,14 @@ package net.jselby.escapists.game;
 import com.badlogic.gdx.graphics.Color;
 import net.jselby.escapists.EscapistsRuntime;
 import net.jselby.escapists.data.ObjectDefinition;
+import net.jselby.escapists.data.chunks.Events;
 import net.jselby.escapists.data.chunks.Frame;
 import net.jselby.escapists.data.chunks.Layers;
 import net.jselby.escapists.data.chunks.ObjectInstances;
 import net.jselby.escapists.game.objects.Active;
 import net.jselby.escapists.game.objects.Backdrop;
 import net.jselby.escapists.game.objects.Text;
+import org.mini2Dx.core.graphics.Graphics;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +26,7 @@ public class Scene {
     // Raw type
     private final ObjectInstances.ObjectInstance[] objectInstanceDefs;
     private final Layers.Layer[] layerDefinitions;
+    private final Events events;
 
     // Parsed type
     private List<ObjectInstance> instances;
@@ -37,6 +40,7 @@ public class Scene {
         background = frame.background;
         objectInstanceDefs = frame.objects.instances;
         layerDefinitions = frame.layers.layers;
+        events = frame.events;
         create();
     }
 
@@ -108,6 +112,28 @@ public class Scene {
         layers = new Layer[layerDefinitions.length];
         for (int i = 0; i < layerDefinitions.length; i++) {
             layers[i] = new Layer(runtime, this, i, layerDefinitions[i]);
+        }
+    }
+
+    public void tick(EscapistsGame game) {
+        for (Layer layer : getLayers()) {
+            if (!layer.isVisible()) { // "IsShow" flag
+                continue;
+            }
+
+            layer.tick(game);
+
+        }
+    }
+
+    public void draw(EscapistsGame game, Graphics g) {
+        for (Layer layer : getLayers()) {
+            if (!layer.isVisible()) { // "IsShow" flag
+                continue;
+            }
+
+            layer.draw(game, g);
+
         }
     }
 
