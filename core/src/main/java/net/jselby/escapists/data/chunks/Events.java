@@ -3,6 +3,8 @@ package net.jselby.escapists.data.chunks;
 import net.jselby.escapists.data.Chunk;
 import net.jselby.escapists.data.events.ActionNames;
 import net.jselby.escapists.data.events.ConditionNames;
+import net.jselby.escapists.data.events.ParameterNames;
+import net.jselby.escapists.data.events.ParameterValue;
 import net.jselby.escapists.util.ByteReader;
 
 import java.util.ArrayList;
@@ -243,12 +245,27 @@ public class Events extends Chunk {
         private final short code;
         private final ParameterLoader loader;
 
+        public String name;
+        public ParameterValue value;
+
         public Parameter(ByteReader buffer) {
             int currentPosition = buffer.position();
             int size = buffer.getShort();
             code = buffer.getShort();
             loader = ParameterLoader.getParamByID(code);
+
+            name = ParameterNames.getByID(code);
+            if (loader != null) {
+                value = ParameterValue.getParameter(loader.name(), buffer);
+            }
+
             buffer.position(currentPosition + size);
+
+        }
+
+        @Override
+        public String toString() {
+            return name;
         }
     }
 

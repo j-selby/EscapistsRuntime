@@ -123,6 +123,9 @@ public class Scene {
     }
 
     public void tick(EscapistsGame game) {
+        // Activate conditional objects
+
+
         for (Layer layer : getLayers()) {
             if (!layer.isVisible()) { // "IsShow" flag
                 continue;
