@@ -1,8 +1,7 @@
 
 ## Escapists
 gradle-wrapper.jar
-*.exe
-Escapists.ttf
+desktop/working/
 
 ## Java
 *.class
@@ -31,6 +30,7 @@ android/gen/
 *.ipr
 *.iws
 *.iml
+*.apk
 out/
 com_crashlytics_export_strings.xml
 
@@ -63,7 +63,6 @@ nb-configuration.xml
 
 .gradle
 gradle-app.setting
-build/
 
 ## OS Specific
 .DS_Store

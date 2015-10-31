@@ -92,11 +92,11 @@ public class Events extends Chunk {
 
         for (EventGroup group : groups) {
             // Check for groups
-            if (group.conditions.length != 0 && group.conditions[0].name.equalsIgnoreCase("NewGroup")) {
+            if (group.conditions.length != 0 && group.conditions[0].name != null && group.conditions[0].name.equalsIgnoreCase("NewGroup")) {
                 builder.append(StringUtils.repeat(' ', indent)).append("{\n");
                 indent += 4;
                 continue;
-            } else if (group.conditions.length != 0 && group.conditions[0].name.equalsIgnoreCase("GroupEnd")) {
+            } else if (group.conditions.length != 0 && group.conditions[0].name != null && group.conditions[0].name.equalsIgnoreCase("GroupEnd")) {
                 indent -= 4;
                 builder.append(StringUtils.repeat(' ', indent)).append("}\n");
                 continue;

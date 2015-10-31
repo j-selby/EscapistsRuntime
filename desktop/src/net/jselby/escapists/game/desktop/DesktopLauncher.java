@@ -1,5 +1,6 @@
 package net.jselby.escapists.game.desktop;
 
+import com.badlogic.gdx.Files;
 import org.mini2Dx.desktop.DesktopMini2DxConfig;
 
 import com.badlogic.gdx.backends.lwjgl.DesktopMini2DxGame;
@@ -15,6 +16,11 @@ public class DesktopLauncher {
         config.targetFPS = 45; // Games framerate, don't blame me
         config.width = 944;
         config.height = 684;
-		new DesktopMini2DxGame(new EscapistsGame(), config);
+        config.samples = 1;
+        config.addIcon("icon_16.png", Files.FileType.Internal);
+        config.addIcon("icon_32.png", Files.FileType.Internal);
+        config.addIcon("icon_48.png", Files.FileType.Internal);
+        config.addIcon("icon_256.png", Files.FileType.Internal);
+		new DesktopMini2DxGame(new EscapistsGame(new DesktopPlatformUtils()), config);
 	}
 }

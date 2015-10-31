@@ -30,7 +30,7 @@ public class Frame extends Chunk {
 
     @Override
     public void init(ByteReader buffer, int length) {
-        chunks = ChunkDecoder.decodeChunk(buffer);
+        chunks = ChunkDecoder.decodeChunk(buffer, null);
 
         FrameName nameChunk = (FrameName) ChunkUtils.popChunk(chunks, FrameName.class);
         if (nameChunk != null) {

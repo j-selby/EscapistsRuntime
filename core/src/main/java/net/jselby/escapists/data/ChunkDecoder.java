@@ -1,5 +1,6 @@
 package net.jselby.escapists.data;
 
+import net.jselby.escapists.game.EscapistsGame;
 import net.jselby.escapists.util.ByteReader;
 
 import java.nio.ByteBuffer;
@@ -18,13 +19,16 @@ import java.util.zip.Inflater;
  * @author j_selby
  */
 public class ChunkDecoder {
-
     /**
      * Decodes a series of Chunks.
      * @param buf The buffer to read from
+     * @param game
      * @return A parsed list of Chunks
      */
-    public static List<Chunk> decodeChunk(ByteReader buf) {
+    public static List<Chunk> decodeChunk(ByteReader buf, EscapistsGame game) {
+        final int[] privateCount = {0};
+        int privateTotalCount = 0;
+
         ExecutorService threadManager = Executors.newCachedThreadPool();
 
         Inflater inflater = new Inflater();
@@ -77,12 +81,19 @@ public class ChunkDecoder {
 
                 final Chunk chunk = potentialChunkDef.asSubclass(Chunk.class).newInstance();
                 final byte[] finalData = data;
+
+                privateTotalCount++;
                 threadManager.submit(new Runnable() {
                     @Override
                     public void run() {
-                        chunk.init(new ByteReader(ByteBuffer.wrap(finalData).order(ByteOrder.LITTLE_ENDIAN)), finalData.length);
+                        try {
+                            chunk.init(new ByteReader(ByteBuffer.wrap(finalData).order(ByteOrder.LITTLE_ENDIAN)), finalData.length);
+                        } finally {
+                            privateCount[0]++;
+                        }
                     }
                 });
+
                 chunks.add(chunk);
             } catch (ClassNotFoundException e) {
                 if (type == ChunkType.Unknown) {
@@ -90,13 +101,6 @@ public class ChunkDecoder {
                 } else {
                     System.err.printf("Failed to find a chunk representation for \"%s\" (ID: %d).\n", type.name(), id);
                 }
-                /*try {
-                    FileOutputStream out = new FileOutputStream("Sections" + File.separator + type.name());
-                    out.write(data);
-                    out.close();
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }*/
             } catch (InstantiationException e) {
                 System.err.printf("Failed to create chunk representation for \"%s\" (ID: %d): ", type.name(), id);
                 e.printStackTrace();
@@ -107,6 +111,23 @@ public class ChunkDecoder {
         }
 
         threadManager.shutdown();
+
+        if (game != null) {
+            int progress = (Math.round((float) privateCount[0] / (float) privateTotalCount * 100));
+            while (privateTotalCount != privateCount[0]) {
+                int newProgress = (Math.round((float) privateCount[0] / (float) privateTotalCount * 100));
+                if (progress != newProgress) {
+                    progress = newProgress;
+                    game.setLoadingMessage("Loading chunks... (" + progress + "%)");
+                }
+                try {
+                    Thread.sleep(50);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
         try {
             threadManager.awaitTermination(1, TimeUnit.HOURS);
         } catch (InterruptedException e) {

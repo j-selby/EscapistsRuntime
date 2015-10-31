@@ -1,6 +1,7 @@
 package net.jselby.escapists.game.events;
 
 import net.jselby.escapists.data.chunks.Events;
+import net.jselby.escapists.data.events.ParameterValue;
 
 import java.lang.reflect.Method;
 
@@ -15,7 +16,13 @@ public class Actions {
     public static void EndApplication(Scope scope,
                                       Events.Action action) {
         // RIP
-        System.exit(0);
+        scope.getGame().exit();
+    }
+
+    public static void extension_SetDirection(Scope scope,
+                                              Events.Action action,
+                                              ParameterValue.Int newDirection) {
+        //System.out.println(scope.objects);
     }
 
     // Utility methods

@@ -12,9 +12,12 @@ public class AndroidLauncher extends AndroidMini2DxGame {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         AndroidMini2DxConfig config = new AndroidMini2DxConfig(EscapistsGame.GAME_IDENTIFIER);
         config.targetFPS = 45;
         config.useImmersiveMode = true;
-        initialize(new EscapistsGame(), config);
+        config.numSamples = 1;
+        config.useWakelock = true;
+        initialize(new EscapistsGame(new AndroidPlatformUtils(this)), config);
     }
 }

@@ -39,7 +39,7 @@ public class FrameItems extends Chunk {
 
         public ObjectInfo(ByteReader buffer) {
             // Read info chunks
-            List<Chunk> chunks = ChunkDecoder.decodeChunk(buffer);
+            List<Chunk> chunks = ChunkDecoder.decodeChunk(buffer, null);
 
             for (Chunk chunk : chunks) {
                 if (chunk instanceof ObjectHeader) {

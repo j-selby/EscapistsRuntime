@@ -131,7 +131,6 @@ public class Scene {
 
     public void init(EscapistsGame game) {
         create();
-
     }
 
     public void tick(EscapistsGame game) {
@@ -151,7 +150,8 @@ public class Scene {
 
                 if (condition.name.equalsIgnoreCase("NewGroup")
                         || condition.name.equalsIgnoreCase("GroupEnd")
-                        || condition.name.equalsIgnoreCase("OnGroupActivation")) {
+                        || condition.name.equalsIgnoreCase("OnGroupActivation")
+                        || condition.name.equalsIgnoreCase("GroupActivated")) {
                     // TODO: Groups
                     conditionsPassed = false;
                     continue;
