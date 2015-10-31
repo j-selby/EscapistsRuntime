@@ -7,14 +7,17 @@ import net.jselby.escapists.data.chunks.Events;
 import net.jselby.escapists.data.chunks.Frame;
 import net.jselby.escapists.data.chunks.Layers;
 import net.jselby.escapists.data.chunks.ObjectInstances;
+import net.jselby.escapists.game.events.Scope;
 import net.jselby.escapists.game.objects.Active;
 import net.jselby.escapists.game.objects.Backdrop;
 import net.jselby.escapists.game.objects.Text;
 import org.mini2Dx.core.graphics.Graphics;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 
 /**
  * A scene is a particular set of layouts. This can be used for levels, etc.
@@ -32,8 +35,14 @@ public class Scene {
     // Parsed type
     private List<ObjectInstance> instances;
     private String name;
+    private int width;
+    private int height;
     private Color background;
     private Layer[] layers;
+
+    // Scripting
+    public boolean firstFrame = true;
+    private Map<String, Object> variables = new HashMap<String, Object>();
 
     public Scene(EscapistsRuntime runtime, Frame frame) {
         this.runtime = runtime;
@@ -42,6 +51,9 @@ public class Scene {
         objectInstanceDefs = frame.objects.instances;
         layerDefinitions = frame.layers.layers;
         events = frame.events;
+
+        width = frame.width;
+        height = frame.height;
     }
 
     /**
@@ -113,17 +125,101 @@ public class Scene {
         for (int i = 0; i < layerDefinitions.length; i++) {
             layers[i] = new Layer(runtime, this, i, layerDefinitions[i]);
         }
+
+        firstFrame = true;
     }
 
     public void init(EscapistsGame game) {
         create();
 
-        System.out.println(Arrays.toString(events.groups));
     }
 
     public void tick(EscapistsGame game) {
         // Activate conditional objects
+        Scope scope = new Scope(game, this);
+        List<Object> args = new ArrayList<Object>();
 
+        for (Events.EventGroup group : events.groups) {
+            scope.objects.clear();
+
+            boolean conditionsPassed = true;
+
+            for (Events.Condition condition : group.conditions) {
+                if (condition.name == null) {
+                    continue;
+                }
+
+                if (condition.name.equalsIgnoreCase("NewGroup")
+                        || condition.name.equalsIgnoreCase("GroupEnd")
+                        || condition.name.equalsIgnoreCase("OnGroupActivation")) {
+                    // TODO: Groups
+                    conditionsPassed = false;
+                    continue;
+                }
+
+                if (condition.method == null) {
+                    conditionsPassed = false;
+                    System.out.println("Condition method failed: " + condition);
+                    continue;
+                }
+
+                args.clear();
+
+                // Build args
+                args.add(scope);
+                args.add(condition);
+                for (Events.Parameter parameter : condition.items) {
+                    args.add(parameter.value);
+                }
+
+                try {
+                    Boolean returnValue = (Boolean) condition.method.invoke(null, args.toArray());
+                    if (returnValue == null || !returnValue) {
+                        conditionsPassed = false;
+                        break;
+                    }
+                } catch (Exception e) {
+                    System.err.print("Condition execution error: ");
+                    e.printStackTrace();
+                    System.err.println("Within " + condition);
+                }
+            }
+
+            if (!conditionsPassed) {
+                continue;
+            }
+
+            // Yay, we can now execute our actions
+            for (Events.Action action : group.actions) {
+                if (action.name == null) {
+                    continue;
+                }
+
+                if (action.method == null) {
+                    //System.out.println("Action method failed: " + action);
+                    continue;
+                }
+
+                args.clear();
+
+                // Build args
+                args.add(scope);
+                args.add(action);
+                for (Events.Parameter parameter : action.items) {
+                    args.add(parameter.value);
+                }
+
+                try {
+                    action.method.invoke(null, args.toArray());
+                } catch (Exception e) {
+                    System.err.print("Condition execution error: ");
+                    e.printStackTrace();
+                    System.err.println("Within " + action);
+                }
+            }
+        }
+
+        firstFrame = false;
 
         for (Layer layer : getLayers()) {
             if (!layer.isVisible()) { // "IsShow" flag
@@ -167,5 +263,17 @@ public class Scene {
 
     public Layer[] getLayers() {
         return layers;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public Map<String, Object> getVariables() {
+        return variables;
     }
 }

@@ -15,7 +15,6 @@ import java.io.IOException;
 public class EscapistsGame extends BasicGame {
 	public static final String GAME_IDENTIFIER = "net.jselby.escapists";
 
-    private boolean firstFrameDrawn = false;
     private Sprite loadingLogo;
     private BitmapFont loadingFont;
     private float loadingTextWidth;
@@ -40,6 +39,36 @@ public class EscapistsGame extends BasicGame {
         generator.dispose();
 
         loadingTextWidth = loadingFont.newFontCache().addText("Loading...", 0, 0).width;
+
+        // Start up the loading thread
+        Thread loadingThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    EscapistsRuntime runtime = new EscapistsRuntime();
+                    runtime.start();
+                    app = runtime.getApplication();
+                    Gdx.app.postRunnable(new Runnable() {
+                        @Override
+                        public void run() {
+                            EscapistsGame.this.app = app;
+                            System.out.println("Callback from app, all assets prepared.");
+                            try {
+                                app.init();
+                                loadFrame(app.frames.get(2)); // 2 = title screen, 6 = game
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            System.gc();
+                        }
+                    });
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        loadingThread.setName("Asset Loading Thread");
+        loadingThread.start();
     }
 
     private void loadFrame(Scene scene) {
@@ -52,22 +81,7 @@ public class EscapistsGame extends BasicGame {
     @Override
     public void update(float delta) {
         if (currentFrame == null) {
-            if (firstFrameDrawn) {
-                EscapistsRuntime runtime = new EscapistsRuntime();
-                try {
-                    runtime.start();
-                    app = runtime.getApplication();
-                    app.init();
-                    System.out.println("Callback from app, all assets prepared.");
-                    loadFrame(app.frames.get(2)); // 2 = title screen, 6 = game
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                loadingFont.dispose();
-                System.gc();
-            } else {
-                return;
-            }
+            return;
         }
 
         currentFrame.tick(this);
@@ -93,8 +107,6 @@ public class EscapistsGame extends BasicGame {
                     g.getCurrentWidth() / 2 - loadingTextWidth / 2,
                     g.getCurrentHeight() / 2 + loadingLogo.getHeight() / 2 + 10);
             g.setFont(baseFont);
-
-            firstFrameDrawn = true;
             return;
         }
 
@@ -111,8 +123,29 @@ public class EscapistsGame extends BasicGame {
         g.setColor(Color.WHITE);
 
         int usedMem = (int) (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024 / 1024;
+        int mouseX = getMouseX();
+        int mouseY = getMouseY();
 
         g.setFont(baseFont);
-        g.drawString("FPS: " + Gdx.graphics.getFramesPerSecond() + ", Mem: " + usedMem + " MB", 5, 5);
+        g.drawString("FPS: " + Gdx.graphics.getFramesPerSecond() + ", Mem: "
+                + usedMem + " MB" + ", X: " + mouseX + ", Y: " + mouseY, 5, 5);
+    }
+
+    public int getMouseX() {
+        if (!Gdx.input.isTouched() && Gdx.app.getType() != com.badlogic.gdx.Application.ApplicationType.Desktop) {
+            return -1;
+        }
+        return (int) (((float) Gdx.input.getX())
+                / (((float) getWidth())
+                / ((float) EscapistsRuntime.getRuntime().getApplication().getWindowWidth())));
+    }
+
+    public int getMouseY() {
+        if (!Gdx.input.isTouched() && Gdx.app.getType() != com.badlogic.gdx.Application.ApplicationType.Desktop) {
+            return -1;
+        }
+        return (int) (((float) Gdx.input.getY())
+                / (((float) getHeight())
+                / ((float) EscapistsRuntime.getRuntime().getApplication().getWindowHeight())));
     }
 }

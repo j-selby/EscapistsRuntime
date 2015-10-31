@@ -14,6 +14,7 @@ public abstract class ObjectInstance {
     private final String name;
     private final int id;
     private final int layerId;
+    private final int objectInfo;
 
     private int x;
     private int y;
@@ -23,6 +24,7 @@ public abstract class ObjectInstance {
     public ObjectInstance(ObjectDefinition definition, ObjectInstances.ObjectInstance instance) {
         this.name = definition.name;
         this.id = instance.handle;
+        this.objectInfo = instance.objectInfo;
         this.layerId = instance.layer;
         this.x = instance.x;
         this.y = instance.y;
@@ -65,6 +67,18 @@ public abstract class ObjectInstance {
     }
 
     /**
+     * Returns the width of this object
+     * @return A width argument
+     */
+    public abstract float getWidth();
+
+    /**
+     * Returns the height of this object
+     * @return A height argument
+     */
+    public abstract float getHeight();
+
+    /**
      * Ticks this object, accepting input and responding accordingly.
      * @param container The container to poll information from.
      */
@@ -84,4 +98,13 @@ public abstract class ObjectInstance {
     public void setIsVisible(boolean isVisible) {
         this.isVisible = isVisible;
     }
+
+    /**
+     * Returns this Object's ObjectInfo information.
+     * @return A ObjectInfo handle.
+     */
+    public int getObjectInfo() {
+        return objectInfo;
+    }
+
 }

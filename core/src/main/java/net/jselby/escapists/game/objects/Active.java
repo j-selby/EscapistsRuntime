@@ -1,5 +1,6 @@
 package net.jselby.escapists.game.objects;
 
+import com.badlogic.gdx.Gdx;
 import net.jselby.escapists.EscapistsRuntime;
 import net.jselby.escapists.data.ObjectDefinition;
 import net.jselby.escapists.data.chunks.ImageBank;
@@ -19,13 +20,60 @@ public class Active extends ObjectInstance {
     private final AnimationHeader animations;
     private int frame;
 
+    private float width;
+    private float height;
+    private short xHotspot;
+    private short yHotspot;
+
     public Active(ObjectDefinition definition,
                   ObjectInstances.ObjectInstance instance) {
         super(definition, instance);
 
         ObjectCommon common = ((ObjectCommon) definition.properties.properties);
         animations = common.animations;
+
+        // Calculate dimensions
+        int frame = -1;
+        AnimationHeader.Animation animation = animations.loadedAnimations[0];
+
+        if (animation != null) {
+            for (AnimationHeader.AnimationDirection dir
+                    : animation.localDirections) {
+                if (dir != null && dir.frames != null) {
+                    frame = dir.frames[0];
+                }
+            }
+
+            if (frame != 0) {
+                ImageBank.ImageItem image = EscapistsRuntime.getRuntime().getApplication().images[frame + 1];
+                width = image.image.getWidth();
+                height = image.image.getHeight();
+                xHotspot = image.xHotspot;
+                yHotspot = image.yHotspot;
+            }
+        }
     }
+
+    @Override
+    public float getWidth() {
+        return width;
+    }
+
+    @Override
+    public float getHeight() {
+        return height;
+    }
+
+    @Override
+    public float getX() {
+        return super.getX() - xHotspot;
+    }
+
+    @Override
+    public float getY() {
+        return super.getY() - yHotspot;
+    }
+
 
     @Override
     public void tick(EscapistsGame container) {
@@ -62,6 +110,6 @@ public class Active extends ObjectInstance {
         }
 
         ImageBank.ImageItem image = EscapistsRuntime.getRuntime().getApplication().images[frame + 1];
-        g.drawSprite(image.image, getX() - image.xHotspot, getY() - image.yHotspot);
+        g.drawSprite(image.image, getX(), getY());
     }
 }

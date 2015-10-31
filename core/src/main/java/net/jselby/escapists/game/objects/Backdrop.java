@@ -23,6 +23,16 @@ public class Backdrop extends ObjectInstance {
     }
 
     @Override
+    public float getWidth() {
+        return image.image.getWidth();
+    }
+
+    @Override
+    public float getHeight() {
+        return image.image.getHeight();
+    }
+
+    @Override
     public void tick(EscapistsGame container) {
 
     }

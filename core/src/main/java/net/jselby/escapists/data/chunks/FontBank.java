@@ -86,8 +86,8 @@ public class FontBank extends Chunk {
 
         public String faceName;
 
-        public final BitmapFont font;
-        public final BitmapFontCache fontCache;
+        public BitmapFont font;
+        public BitmapFontCache fontCache;
 
         //public Font awtFont;
 
@@ -118,6 +118,9 @@ public class FontBank extends Chunk {
             if (faceName.equalsIgnoreCase("Small Fonts")) {
                 faceName = "Escapists";
             }
+        }
+
+        public void load() {
             FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/" + faceName + ".ttf"));
             FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
             parameter.minFilter = Texture.TextureFilter.Nearest;
@@ -131,20 +134,7 @@ public class FontBank extends Chunk {
 
             // Also create a cache for this font
             fontCache = new BitmapFontCache(font);
-
-            // Convert to a slick font
-            //if (faceName.equalsIgnoreCase("Escapists")) {
-            /*    System.out.println("Loading manual font from OS:");
-                InputStream inputStream	= ResourceLoader.getResourceAsStream("Escapists.ttf");
-                try {
-                    awtFont = Font.createFont(Font.TRUETYPE_FONT, inputStream);
-                    awtFont = awtFont.deriveFont((float) (height));
-                } catch (FontFormatException | IOException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                awtFont = new Font(faceName, Font.BOLD, height);
-            }*/
         }
+
     }
 }

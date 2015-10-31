@@ -23,9 +23,10 @@ public class Expression {
         }
 
         int size = buffer.getUnsignedShort();
-        /*
-        if (ExpressionNames.getByID(objectType, num) != null) {
+
+        /*if (ExpressionNames.getByID(objectType, num) != null) {
             value = ParameterValue.getParameter(ExpressionNames.getByID(objectType, num), buffer);
+            value.read(buffer);
         } else if (objectType >= 2 || objectType == -7) {
             objectInfo = buffer.getUnsignedShort();
             objectInfoList = buffer.getShort();

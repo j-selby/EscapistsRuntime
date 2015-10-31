@@ -1,12 +1,14 @@
 package net.jselby.escapists.data.chunks;
 
 import net.jselby.escapists.data.Chunk;
-import net.jselby.escapists.data.events.ActionNames;
-import net.jselby.escapists.data.events.ConditionNames;
-import net.jselby.escapists.data.events.ParameterNames;
-import net.jselby.escapists.data.events.ParameterValue;
+import net.jselby.escapists.data.events.*;
+import net.jselby.escapists.game.events.Actions;
+import net.jselby.escapists.game.events.Conditions;
 import net.jselby.escapists.util.ByteReader;
+import org.apache.commons.lang3.StringUtils;
 
+import java.io.FileOutputStream;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -80,9 +82,96 @@ public class Events extends Chunk {
     }
 
     /**
+     * Converts this event set to a Javascript script, ready to be executed.
+     * @return A String
+     */
+    public String toJS() {
+        // Iterate over the events
+        StringBuilder builder = new StringBuilder();
+        int indent = 0;
+
+        for (EventGroup group : groups) {
+            // Check for groups
+            if (group.conditions.length != 0 && group.conditions[0].name.equalsIgnoreCase("NewGroup")) {
+                builder.append(StringUtils.repeat(' ', indent)).append("{\n");
+                indent += 4;
+                continue;
+            } else if (group.conditions.length != 0 && group.conditions[0].name.equalsIgnoreCase("GroupEnd")) {
+                indent -= 4;
+                builder.append(StringUtils.repeat(' ', indent)).append("}\n");
+                continue;
+            }
+
+            // Build conditions for group
+            String conditions = "";
+            for (Condition condition : group.conditions) {
+                if (condition.name == null || condition.name.equalsIgnoreCase("Always")) {
+                    continue;
+                }
+                if (conditions.length() != 0) {
+                    conditions += " && ";
+                }
+                conditions += condition.name + "(";
+                int paramCount = 0;
+                for (Parameter param : condition.items) {
+                    conditions += (paramCount != 0 ? ", " : "") + param.loader.name() + " " + param.name.toLowerCase();
+                    paramCount++;
+                }
+                conditions += ")";
+            }
+
+            // Build actions for group
+            String actions = "";
+            indent += 4;
+            for (Action action : group.actions) {
+                if (action.name != null && action.name.equalsIgnoreCase("Skip")) {
+                    continue;
+                }
+
+                actions += StringUtils.repeat(' ', indent);
+
+                if (action.name == null) {
+                    actions += "/* Unknown: ";
+                }
+
+                actions += (action.name == null ? (action.objectInfo + ":" + action.num) : action.name) + "(";
+
+                int paramCount = 0;
+                for (Parameter param : action.items) {
+                    actions += (paramCount != 0 ? ", " : "") + param.loader.name() + " " + param.name.toLowerCase();
+                    paramCount++;
+                }
+
+                actions += ");";
+                if (action.name == null) {
+                    actions += " */";
+                }
+
+                actions += "\n";
+            }
+            indent -= 4;
+
+            if (actions.length() == 0) {
+                continue;
+            }
+
+            builder.append(StringUtils.repeat(' ', indent));
+            if (conditions.length() != 0) {
+                builder.append("if (").append(conditions).append(") ");
+            }
+
+            builder.append("{\n");
+            builder.append(actions);
+            builder.append(StringUtils.repeat(' ', indent)).append("}\n");
+        }
+
+        return builder.toString();
+    }
+
+    /**
      * A Qualifier is a object qualifier.
      */
-    private class Qualifier {
+    public class Qualifier {
         private final int objectInfo;
         private final short type;
         private final int qualifier;
@@ -90,18 +179,18 @@ public class Events extends Chunk {
         public Qualifier(ByteReader buffer) {
             objectInfo = buffer.getUnsignedShort();
             type = buffer.getShort();
-            qualifier = objectInfo & 0x7ff; // TODO: Binary & 0b11111111111
+            qualifier = objectInfo & 0x7ff;
         }
     }
 
-    private class EventGroup {
+    public class EventGroup {
         private final int flags;
 
         private final int is_restricted;
         private final int restrictCpt;
 
-        private final Condition[] conditions;
-        private final Action[] actions;
+        public final Condition[] conditions;
+        public final Action[] actions;
 
         public EventGroup(ByteReader buffer) {
             int initialPosition = buffer.position();
@@ -138,7 +227,7 @@ public class Events extends Chunk {
     /**
      * A condition is a check checked when evaluating events.
      */
-    private class Condition {
+    public class Condition {
         private final short objectType;
         private final short num;
 
@@ -149,9 +238,10 @@ public class Events extends Chunk {
         private final short flags2;
 
         private final byte defType;
-        private final short identifier;
+        public final short identifier;
 
         public final String name;
+        public Method method;
         public final Parameter[] items;
 
         public Condition(ByteReader buffer) {
@@ -177,6 +267,11 @@ public class Events extends Chunk {
                 items[i] = new Parameter(buffer);
             }
 
+            // Grab the appropriate method to invoke this Condition
+            if (name != null) {
+                method = Conditions.getMethodForCondition(name);
+            }
+
             buffer.position(currentPosition + size);
         }
 
@@ -191,7 +286,7 @@ public class Events extends Chunk {
      * An Action is something executed if (x) conditions are evaluated as all true. This primarily interact
      * with the game rule.
      */
-    private class Action {
+    public class Action {
         private final short objectType;
         private final short num;
 
@@ -204,6 +299,7 @@ public class Events extends Chunk {
         private final byte defType;
 
         public final String name;
+        public Method method;
         public final Parameter[] items;
 
         public Action(ByteReader buffer) {
@@ -229,6 +325,11 @@ public class Events extends Chunk {
                 items[i] = new Parameter(buffer);
             }
 
+            // Grab the appropriate method to invoke this Action
+            if (name != null) {
+                method = Actions.getMethodForAction(name);
+            }
+
             buffer.position(currentPosition + size);
         }
 
@@ -241,7 +342,7 @@ public class Events extends Chunk {
     /**
      * A Parameter is a param to a action/condition.
      */
-    private class Parameter {
+    public class Parameter {
         private final short code;
         private final ParameterLoader loader;
 

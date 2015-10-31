@@ -1,5 +1,6 @@
 package net.jselby.escapists.game;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap;
 import net.jselby.escapists.EscapistsRuntime;
 import net.jselby.escapists.data.Chunk;
@@ -67,10 +68,10 @@ public class Application {
         GlobalValues globalValuesChunk = (GlobalValues) ChunkUtils.popChunk(chunks, GlobalValues.class);
         GlobalStrings globalStringsChunk = (GlobalStrings) ChunkUtils.popChunk(chunks, GlobalStrings.class);
         FrameItems frameItemsChunk = (FrameItems) ChunkUtils.popChunk(chunks, FrameItems.class);
-        FontBank fontBankChunk = (FontBank) ChunkUtils.popChunk(chunks, FontBank.class);
+        final FontBank fontBankChunk = (FontBank) ChunkUtils.popChunk(chunks, FontBank.class);
 
         // Get remaining chunks
-        ImageBank imageBankChunk = (ImageBank) ChunkUtils.popChunk(chunks, ImageBank.class);
+        final ImageBank imageBankChunk = (ImageBank) ChunkUtils.popChunk(chunks, ImageBank.class);
 
         assert nameChunk != null; // Impossible without
         assert authorChunk != null;
@@ -104,6 +105,14 @@ public class Application {
         images = new ImageBank.ImageItem[highestHandle + 1];
         for (ImageBank.ImageItem imageItem : imageBankChunk.images) {
             images[imageItem.handle] = imageItem;
+            imageItem.load();
+        }
+
+        // Prepare fonts
+        for (FontBank.FontItem font : fontBankChunk.fonts) {
+            if (font != null) {
+                font.value.load();
+            }
         }
 
         // Get frames

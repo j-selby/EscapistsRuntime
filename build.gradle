@@ -43,6 +43,7 @@ project(":core") {
         compile "org.mini2Dx:mini2Dx-core:$mini2DxVersion"
         compile 'commons-io:commons-io:2.4'
         compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
+        compile 'org.apache.commons:commons-lang3:3.4'
     }
 }
 

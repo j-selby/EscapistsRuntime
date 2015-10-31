@@ -342,7 +342,7 @@ public class ActionNames {
         if (map.containsKey(categoryID) && map.get(categoryID).containsKey(itemID)) {
             return map.get(categoryID).get(itemID);
         } else if (extensionMap.containsKey(itemID)) {
-            return "extension:" + extensionMap.get(itemID);
+            return "extension_" + extensionMap.get(itemID);
         } else {
             return null;
         }

@@ -16,9 +16,9 @@ public abstract class ParameterValue {
     public abstract void read(ByteReader buffer);
 
     public static class Object extends ParameterValue {
-        private short objectInfoList;
-        private int objectInfo;
-        private short objectType;
+        public short objectInfoList;
+        public int objectInfo;
+        public short objectType;
 
         @Override
         public void read(ByteReader buffer) {
@@ -29,8 +29,8 @@ public abstract class ParameterValue {
     }
 
     public static class Time extends ParameterValue {
-        private int timer;
-        private int loops;
+        public int timer;
+        public int loops;
 
         @Override
         public void read(ByteReader buffer) {
@@ -40,7 +40,7 @@ public abstract class ParameterValue {
     }
 
     public static class Short extends ParameterValue {
-        private short value;
+        public short value;
 
         @Override
         public void read(ByteReader buffer) {
@@ -51,7 +51,7 @@ public abstract class ParameterValue {
     // TODO: Remark
 
     public static class Int extends ParameterValue {
-        private int value;
+        public int value;
 
         @Override
         public void read(ByteReader buffer) {
@@ -60,9 +60,9 @@ public abstract class ParameterValue {
     }
 
     public static class Sample extends ParameterValue {
-        private int handle;
-        private int flags;
-        private java.lang.String name;
+        public int handle;
+        public int flags;
+        public java.lang.String name;
 
         @Override
         public void read(ByteReader buffer) {
@@ -73,10 +73,10 @@ public abstract class ParameterValue {
     }
 
     public static class Create extends ParameterValue {
-        private Position position;
+        public Position position;
 
-        private int objectInstance;
-        private int objectInfo;
+        public int objectInstance;
+        public int objectInfo;
 
         @Override
         public void read(ByteReader buffer) {
@@ -89,8 +89,8 @@ public abstract class ParameterValue {
     }
 
     public static class Every extends ParameterValue {
-        private int delay;
-        private int compteur;
+        public int delay;
+        public int compteur;
 
         @Override
         public void read(ByteReader buffer) {
@@ -100,7 +100,7 @@ public abstract class ParameterValue {
     }
 
     public static class KeyParameter extends ParameterValue {
-        private short key;
+        public short key;
 
         @Override
         public void read(ByteReader buffer) {
@@ -109,8 +109,8 @@ public abstract class ParameterValue {
     }
 
     public static class ExpressionParameter extends ParameterValue {
-        private short comparison;
-        private Expression[] expressions;
+        public short comparison;
+        public Expression[] expressions;
 
         @Override
         public void read(ByteReader buffer) {
@@ -130,20 +130,20 @@ public abstract class ParameterValue {
     }
 
     public static class Position extends ParameterValue {
-        private int objectInfoParent;
-        private int flags;
+        public int objectInfoParent;
+        public int flags;
 
-        private short x;
-        private short y;
+        public short x;
+        public short y;
 
-        private short slope;
-        private short angle;
+        public short slope;
+        public short angle;
 
-        private int direction;
-        private short typeParent;
+        public int direction;
+        public short typeParent;
 
-        private short objectInfoList;
-        private short layer;
+        public short objectInfoList;
+        public short layer;
 
         @Override
         public void read(ByteReader buffer) {
@@ -165,12 +165,12 @@ public abstract class ParameterValue {
     }
 
     public static class Shoot extends ParameterValue {
-        private Position position;
+        public Position position;
 
-        private int objectInstance;
-        private int objectInfo;
+        public int objectInstance;
+        public int objectInfo;
 
-        private short shootSpeed;
+        public short shootSpeed;
 
         @Override
         public void read(ByteReader buffer) {
@@ -187,10 +187,10 @@ public abstract class ParameterValue {
     }
 
     public static class Zone extends ParameterValue {
-        private short x1;
-        private short y1;
-        private short x2;
-        private short y2;
+        public short x1;
+        public short y1;
+        public short x2;
+        public short y2;
 
         @Override
         public void read(ByteReader buffer) {
@@ -202,7 +202,7 @@ public abstract class ParameterValue {
     }
 
     public static class Colour extends ParameterValue {
-        private com.badlogic.gdx.graphics.Color value;
+        public com.badlogic.gdx.graphics.Color value;
 
         @Override
         public void read(ByteReader buffer) {
@@ -211,10 +211,10 @@ public abstract class ParameterValue {
     }
 
     public static class Program extends ParameterValue {
-        private int flags;
+        public int flags;
 
-        private java.lang.String fileName;
-        private java.lang.String command;
+        public java.lang.String fileName;
+        public java.lang.String command;
 
         @Override
         public void read(ByteReader buffer) {
@@ -229,13 +229,13 @@ public abstract class ParameterValue {
     }
 
     public static class Group extends ParameterValue {
-        private int offset;
+        public int offset;
 
-        private int flags;
-        private int id;
+        public int flags;
+        public int id;
 
-        private java.lang.String name;
-        private int password;
+        public java.lang.String name;
+        public int password;
 
         @Override
         public void read(ByteReader buffer) {
@@ -248,9 +248,9 @@ public abstract class ParameterValue {
     }
 
     public static class GroupPointer extends ParameterValue {
-        private int savedPointer;
-        private int pointer;
-        private short id;
+        public int savedPointer;
+        public int pointer;
+        public short id;
 
         @Override
         public void read(ByteReader buffer) {
@@ -264,7 +264,7 @@ public abstract class ParameterValue {
     }
 
     public static class String extends ParameterValue {
-        private java.lang.String value;
+        public java.lang.String value;
 
         @Override
         public void read(ByteReader buffer) {
@@ -273,7 +273,7 @@ public abstract class ParameterValue {
     }
 
     public static class Filename extends ParameterValue {
-        private java.lang.String value;
+        public java.lang.String value;
 
         @Override
         public void read(ByteReader buffer) {
@@ -282,9 +282,9 @@ public abstract class ParameterValue {
     }
 
     public static class CompareTime extends ParameterValue {
-        private int timer;
-        private int loops;
-        private short comparison;
+        public int timer;
+        public int loops;
+        public short comparison;
 
         @Override
         public void read(ByteReader buffer) {
@@ -295,8 +295,8 @@ public abstract class ParameterValue {
     }
 
     public static class TwoShorts extends ParameterValue {
-        private short value1;
-        private short value2;
+        public short value1;
+        public short value2;
 
         @Override
         public void read(ByteReader buffer) {
@@ -306,9 +306,9 @@ public abstract class ParameterValue {
     }
 
     public static class Extension extends ParameterValue {
-        private short type;
-        private short code;
-        private byte[] data;
+        public short type;
+        public short code;
+        public byte[] data;
 
         @Override
         public void read(ByteReader buffer) {
@@ -321,8 +321,8 @@ public abstract class ParameterValue {
     }
 
     public static class Click extends ParameterValue {
-        private byte click;
-        private boolean doubleVal;
+        public byte click;
+        public boolean doubleVal;
 
         @Override
         public void read(ByteReader buffer) {
@@ -338,6 +338,13 @@ public abstract class ParameterValue {
     }
 
     public static class Bug extends ParameterValue {
+        @Override
+        public void read(ByteReader buffer) {
+        }
+    }
+
+    // Expression exclusive, only $5.99 for the first DLC pack!
+    public static class EndParenthesis extends ParameterValue {
         @Override
         public void read(ByteReader buffer) {
         }

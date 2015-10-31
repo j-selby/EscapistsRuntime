@@ -45,7 +45,8 @@ public class ImageBank extends Chunk {
         public final short actionY;
 
         private final com.badlogic.gdx.graphics.Color transparent;
-        public final org.mini2Dx.core.graphics.Sprite image;
+        public Sprite image;
+        private final Pixmap pixmap;
 
         public int handle;
 
@@ -97,7 +98,7 @@ public class ImageBank extends Chunk {
             pad = (int) Math.ceil(pad / (float)3);
             int i = 0;
             int n = 0;
-            Pixmap image = new Pixmap(width, height, Pixmap.Format.RGBA8888);
+            pixmap = new Pixmap(width, height, Pixmap.Format.RGBA8888);
 
             int originalPos = buffer.position();
             for (int y = 0; y < height; y++) {
@@ -108,7 +109,7 @@ public class ImageBank extends Chunk {
                     int r = buffer.getUnsignedByte();
                     int val =  Color.rgba8888(r / 256f, g / 256f, b / 256f, 1);
                     if (val != transparentVal/* && !alpha*/) {
-                        image.drawPixel(x, y, val);
+                        pixmap.drawPixel(x, y, val);
                     }// else {
                         //buf[i] = new Color(((float) r) / 256f, ((float) g) / 256f,
                         //        ((float) b) / 256f, 1f);
@@ -140,8 +141,13 @@ public class ImageBank extends Chunk {
             } catch (IOException e) {
                 e.printStackTrace();
             }*/
+        }
 
-            this.image = new Sprite(new Texture(image));
+        /**
+         * Thread-unsafe task for uploading this image to the GPU.
+         */
+        public void load() {
+            this.image = new Sprite(new Texture(pixmap));
         }
     }
 }

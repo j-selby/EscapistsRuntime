@@ -36,6 +36,16 @@ public class Text extends ObjectInstance {
     }
 
     @Override
+    public float getWidth() {
+        return rawType.width;
+    }
+
+    @Override
+    public float getHeight() {
+        return rawType.height;
+    }
+
+    @Override
     public void tick(EscapistsGame container) {
 
     }
