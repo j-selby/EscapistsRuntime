@@ -27,6 +27,7 @@ public class EscapistsGame extends BasicGame {
     private Scene currentFrame;
 
     private PlatformUtils utils;
+    private int sceneIndex;
 
     public EscapistsGame(PlatformUtils utils) {
         this.utils = utils;
@@ -77,7 +78,7 @@ public class EscapistsGame extends BasicGame {
                             System.out.println("Callback from app, all assets prepared.");
                             try {
                                 app.init();
-                                loadFrame(app.frames.get(2)); // 2 = title screen, 6 = game
+                                loadScene(0); // 2 = title screen, 6 = game
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -104,6 +105,15 @@ public class EscapistsGame extends BasicGame {
         System.out.println("Launching frame: " + currentFrame.getName().trim());
     }
 
+    public int getSceneIndex() {
+        return sceneIndex;
+    }
+
+    public void loadScene(int id) {
+        sceneIndex = id;
+        loadFrame(app.frames.get(id));
+    }
+
     @Override
     public void update(float delta) {
         if (currentFrame == null) {
@@ -111,6 +121,8 @@ public class EscapistsGame extends BasicGame {
         }
 
         currentFrame.tick(this);
+
+        getPlatformUtils().tick();
     }
     
     @Override
@@ -155,6 +167,7 @@ public class EscapistsGame extends BasicGame {
 
             g.drawString("Mouse X: " + mouseX + ", Mouse Y: " + mouseY, 5, 35);
             g.drawString("scaleX: " + scaleX + ", scaleY: " + scaleY, 5, 50);
+            g.drawString("Scene: " + currentFrame.getName(), 5, 65);
         }
 
         int usedMem = (int) (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024 / 1024;

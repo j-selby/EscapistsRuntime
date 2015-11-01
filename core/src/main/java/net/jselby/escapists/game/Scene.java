@@ -43,6 +43,8 @@ public class Scene {
     // Scripting
     public boolean firstFrame = true;
     private Map<String, Object> variables = new HashMap<String, Object>();
+    private int frameCount;
+    private long startTime;
 
     public Scene(EscapistsRuntime runtime, Frame frame) {
         this.runtime = runtime;
@@ -129,6 +131,9 @@ public class Scene {
         firstFrame = true;
 
         System.out.println(events.toJS());
+
+        frameCount = 0;
+        startTime = System.currentTimeMillis();
     }
 
     public void init(EscapistsGame game) {
@@ -231,6 +236,8 @@ public class Scene {
             layer.tick(game);
 
         }
+
+        frameCount++;
     }
 
     public void draw(EscapistsGame game, Graphics g) {
@@ -277,5 +284,13 @@ public class Scene {
 
     public Map<String, Object> getVariables() {
         return variables;
+    }
+
+    public int getFrameCount() {
+        return frameCount;
+    }
+
+    public long getSceneStartTime() {
+        return startTime;
     }
 }

@@ -13,6 +13,11 @@ public class Actions {
                             Events.Action action) {
     }
 
+    public static void NextFrame(Scope scope,
+                            Events.Action action) {
+        scope.getGame().loadScene(scope.getGame().getSceneIndex() + 1);
+    }
+
     public static void EndApplication(Scope scope,
                                       Events.Action action) {
         // RIP

@@ -113,6 +113,9 @@ public class Events extends Chunk {
                 if (conditions.length() != 0) {
                     conditions += " && ";
                 }
+                if (condition.inverted()) {
+                    conditions += "!";
+                }
                 conditions += (condition.name == null ? (condition.objectType + ":" + condition.num) : condition.name) + "(";
                 int paramCount = 0;
                 for (Parameter param : condition.items) {
@@ -278,7 +281,7 @@ public class Events extends Chunk {
         }
 
         public boolean inverted() {
-            return (flags2 & 1) == 0;
+            return (flags2 & 1) != 0;
         }
 
         @Override

@@ -51,4 +51,22 @@ public class AndroidPlatformUtils extends PlatformUtils {
     public File findGameFolder() {
         throw new NotImplementedException("Steam cannot be detected on a mobile platform!");
     }
+
+    /**
+     * Verifies if this game was purchased via Steam.
+     *
+     * @return If the game has been purchased.
+     */
+    @Override
+    public boolean verifySteam() {
+        return true; // TODO: Validate game license
+    }
+
+    /**
+     * Ticks any system-exclusive processes.
+     */
+    @Override
+    public void tick() {
+
+    }
 }

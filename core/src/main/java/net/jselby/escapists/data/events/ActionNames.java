@@ -35,6 +35,9 @@ public class ActionNames {
         tempMap.put(86, "NextParagraph");
         tempMap.put(87, "DisplayAlterableString");
         tempMap.put(88, "SetString");
+
+        tempMap.put(26, "Disappear"); // Extension
+        tempMap.put(27, "Reappear"); // Extension
         map.put(3, tempMap);
 
         tempMap = new HashMap<Integer, String>();
@@ -262,11 +265,6 @@ public class ActionNames {
         tempMap = new HashMap<Integer, String>();
         tempMap.put(80, "EmbedFont");
         map.put(65, tempMap);
-
-        tempMap = new HashMap<Integer, String>();
-        tempMap.put(26, "Disappear");
-        tempMap.put(27, "Reappear");
-        map.put(3, tempMap);
 
         tempMap = new HashMap<Integer, String>();
         tempMap.put(82, "CreateDirectory");

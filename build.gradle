@@ -57,6 +57,7 @@ project(":desktop") {
         compile project(":core")
         compile "org.mini2Dx:mini2Dx-desktop:$mini2DxVersion"
         compile "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
+        compile "com.code-disaster.steamworks4j:steamworks4j:1.2.1"
     }
     parcl {
         exe {

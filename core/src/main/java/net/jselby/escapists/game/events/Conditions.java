@@ -157,15 +157,16 @@ public class Conditions {
     public static boolean TimerGreater(Scope scope,
                                        Events.Condition condition,
                                        ParameterValue.Time time) {
-        // TODO: Timers
-        /*String key = "_env_flag_" + value;
-        if (scope.getScene().getVariables().containsKey(key)) {
-            return (Boolean) scope.getScene().getVariables().get(key);
-        } else {
-            return false;
-        }*/
-        return false;
+        return (System.currentTimeMillis() - scope.getScene().getSceneStartTime()) > time.timer;
     }
+
+    public static boolean SteamHasGameLicense(Scope scope,
+                                       Events.Condition condition) {
+        boolean auth =  scope.getGame().getPlatformUtils().verifySteam();
+        System.out.println("Steam auth: " + auth);
+        return auth;
+    }
+
 
     public static boolean extension_FlagOff(Scope scope,
                                             Events.Condition condition,

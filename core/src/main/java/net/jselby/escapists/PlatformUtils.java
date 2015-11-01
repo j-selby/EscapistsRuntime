@@ -24,4 +24,16 @@ public abstract class PlatformUtils {
      * Finds the game folder from Steam on desktop platforms.
      */
     public abstract File findGameFolder();
+
+    /**
+     * Verifies if this game was purchased via Steam.
+     *
+     * @return If the game has been purchased.
+     */
+    public abstract boolean verifySteam();
+
+    /**
+     * Ticks any system-exclusive processes.
+     */
+    public abstract void tick();
 }
