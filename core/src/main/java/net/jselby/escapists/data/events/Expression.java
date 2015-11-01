@@ -9,7 +9,7 @@ public class Expression {
     public final short objectType;
     public final short num;
 
-    public ParameterValue value;
+    public ExpressionValue value;
 
     private int objectInfo;
     private short objectInfoList;
@@ -24,18 +24,30 @@ public class Expression {
 
         int size = buffer.getUnsignedShort();
 
-        /*if (ExpressionNames.getByID(objectType, num) != null) {
-            value = ParameterValue.getParameter(ExpressionNames.getByID(objectType, num), buffer);
-            value.read(buffer);
-        } else if (objectType >= 2 || objectType == -7) {
-            objectInfo = buffer.getUnsignedShort();
-            objectInfoList = buffer.getShort();
-
-            // TODO: Extension expression
-        }*/
+        try {
+            if (ExpressionNames.getByID(objectType, num) != null) {
+                value = ExpressionValue.getExpression(ExpressionNames.getByID(objectType, num), buffer);
+            } else if (objectType >= 2 || objectType == -7) {
+                objectInfo = buffer.getUnsignedShort();
+                objectInfoList = buffer.getShort();
+                if (ExpressionNames.getByExtensionID(num) != null) {
+                    value = ExpressionValue.getExpression(ExpressionNames.getByExtensionID(num), buffer);
+                } else {
+                    //System.out.println("Unknown value: " + (size - 8));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         buffer.position(currentPosition + size);
     }
+
+    @Override
+    public String toString() {
+        return value == null ? "null1" : value.toString();
+    }
+
     /*
     cdef int currentPosition = reader.tell()
         self.objectType = reader.readShort()

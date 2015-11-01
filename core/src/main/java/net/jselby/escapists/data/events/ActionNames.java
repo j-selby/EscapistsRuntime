@@ -10,7 +10,6 @@ import java.util.Map;
  */
 public class ActionNames {
     private final static Map<Integer, Map<Integer, String>> map = new HashMap<Integer, Map<Integer, String>>();
-    private final static Map<Integer, String> extensionMap = new HashMap<Integer, String>();
 
     static {
         Map<Integer, String> tempMap = new HashMap<Integer, String>();
@@ -255,7 +254,25 @@ public class ActionNames {
         tempMap.put(33, "SetSampleFrequency");
         map.put(-2, tempMap);
 
-        extensionMap.put(1, "SetPosition");
+        // Custom Extensions
+        tempMap = new HashMap<Integer, String>();
+        tempMap.put(82, "CreateDirectory");
+        map.put(42, tempMap);
+
+        tempMap = new HashMap<Integer, String>();
+        tempMap.put(80, "EmbedFont");
+        map.put(65, tempMap);
+
+        tempMap = new HashMap<Integer, String>();
+        tempMap.put(26, "Disappear");
+        tempMap.put(27, "Reappear");
+        map.put(3, tempMap);
+
+        tempMap = new HashMap<Integer, String>();
+        tempMap.put(82, "CreateDirectory");
+        map.put(13, tempMap);
+
+        /*extensionMap.put(1, "SetPosition");
         extensionMap.put(2, "SetX");
         extensionMap.put(3, "SetY");
         extensionMap.put(4, "Stop");
@@ -334,15 +351,13 @@ public class ActionNames {
         extensionMap.put(77, "ForeachTwoObjects");
         extensionMap.put(78, "StopForce");
         extensionMap.put(79, "StopTorque");
-        extensionMap.put(80, "SetDensity");
-        extensionMap.put(81, "SetGravityScale");
+        //extensionMap.put(80, "SetDensity");
+        extensionMap.put(81, "SetGravityScale");*/
     }
 
     public static String getByID(int categoryID, int itemID) {
         if (map.containsKey(categoryID) && map.get(categoryID).containsKey(itemID)) {
             return map.get(categoryID).get(itemID);
-        } else if (extensionMap.containsKey(itemID)) {
-            return "extension_" + extensionMap.get(itemID);
         } else {
             return null;
         }

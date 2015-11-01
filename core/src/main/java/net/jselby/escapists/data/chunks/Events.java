@@ -93,7 +93,9 @@ public class Events extends Chunk {
         for (EventGroup group : groups) {
             // Check for groups
             if (group.conditions.length != 0 && group.conditions[0].name != null && group.conditions[0].name.equalsIgnoreCase("NewGroup")) {
-                builder.append(StringUtils.repeat(' ', indent)).append("{\n");
+                builder.append(StringUtils.repeat(' ', indent)).append("{ // ")
+                        .append(((ParameterValue.Group) group.conditions[0].items[0].value).name)
+                        .append("\n");
                 indent += 4;
                 continue;
             } else if (group.conditions.length != 0 && group.conditions[0].name != null && group.conditions[0].name.equalsIgnoreCase("GroupEnd")) {
@@ -105,16 +107,16 @@ public class Events extends Chunk {
             // Build conditions for group
             String conditions = "";
             for (Condition condition : group.conditions) {
-                if (condition.name == null || condition.name.equalsIgnoreCase("Always")) {
+                /*if (condition.name != null && condition.name.equalsIgnoreCase("Always")) {
                     continue;
-                }
+                }*/
                 if (conditions.length() != 0) {
                     conditions += " && ";
                 }
-                conditions += condition.name + "(";
+                conditions += (condition.name == null ? (condition.objectType + ":" + condition.num) : condition.name) + "(";
                 int paramCount = 0;
                 for (Parameter param : condition.items) {
-                    conditions += (paramCount != 0 ? ", " : "") + param.loader.name() + " " + param.name.toLowerCase();
+                    conditions += (paramCount != 0 ? ", " : "") + param.value;//param.loader.name() + " " + param.name.toLowerCase();
                     paramCount++;
                 }
                 conditions += ")";
@@ -134,11 +136,11 @@ public class Events extends Chunk {
                     actions += "/* Unknown: ";
                 }
 
-                actions += (action.name == null ? (action.objectInfo + ":" + action.num) : action.name) + "(";
+                actions += (action.name == null ? (action.objectType + ":" + action.num) : action.name) + "(";
 
                 int paramCount = 0;
                 for (Parameter param : action.items) {
-                    actions += (paramCount != 0 ? ", " : "") + param.loader.name() + " " + param.name.toLowerCase();
+                    actions += (paramCount != 0 ? ", " : "") + param.value;//param.loader.name() + " " + param.name.toLowerCase();
                     paramCount++;
                 }
 
@@ -273,6 +275,10 @@ public class Events extends Chunk {
             }
 
             buffer.position(currentPosition + size);
+        }
+
+        public boolean inverted() {
+            return (flags2 & 1) == 0;
         }
 
         @Override

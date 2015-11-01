@@ -127,6 +127,8 @@ public class Scene {
         }
 
         firstFrame = true;
+
+        System.out.println(events.toJS());
     }
 
     public void init(EscapistsGame game) {
@@ -159,7 +161,7 @@ public class Scene {
 
                 if (condition.method == null) {
                     conditionsPassed = false;
-                    System.out.println("Condition method failed: " + condition);
+                    //System.out.println("Condition method failed: " + condition);
                     continue;
                 }
 

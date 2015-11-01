@@ -161,4 +161,8 @@ public class ByteReader {
     public String getString(int length) {
         return new ByteReader(getBytes(length)).getString();
     }
+
+    public double getDouble() {
+        return buf.getDouble();
+    }
 }

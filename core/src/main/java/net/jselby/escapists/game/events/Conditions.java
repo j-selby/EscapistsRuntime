@@ -209,6 +209,16 @@ public class Conditions {
         }
     }
 
+    public static boolean GroupStart(Scope scope,
+                                   Events.Condition condition) {
+        // TODO: Support group disabling
+        return true;
+    }
+
+    public static boolean GroupEnd(Scope scope,
+                                             Events.Condition condition) {
+        return true;
+    }
     // Utility methods
 
     /**

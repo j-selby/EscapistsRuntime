@@ -8,6 +8,7 @@ import java.util.Map;
  */
 public class ExpressionNames {
     private final static Map<Integer, Map<Integer, String>> map = new HashMap<Integer, Map<Integer, String>>();
+    private final static Map<Integer, String> extensionMap = new HashMap<Integer, String>();
 
     static {
 
@@ -221,6 +222,9 @@ public class ExpressionNames {
         tempMap.put(-3, "Virgule");
         tempMap.put(-2, "EndParenthesis");
         map.put(-1, tempMap);
+
+        extensionMap.put(16, "ExtensionValue");
+        extensionMap.put(19, "ExtensionString");
     }
 
 
@@ -230,5 +234,9 @@ public class ExpressionNames {
         } else {
             return null;
         }
+    }
+
+    public static String getByExtensionID(int itemID) {
+        return extensionMap.get(itemID);
     }
 }

@@ -3,6 +3,7 @@ package net.jselby.escapists.data.events;
 import net.jselby.escapists.util.ByteReader;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -46,6 +47,11 @@ public abstract class ParameterValue {
         public void read(ByteReader buffer) {
             value = buffer.getShort();
         }
+
+        @Override
+        public java.lang.String toString() {
+            return "Short=" + value;
+        }
     }
 
     // TODO: Remark
@@ -56,6 +62,11 @@ public abstract class ParameterValue {
         @Override
         public void read(ByteReader buffer) {
             value = buffer.getInt();
+        }
+
+        @Override
+        public java.lang.String toString() {
+            return "Int=" + value;
         }
     }
 
@@ -86,6 +97,11 @@ public abstract class ParameterValue {
             objectInfo = buffer.getUnsignedShort();
             buffer.skipBytes(4);
         }
+
+        @Override
+        public java.lang.String toString() {
+            return "Create=" + objectInfo;
+        }
     }
 
     public static class Every extends ParameterValue {
@@ -96,6 +112,11 @@ public abstract class ParameterValue {
         public void read(ByteReader buffer) {
             delay = buffer.getInt();
             compteur = buffer.getInt();
+        }
+
+        @Override
+        public java.lang.String toString() {
+            return "Every=" + delay;
         }
     }
 
@@ -126,6 +147,20 @@ public abstract class ParameterValue {
             }
 
             this.expressions = expressions.toArray(new Expression[expressions.size()]);
+        }
+
+        @Override
+        public java.lang.String toString() {
+            // Build string
+            java.lang.String str = "";
+            for (Expression expression : expressions) {
+                if (expression.value != null) {
+                    str += expression.value.toString();
+                } else {
+                    str += "$null(" + expression.objectType + ":" + expression.num + "$";
+                }
+            }
+            return str;
         }
     }
 
@@ -343,13 +378,6 @@ public abstract class ParameterValue {
         }
     }
 
-    // Expression exclusive, only $5.99 for the first DLC pack!
-    public static class EndParenthesis extends ParameterValue {
-        @Override
-        public void read(ByteReader buffer) {
-        }
-    }
-
     public static ParameterValue getParameter(java.lang.String name, ByteReader buffer) {
         try {
             @SuppressWarnings("unchecked")
@@ -360,7 +388,7 @@ public abstract class ParameterValue {
             return result;
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
+            throw new IllegalStateException(e);
         }
     }
 }

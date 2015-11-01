@@ -72,6 +72,10 @@ public class ParameterNames {
         map.put(63, "FILENAME");
         map.put(64, "FASTLOOPNAME");
         map.put(65, "CHAR_ENCODING_INPUT");
+
+        // Custom Extensions
+        map.put(88, "GetItemValue");
+        map.put(107, "MyDocsDirectory");
     }
 
     public static String getByID(int id) {

@@ -15,6 +15,7 @@ public class ConditionNames {
     static {
         Map<Integer, String> tempMap = new HashMap<Integer, String>();
         tempMap.put(-81, "ObjectClicked"); // SPRCLICK
+        tempMap.put(-85, "GroupHas"); // Extension
         map.put(2, tempMap);
 
         tempMap = new HashMap<Integer, String>();
@@ -161,6 +162,12 @@ public class ConditionNames {
         tempMap.put(-40, "RunningAs");
         map.put(-1, tempMap);
 
+        // Custom Extensions
+        tempMap = new HashMap<Integer, String>();
+        tempMap.put(-81, "SteamHasGameLicense");
+        map.put(64, tempMap);
+
+        // Other extensions
         extensionMap.put(-1, "AnimationFrame");
         extensionMap.put(-2, "AnimationFinished");
         extensionMap.put(-3, "AnimationPlaying");
