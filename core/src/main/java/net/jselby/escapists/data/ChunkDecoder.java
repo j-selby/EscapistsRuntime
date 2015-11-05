@@ -88,6 +88,9 @@ public class ChunkDecoder {
                     public void run() {
                         try {
                             chunk.init(new ByteReader(ByteBuffer.wrap(finalData).order(ByteOrder.LITTLE_ENDIAN)), finalData.length);
+                            if (chunk instanceof StringChunk) {
+                                System.out.println(((StringChunk) chunk).getContent());
+                            }
                         } finally {
                             privateCount[0]++;
                         }

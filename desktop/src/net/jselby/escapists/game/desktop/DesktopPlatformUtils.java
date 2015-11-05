@@ -21,7 +21,7 @@ public class DesktopPlatformUtils extends PlatformUtils {
 
     public DesktopPlatformUtils() {
         // Write the game ID to the filesystem
-        try {
+        /*try {
             FileOutputStream out = new FileOutputStream("steam_appid.txt");
             out.write("298630".getBytes());
             out.close();
@@ -44,12 +44,12 @@ public class DesktopPlatformUtils extends PlatformUtils {
             }
         } finally {
             new File("steam_appid.txt").delete();
-        }
+        }*/
 
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
             @Override
             public void run() {
-                SteamAPI.shutdown();
+                //SteamAPI.shutdown();
             }
         }));
 
@@ -111,7 +111,7 @@ public class DesktopPlatformUtils extends PlatformUtils {
      */
     @Override
     public void tick() {
-        SteamAPI.runCallbacks();
+        //SteamAPI.runCallbacks();
     }
 
     public void dialog(String s) {

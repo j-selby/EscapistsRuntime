@@ -78,7 +78,7 @@ public class EscapistsGame extends BasicGame {
                             System.out.println("Callback from app, all assets prepared.");
                             try {
                                 app.init();
-                                loadScene(0); // 2 = title screen, 6 = game
+                                loadScene(2); // 2 = title screen, 6 = game
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
