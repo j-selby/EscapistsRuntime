@@ -270,6 +270,15 @@ public class ActionNames {
         tempMap.put(82, "CreateDirectory");
         map.put(13, tempMap);
 
+        tempMap = new HashMap<Integer, String>();
+        tempMap.put(2, "SetX");
+        tempMap.put(3, "SetY");
+        tempMap.put(23, "SetDirection");
+        tempMap.put(35, "FlagOn");
+        tempMap.put(36, "FlagOff");
+        tempMap.put(57, "BringToFront");
+        map.put(2, tempMap);
+
         /*extensionMap.put(1, "SetPosition");
         extensionMap.put(2, "SetX");
         extensionMap.put(3, "SetY");

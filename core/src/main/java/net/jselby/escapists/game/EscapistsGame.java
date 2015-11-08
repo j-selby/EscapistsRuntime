@@ -13,6 +13,8 @@ import org.mini2Dx.core.graphics.Graphics;
 import org.mini2Dx.core.graphics.Sprite;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class EscapistsGame extends BasicGame {
 	public static final String GAME_IDENTIFIER = "net.jselby.escapists";
@@ -28,6 +30,7 @@ public class EscapistsGame extends BasicGame {
 
     private PlatformUtils utils;
     private int sceneIndex;
+    public Map<Integer, Integer> globalInts;
 
     public EscapistsGame(PlatformUtils utils) {
         this.utils = utils;
@@ -35,6 +38,10 @@ public class EscapistsGame extends BasicGame {
 
     @Override
     public void initialise() {
+        globalInts = new HashMap<Integer, Integer>();
+
+        getPlatformUtils().hideMouse();
+
         loadingLogo = new Sprite(new Texture(Gdx.files.internal("logo.png")));
 
         // Load the initial font, if possible
@@ -77,8 +84,8 @@ public class EscapistsGame extends BasicGame {
 
                             System.out.println("Callback from app, all assets prepared.");
                             try {
-                                app.init();
-                                loadScene(2); // 2 = title screen, 6 = game
+                                app.init(EscapistsGame.this);
+                                loadScene(0); // 2 = title screen, 6 = game
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -179,18 +186,12 @@ public class EscapistsGame extends BasicGame {
     }
 
     public int getMouseX() {
-        if (!Gdx.input.isTouched() && Gdx.app.getType() != com.badlogic.gdx.Application.ApplicationType.Desktop) {
-            return -1;
-        }
         return (int) (((float) Gdx.input.getX())
                 / (((float) getWidth())
                 / ((float) EscapistsRuntime.getRuntime().getApplication().getWindowWidth())));
     }
 
     public int getMouseY() {
-        if (!Gdx.input.isTouched() && Gdx.app.getType() != com.badlogic.gdx.Application.ApplicationType.Desktop) {
-            return -1;
-        }
         return (int) (((float) Gdx.input.getY())
                 / (((float) getHeight())
                 / ((float) EscapistsRuntime.getRuntime().getApplication().getWindowHeight())));

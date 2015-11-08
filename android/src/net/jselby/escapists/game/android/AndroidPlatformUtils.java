@@ -69,4 +69,9 @@ public class AndroidPlatformUtils extends PlatformUtils {
     public void tick() {
 
     }
+
+    @Override
+    public void hideMouse() {
+
+    }
 }

@@ -4,6 +4,10 @@ import com.badlogic.gdx.Gdx;
 import com.codedisaster.steamworks.*;
 import net.jselby.escapists.PlatformUtils;
 import org.lwjgl.opengl.Display;
+import org.lwjgl.input.Cursor;
+import org.lwjgl.BufferUtils;
+import org.lwjgl.LWJGLException;
+import org.lwjgl.input.Mouse;
 
 import javax.swing.*;
 import java.io.File;
@@ -112,6 +116,16 @@ public class DesktopPlatformUtils extends PlatformUtils {
     @Override
     public void tick() {
         //SteamAPI.runCallbacks();
+    }
+
+    @Override
+    public void hideMouse() {
+        try {
+            Cursor emptyCursor = new Cursor(1, 1, 0, 0, 1, BufferUtils.createIntBuffer(1), null);
+            Mouse.setNativeCursor(emptyCursor);
+        } catch (LWJGLException e) {
+            e.printStackTrace();
+        }
     }
 
     public void dialog(String s) {

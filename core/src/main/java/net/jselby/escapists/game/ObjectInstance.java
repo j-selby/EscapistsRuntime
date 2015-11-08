@@ -66,6 +66,14 @@ public abstract class ObjectInstance {
         return y;
     }
 
+    public void setX(int newX) {
+        x = newX;
+    }
+
+    public void setY(int newY) {
+        y = newY;
+    }
+
     /**
      * Returns the width of this object
      * @return A width argument

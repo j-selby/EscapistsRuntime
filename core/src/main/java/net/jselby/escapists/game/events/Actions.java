@@ -1,7 +1,12 @@
 package net.jselby.escapists.game.events;
 
+import com.badlogic.gdx.Gdx;
 import net.jselby.escapists.data.chunks.Events;
+import net.jselby.escapists.data.events.ExpressionValue;
 import net.jselby.escapists.data.events.ParameterValue;
+import net.jselby.escapists.game.Layer;
+import net.jselby.escapists.game.ObjectInstance;
+import net.jselby.escapists.game.objects.Text;
 
 import java.lang.reflect.Method;
 
@@ -22,6 +27,58 @@ public class Actions {
                                       Events.Action action) {
         // RIP
         scope.getGame().exit();
+    }
+
+    public static void SetX(Scope scope,
+                            Events.Action action,
+                            ParameterValue.ExpressionParameter xPos) {
+        for (ObjectInstance object : scope.objects) {
+            if (xPos.expressions[0].value instanceof ExpressionValue.XMouse) {
+                object.setIsVisible(true);
+                object.setX(scope.getGame().getMouseX());
+            }
+        }
+        //System.out.println(scope.objects);
+    }
+
+    public static void SetY(Scope scope,
+                            Events.Action action,
+                            ParameterValue.ExpressionParameter xPos) {
+        for (ObjectInstance object : scope.objects) {
+            if (xPos.expressions[0].value instanceof ExpressionValue.YMouse) {
+                object.setY(scope.getGame().getMouseY());
+            }
+        }
+        //System.out.println(scope.objects);
+    }
+
+    public static void BringToFront(Scope scope,
+                            Events.Action action) {
+        for (ObjectInstance object : scope.objects) {
+            for (Layer layer : scope.getScene().getLayers()) {
+                layer.objects.remove(object);
+            }
+            Layer[] layers = scope.getScene().getLayers();
+            layers[layers.length - 1].objects.add(object);
+        }
+        //System.out.println(scope.objects);
+    }
+
+    public static void Reappear(Scope scope,
+                                 Events.Action action) {
+        for (ObjectInstance object : scope.objects) {
+            object.setIsVisible(true);
+        }
+    }
+
+    public static void SetString(Scope scope,
+                                Events.Action action,
+                                 ParameterValue.ExpressionParameter value) {
+        for (ObjectInstance object : scope.objects) {
+            if (object instanceof Text && value.expressions[0].value instanceof ExpressionValue.String) {
+                ((Text) object).setString(((ExpressionValue.String) value.expressions[0].value).getValue());
+            }
+        }
     }
 
     public static void extension_SetDirection(Scope scope,

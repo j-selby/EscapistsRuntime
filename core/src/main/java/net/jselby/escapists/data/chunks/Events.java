@@ -1,7 +1,11 @@
 package net.jselby.escapists.data.chunks;
 
+import net.jselby.escapists.EscapistsRuntime;
 import net.jselby.escapists.data.Chunk;
+import net.jselby.escapists.data.ObjectDefinition;
 import net.jselby.escapists.data.events.*;
+import net.jselby.escapists.game.EscapistsGame;
+import net.jselby.escapists.game.Scene;
 import net.jselby.escapists.game.events.Actions;
 import net.jselby.escapists.game.events.Conditions;
 import net.jselby.escapists.util.ByteReader;
@@ -116,10 +120,18 @@ public class Events extends Chunk {
                 if (condition.inverted()) {
                     conditions += "!";
                 }
-                conditions += (condition.name == null ? (condition.objectType + ":" + condition.num) : condition.name) + "(";
+
+
+                ObjectDefinition object = null;
+                if (EscapistsRuntime.getRuntime().getApplication().objectDefs.length > condition.objectInfo) {
+                    object = EscapistsRuntime.getRuntime().getApplication().objectDefs[condition.objectInfo];
+                }
+
+                conditions += (condition.name == null ? (condition.objectType + ":" + condition.num) : condition.name)
+                        + "(" + (object == null ? "null" + condition.objectInfo : object.name) + ")(";
                 int paramCount = 0;
                 for (Parameter param : condition.items) {
-                    conditions += (paramCount != 0 ? ", " : "") + param.value;//param.loader.name() + " " + param.name.toLowerCase();
+                    conditions += (paramCount != 0 ? ", " : "") + param.value + ":" + param.code;//param.loader.name() + " " + param.name.toLowerCase();
                     paramCount++;
                 }
                 conditions += ")";
@@ -139,15 +151,21 @@ public class Events extends Chunk {
                     actions += "/* Unknown: ";
                 }
 
-                actions += (action.name == null ? (action.objectType + ":" + action.num) : action.name) + "(";
+                ObjectDefinition object = null;
+                if (EscapistsRuntime.getRuntime().getApplication().objectDefs.length > action.objectInfo) {
+                    object = EscapistsRuntime.getRuntime().getApplication().objectDefs[action.objectInfo];
+                }
+
+                actions += (action.name == null ? (action.objectType + ":" + action.num) : action.name)
+                        + "(" + (object == null ? "null" + action.objectInfo : object.name) + ")" + "(";
 
                 int paramCount = 0;
                 for (Parameter param : action.items) {
-                    actions += (paramCount != 0 ? ", " : "") + param.value;//param.loader.name() + " " + param.name.toLowerCase();
+                    actions += (paramCount != 0 ? ", " : "") + param.value + ":" + param.code;//param.loader.name() + " " + param.name.toLowerCase();
                     paramCount++;
                 }
 
-                actions += ");";
+                actions += "); // ID: " + action.num;
                 if (action.name == null) {
                     actions += " */";
                 }
@@ -299,7 +317,7 @@ public class Events extends Chunk {
         private final short objectType;
         private final short num;
 
-        private final int objectInfo;
+        public final int objectInfo;
         private final short objectInfoList;
 
         private final short flags;

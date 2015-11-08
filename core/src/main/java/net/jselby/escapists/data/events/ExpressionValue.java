@@ -23,6 +23,10 @@ public abstract class ExpressionValue {
             value = buffer.getString();
         }
 
+        public java.lang.String getValue() {
+            return value;
+        }
+
         @Override
         public java.lang.String toString() {
             return "\"" + value + "\"";
@@ -30,7 +34,7 @@ public abstract class ExpressionValue {
     }
 
     public static class Long extends ExpressionValue {
-        private int value;
+        public int value;
 
         @Override
         public void read(ByteReader buffer) {

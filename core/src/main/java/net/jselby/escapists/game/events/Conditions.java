@@ -2,7 +2,9 @@ package net.jselby.escapists.game.events;
 
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
+import net.jselby.escapists.EscapistsRuntime;
 import net.jselby.escapists.data.chunks.Events;
+import net.jselby.escapists.data.events.ExpressionValue;
 import net.jselby.escapists.data.events.ParameterValue;
 import net.jselby.escapists.game.ObjectInstance;
 
@@ -71,7 +73,7 @@ public class Conditions {
         if (Gdx.app.getType() != Application.ApplicationType.Desktop
                 && click.click != 0) {
             // We only get left clicks on mobile platforms
-            System.out.println("Bad click type for platform: " + click.click);
+            //System.out.println("Bad click type for platform: " + click.click);
             return false;
         }
 
@@ -154,6 +156,18 @@ public class Conditions {
         return false;
     }
 
+    public static boolean CompareGlobalValueIntEqual(Scope scope,
+                                                     Events.Condition condition,
+                                                     ParameterValue.Short id,
+                                                     ParameterValue.ExpressionParameter value) {
+        if (scope.getGame().globalInts.containsKey(id.value)) {
+            return ((ExpressionValue.Long) value.expressions[0].value).value == scope.getGame().globalInts.get(id.value);
+        } else {
+            return ((ExpressionValue.Long) value.expressions[0].value).value == 0;
+        }
+        //return (System.currentTimeMillis() - scope.getScene().getSceneStartTime()) > time.timer;
+    }
+
     public static boolean TimerGreater(Scope scope,
                                        Events.Condition condition,
                                        ParameterValue.Time time) {
@@ -162,9 +176,7 @@ public class Conditions {
 
     public static boolean SteamHasGameLicense(Scope scope,
                                        Events.Condition condition) {
-        boolean auth =  scope.getGame().getPlatformUtils().verifySteam();
-        System.out.println("Steam auth: " + auth);
-        return auth;
+        return scope.getGame().getPlatformUtils().verifySteam();
     }
 
 
@@ -210,11 +222,17 @@ public class Conditions {
         }
     }
 
+    /*public static boolean GroupActivated(Scope scope,
+                                     Events.Condition condition) {
+        // TODO: Support group disabling
+        return true;
+    }
+
     public static boolean GroupStart(Scope scope,
                                    Events.Condition condition) {
         // TODO: Support group disabling
         return true;
-    }
+    }*/
 
     public static boolean GroupEnd(Scope scope,
                                              Events.Condition condition) {

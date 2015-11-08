@@ -54,7 +54,7 @@ public class Application {
         this.chunks = chunks;
     }
 
-    public void init() throws IOException {
+    public void init(EscapistsGame game) throws IOException {
         // Get instances of all important chunks
         AppName nameChunk = (AppName) ChunkUtils.popChunk(chunks, AppName.class);
         AppAuthor authorChunk = (AppAuthor) ChunkUtils.popChunk(chunks, AppAuthor.class);
@@ -119,7 +119,7 @@ public class Application {
         frames = new ArrayList<Scene>();
         Frame frame;
         while((frame = (Frame) ChunkUtils.popChunk(chunks, Frame.class)) != null) {
-            frames.add(new Scene(runtime, frame));
+            frames.add(new Scene(runtime, frame, game));
         }
 
         // Remove bad/unknown chunks

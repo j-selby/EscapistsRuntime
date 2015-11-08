@@ -14,7 +14,7 @@ import java.util.List;
  * @author j_selby
  */
 public class Layer {
-    private final List<ObjectInstance> objects;
+    public final List<ObjectInstance> objects;
     private final String name;
     private long flags;
 
@@ -29,6 +29,14 @@ public class Layer {
                 objects.add(child);
             }
         }
+    }
+
+    public Layer(EscapistsRuntime runtime, Scene scene, int i) {
+        this.name = "FrontLayer";
+
+        // Grab our objects
+        objects = new ArrayList<ObjectInstance>();
+
     }
 
     public void tick(EscapistsGame game) {

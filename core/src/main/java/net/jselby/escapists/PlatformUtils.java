@@ -36,4 +36,9 @@ public abstract class PlatformUtils {
      * Ticks any system-exclusive processes.
      */
     public abstract void tick();
+
+    /**
+     * Hides the mouse.
+     */
+    public abstract void hideMouse();
 }

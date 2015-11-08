@@ -33,7 +33,7 @@ public class Scope {
 
     public Object evaluate(Events.Condition condition, ParameterValue.ExpressionParameter expression) {
         for (Expression expression1 : expression.expressions) {
-            System.out.println(expression1.value);
+            //System.out.println(expression1.value);
         }
         return false;
         /*if (expression.)

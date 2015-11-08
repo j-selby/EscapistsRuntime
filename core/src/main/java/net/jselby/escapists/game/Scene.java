@@ -13,10 +13,6 @@ import net.jselby.escapists.game.objects.Backdrop;
 import net.jselby.escapists.game.objects.Text;
 import org.mini2Dx.core.graphics.Graphics;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 /**
@@ -46,7 +42,10 @@ public class Scene {
     private int frameCount;
     private long startTime;
 
-    public Scene(EscapistsRuntime runtime, Frame frame) {
+    private Scope scope;
+    private List<Object> args = new ArrayList<Object>();
+
+    public Scene(EscapistsRuntime runtime, Frame frame, EscapistsGame game) {
         this.runtime = runtime;
         name = frame.name;
         background = frame.background;
@@ -56,6 +55,8 @@ public class Scene {
 
         width = frame.width;
         height = frame.height;
+
+        scope = new Scope(game, this);
     }
 
     /**
@@ -123,10 +124,11 @@ public class Scene {
         }
 
         // Create layers
-        layers = new Layer[layerDefinitions.length];
+        layers = new Layer[layerDefinitions.length + 1]; // Additional layer for mouse etc
         for (int i = 0; i < layerDefinitions.length; i++) {
             layers[i] = new Layer(runtime, this, i, layerDefinitions[i]);
         }
+        layers[layers.length - 1] = new Layer(runtime, this, layers.length - 1);
 
         firstFrame = true;
 
@@ -142,9 +144,6 @@ public class Scene {
 
     public void tick(EscapistsGame game) {
         // Activate conditional objects
-        Scope scope = new Scope(game, this);
-        List<Object> args = new ArrayList<Object>();
-
         for (Events.EventGroup group : events.groups) {
             scope.objects.clear();
 
@@ -181,14 +180,16 @@ public class Scene {
 
                 try {
                     Boolean returnValue = (Boolean) condition.method.invoke(null, args.toArray());
-                    if (returnValue == null || !returnValue) {
+                    if (returnValue == null || returnValue == condition.inverted()) {
                         conditionsPassed = false;
                         break;
                     }
                 } catch (Exception e) {
-                    System.err.print("Condition execution error: ");
-                    e.printStackTrace();
-                    System.err.println("Within " + condition);
+                    if (EscapistsRuntime.DEBUG) {
+                        System.err.print("Condition execution error: ");
+                        e.printStackTrace();
+                        System.err.println("\tWithin " + condition);
+                    }
                 }
             }
 
@@ -209,6 +210,17 @@ public class Scene {
 
                 args.clear();
 
+
+                // Add objects to scope
+                scope.objects.clear();
+
+                for (ObjectInstance instance : instances) {
+                    if (instance.getObjectInfo() == action.objectInfo) {
+                        scope.objects.add(instance);
+                        //System.out.println(instance.getObjectInfo() + ":" + instance.getName() + ":" + action.objectInfo + ":" + action.name);
+                    }
+                }
+
                 // Build args
                 args.add(scope);
                 args.add(action);
@@ -219,9 +231,11 @@ public class Scene {
                 try {
                     action.method.invoke(null, args.toArray());
                 } catch (Exception e) {
-                    System.err.print("Condition execution error: ");
-                    e.printStackTrace();
-                    System.err.println("Within " + action);
+                    if (EscapistsRuntime.DEBUG) {
+                        System.err.print("Condition execution error: ");
+                        e.printStackTrace();
+                        System.err.println("\tWithin " + action);
+                    }
                 }
             }
         }
