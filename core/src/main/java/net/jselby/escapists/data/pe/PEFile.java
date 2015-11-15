@@ -29,7 +29,7 @@ public class PEFile {
         }
 
         // Secondly, read the header offset
-        buf.position(0x30 + 12);
+        buf.position(startPos + 0x30 + 12);
         int peHeaderOffset = buf.getInt();
 
         // Grab data from the PE header
