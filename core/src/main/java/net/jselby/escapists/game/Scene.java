@@ -7,11 +7,13 @@ import net.jselby.escapists.data.chunks.Events;
 import net.jselby.escapists.data.chunks.Frame;
 import net.jselby.escapists.data.chunks.Layers;
 import net.jselby.escapists.data.chunks.ObjectInstances;
+import net.jselby.escapists.data.events.ParameterValue;
 import net.jselby.escapists.game.events.Scope;
 import net.jselby.escapists.game.objects.Active;
 import net.jselby.escapists.game.objects.Backdrop;
 import net.jselby.escapists.game.objects.Text;
 import org.mini2Dx.core.graphics.Graphics;
+import org.mozilla.javascript.Context;
 
 import java.util.*;
 
@@ -57,6 +59,32 @@ public class Scene {
         height = frame.height;
 
         scope = new Scope(game, this);
+
+        // Compile events
+        Context context = Context.enter();
+
+        List<ParameterValue.ExpressionParameter> expressions = new ArrayList<ParameterValue.ExpressionParameter>();
+        for (Events.EventGroup group : events.groups) {
+            for (Events.Action action : group.actions) {
+                for (Events.Parameter parameter : action.items) {
+                    if (parameter.value instanceof ParameterValue.ExpressionParameter) {
+                        expressions.add((ParameterValue.ExpressionParameter) parameter.value);
+                    }
+                }
+            }
+
+            for (Events.Condition condition : group.conditions) {
+                for (Events.Parameter parameter : condition.items) {
+                    if (parameter.value instanceof ParameterValue.ExpressionParameter) {
+                        expressions.add((ParameterValue.ExpressionParameter) parameter.value);
+                    }
+                }
+            }
+        }
+
+        for (ParameterValue.ExpressionParameter expression : expressions) {
+            expression.compile(context);
+        }
     }
 
     /**

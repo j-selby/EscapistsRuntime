@@ -1,6 +1,9 @@
 package net.jselby.escapists.data.events;
 
+import net.jselby.escapists.EscapistsRuntime;
 import net.jselby.escapists.util.ByteReader;
+import org.mozilla.javascript.Context;
+import org.mozilla.javascript.Script;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -132,6 +135,7 @@ public abstract class ParameterValue {
     public static class ExpressionParameter extends ParameterValue {
         public short comparison;
         public Expression[] expressions;
+        private Script value;
 
         @Override
         public void read(ByteReader buffer) {
@@ -157,10 +161,15 @@ public abstract class ParameterValue {
                 if (expression.value != null) {
                     str += expression.value.toString();
                 } else {
-                    str += "$null(" + expression.objectType + ":" + expression.num + "$";
+                    str += "/*$null(" + expression.objectType + ":" + expression.num + ")$*/";
                 }
             }
             return str;
+        }
+
+        public void compile(Context context) {
+            System.out.println("Compiling expression: " + toString());
+            value = context.compileString(toString(), "expression@" + hashCode(), 1, null);
         }
     }
 
