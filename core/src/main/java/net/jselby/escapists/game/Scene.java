@@ -183,9 +183,7 @@ public class Scene {
                 }
 
                 if (condition.name.equalsIgnoreCase("NewGroup")
-                        || condition.name.equalsIgnoreCase("GroupEnd")
-                        || condition.name.equalsIgnoreCase("OnGroupActivation")
-                        || condition.name.equalsIgnoreCase("GroupActivated")) {
+                        || condition.name.equalsIgnoreCase("GroupEnd")) {
                     // TODO: Groups
                     conditionsPassed = false;
                     continue;
@@ -193,7 +191,7 @@ public class Scene {
 
                 if (condition.method == null) {
                     conditionsPassed = false;
-                    //System.out.println("Condition method failed: " + condition);
+                    System.out.println("Condition method failed: " + condition);
                     continue;
                 }
 

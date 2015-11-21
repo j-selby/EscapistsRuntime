@@ -223,6 +223,10 @@ public class ExpressionNames {
         tempMap.put(-2, "EndParenthesis");
         map.put(-1, tempMap);
 
+        tempMap = new HashMap<Integer, String>();
+        tempMap.put(107, "GetDataDirectory");
+        map.put(42, tempMap);
+
         extensionMap.put(16, "ExtensionValue");
         extensionMap.put(19, "ExtensionString");
     }

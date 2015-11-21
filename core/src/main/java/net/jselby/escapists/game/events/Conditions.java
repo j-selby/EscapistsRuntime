@@ -69,6 +69,16 @@ public class Conditions {
         return mouseOver;
     }
 
+    public static boolean MouseClicked(Scope scope,
+                                        Events.Condition condition,
+                                        ParameterValue.Click click) {
+        // We only get left clicks on mobile platforms
+//System.out.println("Bad click type for platform: " + click.click);
+        return !(Gdx.app.getType() != Application.ApplicationType.Desktop && click.click != 0)
+                && Gdx.input.isButtonPressed(click.click);
+
+    }
+
     public static boolean ObjectClicked(Scope scope,
                                         Events.Condition condition,
                                         ParameterValue.Click click,
@@ -117,7 +127,6 @@ public class Conditions {
                                 Events.Condition condition,
                                 ParameterValue.Every every) {
         String key = "_env_every_" + condition.identifier;
-        boolean isTime = false;
         if (scope.getScene().getVariables().containsKey(key)) {
             // Check if it has updated
             long currentTime = System.currentTimeMillis();
@@ -125,18 +134,18 @@ public class Conditions {
             long diff = currentTime - lastTime;
             if (diff > every.delay) {
                 currentTime -= diff - every.delay;
-                isTime = true;
                 scope.getScene().getVariables().put(key, currentTime);
+                return true;
             }
         } else {
             scope.getScene().getVariables().put(key, System.currentTimeMillis());
         }
-        return isTime;
+        return false;
     }
 
     public static boolean Once(Scope scope,
                                 Events.Condition condition) {
-        String key = "_env_every_" + condition.identifier;
+        String key = "_env_once_" + condition.identifier;
         if (scope.getScene().getVariables().containsKey(key)) {
             return false;
         } else {
@@ -163,13 +172,22 @@ public class Conditions {
                                                      Events.Condition condition,
                                                      ParameterValue.Short id,
                                                      ParameterValue.ExpressionParameter value) {
-        if (scope.getGame().globalInts.containsKey(id.value)) {
-            return ((ExpressionValue.Long) value.expressions[0].value).value == scope.getGame().globalInts.get(id.value);
+        if (scope.getGame().globalInts.containsKey((int) id.value)) {
+            return ((ExpressionValue.Long) value.expressions[0].value).value == scope.getGame().globalInts.get((int) id.value);
         } else {
             return ((ExpressionValue.Long) value.expressions[0].value).value == 0;
         }
         //return (System.currentTimeMillis() - scope.getScene().getSceneStartTime()) > time.timer;
     }
+
+    public static boolean CompareGlobalString(Scope scope,
+                                                      Events.Condition condition,
+                                                      ParameterValue.Short id,
+                                                      ParameterValue.String value) {
+        return false;
+        //return (System.currentTimeMillis() - scope.getScene().getSceneStartTime()) > time.timer;
+    }
+
 
     public static boolean TimerGreater(Scope scope,
                                        Events.Condition condition,

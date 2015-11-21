@@ -216,6 +216,9 @@ public abstract class ExpressionValue {
     public static class DistanceBetween extends ExpressionValue {
     }
 
+    public static class GetDataDirectory extends ExpressionValue {
+    }
+
     // Operators
     public static class Virgule extends ExpressionValue {
         @Override
