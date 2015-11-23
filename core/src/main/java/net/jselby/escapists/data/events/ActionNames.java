@@ -279,6 +279,10 @@ public class ActionNames {
         tempMap.put(57, "BringToFront");
         map.put(2, tempMap);
 
+        tempMap = new HashMap<Integer, String>();
+        tempMap.put(80, "OpenURL");
+        map.put(56, tempMap);
+
         /*extensionMap.put(1, "SetPosition");
         extensionMap.put(2, "SetX");
         extensionMap.put(3, "SetY");

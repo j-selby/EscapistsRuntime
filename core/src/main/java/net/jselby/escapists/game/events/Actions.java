@@ -23,6 +23,12 @@ public class Actions {
         scope.getGame().loadScene(scope.getGame().getSceneIndex() + 1);
     }
 
+    public static void JumpToFrame(Scope scope,
+                                 Events.Action action,
+                                   ParameterValue.Short scene) {
+        scope.getGame().loadScene(scene.value);
+    }
+
     public static void EndApplication(Scope scope,
                                       Events.Action action) {
         // RIP

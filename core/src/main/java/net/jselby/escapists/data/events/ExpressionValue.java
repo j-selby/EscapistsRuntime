@@ -1,6 +1,8 @@
 package net.jselby.escapists.data.events;
 
 import net.jselby.escapists.util.ByteReader;
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Values of expressions.
@@ -9,6 +11,11 @@ import net.jselby.escapists.util.ByteReader;
  * @author j_selby
  */
 public abstract class ExpressionValue {
+    @Override
+    public java.lang.String toString() {
+        return getClass().getSimpleName() + "()";
+    }
+
     /**
      * Reads a parameter using the specified buffer.
      * @param buffer The buffer to read from.
@@ -29,7 +36,7 @@ public abstract class ExpressionValue {
 
         @Override
         public java.lang.String toString() {
-            return "\"" + value + "\"";
+            return "\"" + StringEscapeUtils.escapeEcmaScript(value) + "\"";
         }
     }
 
@@ -221,9 +228,17 @@ public abstract class ExpressionValue {
     }
 
     public static class Parenthesis extends ExpressionValue {
+        @Override
+        public java.lang.String toString() {
+            return "(";
+        }
     }
 
     public static class EndParenthesis extends ExpressionValue {
+        @Override
+        public java.lang.String toString() {
+            return ")";
+        }
     }
 
     // Converters

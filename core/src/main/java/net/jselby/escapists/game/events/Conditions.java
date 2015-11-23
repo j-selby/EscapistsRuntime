@@ -26,7 +26,10 @@ public class Conditions {
                                   ParameterValue.ExpressionParameter expression,
                                   ParameterValue.ExpressionParameter comparison) {
         // TODO: Compare
-        return false;
+        if (expression.toString().contains("RUN_EDITOR")) {
+            return false;
+        }
+        return true;
     }
 
     public static boolean StartOfFrame(Scope scope,
@@ -256,6 +259,14 @@ public class Conditions {
                                              Events.Condition condition) {
         return true;
     }
+
+    public static boolean extension_AnimationPlaying(Scope scope,
+                                   Events.Condition condition,
+                                                     ParameterValue.Short num) {
+        // TODO: Animations
+        return true;
+    }
+
     // Utility methods
 
     /**
