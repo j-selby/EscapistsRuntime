@@ -62,11 +62,8 @@ public class Events extends Chunk {
 
                 List<EventGroup> groups = new ArrayList<EventGroup>();
 
-                while(true) {
+                while(buffer.position() < endPosition) {
                     groups.add(new EventGroup(buffer));
-                    if (buffer.position() >= endPosition) {
-                        break;
-                    }
                 }
 
                 this.groups = groups.toArray(new EventGroup[groups.size()]);
