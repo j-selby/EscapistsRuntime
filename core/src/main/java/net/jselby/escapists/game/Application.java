@@ -69,6 +69,7 @@ public class Application {
         GlobalStrings globalStringsChunk = (GlobalStrings) ChunkUtils.popChunk(chunks, GlobalStrings.class);
         FrameItems frameItemsChunk = (FrameItems) ChunkUtils.popChunk(chunks, FrameItems.class);
         final FontBank fontBankChunk = (FontBank) ChunkUtils.popChunk(chunks, FontBank.class);
+        final SoundBank soundBankChunk = (SoundBank) ChunkUtils.popChunk(chunks, SoundBank.class);
 
         // Get remaining chunks
         final ImageBank imageBankChunk = (ImageBank) ChunkUtils.popChunk(chunks, ImageBank.class);
@@ -84,34 +85,34 @@ public class Application {
 
         name = nameChunk.getContent();
         author = authorChunk.getContent();
-        icon = appIconChunk.image;
+        icon = appIconChunk.getImage();
         copyright = copyrightChunk.getContent();
 
-        width = appHeader.windowWidth;
-        height = appHeader.windowHeight;
-        objectDefs = frameItemsChunk.info;
-        targetFPS = (int) appHeader.frameRate;
+        width = appHeader.getWindowWidth();
+        height = appHeader.getWindowHeight();
+        objectDefs = frameItemsChunk.getInfo();
+        targetFPS = (int) appHeader.getFrameRate();
         fonts = fontBankChunk.fonts;
 
         // Discover highest handle
         int highestHandle = 0;
         for (ImageBank.ImageItem imageItem : imageBankChunk.images) {
-            if (imageItem.handle > highestHandle) {
-                highestHandle = imageItem.handle;
+            if (imageItem.getHandle() > highestHandle) {
+                highestHandle = imageItem.getHandle();
             }
         }
 
         // Update images
         images = new ImageBank.ImageItem[highestHandle + 1];
         for (ImageBank.ImageItem imageItem : imageBankChunk.images) {
-            images[imageItem.handle] = imageItem;
+            images[imageItem.getHandle()] = imageItem;
             imageItem.load();
         }
 
         // Prepare fonts
         for (FontBank.FontItem font : fontBankChunk.fonts) {
             if (font != null) {
-                font.value.load();
+                font.getValue().load();
             }
         }
 

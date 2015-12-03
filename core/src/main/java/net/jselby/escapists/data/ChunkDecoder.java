@@ -1,5 +1,6 @@
 package net.jselby.escapists.data;
 
+import net.jselby.escapists.data.chunks.ReflectionsHandle;
 import net.jselby.escapists.game.EscapistsGame;
 import net.jselby.escapists.util.ByteReader;
 
@@ -19,6 +20,7 @@ import java.util.zip.Inflater;
  * @author j_selby
  */
 public class ChunkDecoder {
+
     /**
      * Decodes a series of Chunks.
      * @param buf The buffer to read from
@@ -26,9 +28,6 @@ public class ChunkDecoder {
      * @return A parsed list of Chunks
      */
     public static List<Chunk> decodeChunk(ByteReader buf, EscapistsGame game) {
-        final int[] privateCount = {0};
-        int privateTotalCount = 0;
-
         ExecutorService threadManager = Executors.newCachedThreadPool();
 
         Inflater inflater = new Inflater();
@@ -40,11 +39,14 @@ public class ChunkDecoder {
             int flags = buf.getShort();
             int size = buf.getInt();
 
-            byte[] data = buf.getBytes(size);
-
             if (type == ChunkType.Last) {
+                if (size != 0) {
+                    buf.skipBytes(size);
+                }
                 break;
             }
+
+            byte[] data = buf.getBytes(size);
 
             if ((flags & 1) != 0) { // Compression
                 if ((flags & 2) != 0) { // Encryption
@@ -75,22 +77,18 @@ public class ChunkDecoder {
 
             //System.out.println(type.name() + " (" + id + "): " + data.length + "/" + size + " bytes, " + flags + " flags.");
 
+            // TODO: Clean up this mess, create our own runnable tracker
             // Attempt to find a copy
             try {
-                Class<?> potentialChunkDef = Class.forName("net.jselby.escapists.data.chunks." + type.name());
+                Class<?> potentialChunkDef = Class.forName(ReflectionsHandle.class.getPackage().getName() + "." + type.name());
 
                 final Chunk chunk = potentialChunkDef.asSubclass(Chunk.class).newInstance();
                 final byte[] finalData = data;
 
-                privateTotalCount++;
                 threadManager.submit(new Runnable() {
                     @Override
                     public void run() {
-                        try {
-                            chunk.init(new ByteReader(ByteBuffer.wrap(finalData).order(ByteOrder.LITTLE_ENDIAN)), finalData.length);
-                        } finally {
-                            privateCount[0]++;
-                        }
+                        chunk.init(new ByteReader(ByteBuffer.wrap(finalData).order(ByteOrder.LITTLE_ENDIAN)), finalData.length);
                     }
                 });
 
@@ -110,26 +108,9 @@ public class ChunkDecoder {
             }
         }
 
-        threadManager.shutdown();
-
-        if (game != null) {
-            int progress = (Math.round((float) privateCount[0] / (float) privateTotalCount * 100));
-            while (privateTotalCount != privateCount[0]) {
-                int newProgress = (Math.round((float) privateCount[0] / (float) privateTotalCount * 100));
-                if (progress != newProgress) {
-                    progress = newProgress;
-                    game.setLoadingMessage("Loading chunks... (" + progress + "%)");
-                }
-                try {
-                    Thread.sleep(50);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
         try {
-            threadManager.awaitTermination(1, TimeUnit.HOURS);
+            threadManager.shutdown();
+            threadManager.awaitTermination(1, TimeUnit.MINUTES);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

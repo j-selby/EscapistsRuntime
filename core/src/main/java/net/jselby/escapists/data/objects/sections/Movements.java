@@ -9,17 +9,17 @@ public class Movements {
     private final Movement[] items;
 
     public Movements(ByteReader buffer) {
-        int rootPosition = buffer.position();
+        int rootPosition = buffer.getPosition();
 
         long count = buffer.getUnsignedInt();
         items = new Movement[(int) count];
 
-        int currentPosition = buffer.position();
+        int currentPosition = buffer.getPosition();
 
         for (int i = 0; i < count; i++) {
             items[i] = new Movement(buffer, rootPosition);
-            buffer.position(currentPosition + 16);
-            currentPosition = buffer.position();
+            buffer.setPosition(currentPosition + 16);
+            currentPosition = buffer.getPosition();
         }
     }
 
@@ -38,7 +38,7 @@ public class Movements {
             int newOffset = buffer.getInt();
             int dataSize = buffer.getInt();
 
-            buffer.position(rootPosition + newOffset);
+            buffer.setPosition(rootPosition + newOffset);
 
             player = buffer.getShort();
             type = buffer.getShort();

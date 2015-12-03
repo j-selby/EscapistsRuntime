@@ -1,5 +1,6 @@
 package net.jselby.escapists.data.objects;
 
+import net.jselby.escapists.data.Shape;
 import net.jselby.escapists.util.ByteReader;
 
 /**

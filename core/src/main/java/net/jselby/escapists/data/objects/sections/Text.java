@@ -12,7 +12,7 @@ public class Text {
     public final Paragraph[] paragraphs;
 
     public Text(ByteReader buffer) {
-        int currentPosition = buffer.position();
+        int currentPosition = buffer.getPosition();
         int size = buffer.getInt();
 
         width = buffer.getInt();
@@ -26,7 +26,7 @@ public class Text {
 
         paragraphs = new Paragraph[itemOffsetsCount];
         for (int i = 0; i < itemOffsets.length; i++) {
-            buffer.position(currentPosition + itemOffsets[i]);
+            buffer.setPosition(currentPosition + itemOffsets[i]);
             paragraphs[i] = new Paragraph(buffer);
         }
     }

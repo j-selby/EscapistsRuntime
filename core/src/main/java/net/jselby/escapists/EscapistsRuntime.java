@@ -50,12 +50,13 @@ public class EscapistsRuntime {
         // TODO: Detect Steam installations, and use their Escapists build.
         game.setLoadingMessage("Loading game executable...");
 
+        // Check for internal storage/SD card
         if (!Gdx.files.isExternalStorageAvailable()) {
-            // There is no storage medium available
             game.fatalPrompt("There is no SD card inserted.");
             return false;
         }
 
+        // Locate the game directory, in Steam/storage root.
         File escapistsDirectory = new File(Gdx.files.getExternalStoragePath(), "The Escapists");
         if (Gdx.app.getType() == com.badlogic.gdx.Application.ApplicationType.Desktop) {
             escapistsDirectory = game.getPlatformUtils().findGameFolder();
@@ -74,7 +75,6 @@ public class EscapistsRuntime {
         }
 
         if (!new File(escapistsDirectory, "TheEscapists_eur.exe").exists()) {
-            System.err.println("Panicing, couldn't find Escapists in application archive.");
             game.fatalPrompt("Failed to find game's executable within game folder.");
             return false;
         }
@@ -98,7 +98,7 @@ public class EscapistsRuntime {
         }
         PESection lastPeSection = peSections[peSections.length - 1];
         int afterSectionPointer = lastPeSection.getSectionPointer() + lastPeSection.getSectionSize();
-        buf.position(afterSectionPointer);
+        buf.setPosition(afterSectionPointer);
 
         Inflater inflater = new Inflater();
         // -- PACK READING
@@ -111,7 +111,7 @@ public class EscapistsRuntime {
         }
 
         // Read pack
-        int packStart = buf.position() - 8;
+        int packStart = buf.getPosition() - 8;
         if (buf.getInt() != 32) { // Pack header size
             System.out.println("Bad pack header size. Is this the correct Escapists file (TheEscapists_eur.exe)?");
             game.fatalPrompt("Game failed validation check (PACK_HEADER_SIZE). Is the correct Escapists file (TheEscapists_eur.exe)?");
@@ -120,7 +120,7 @@ public class EscapistsRuntime {
 
         System.out.println("Game header and size validated.");
 
-        buf.position(packStart + 16);
+        buf.setPosition(packStart + 16);
         // Pack metadata
         int formatVersion = buf.getInt();
         if (buf.getInt() != 0 || buf.getInt() != 0) {

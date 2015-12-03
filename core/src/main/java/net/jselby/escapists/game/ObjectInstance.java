@@ -23,14 +23,14 @@ public abstract class ObjectInstance {
 
     public ObjectInstance(ObjectDefinition definition, ObjectInstances.ObjectInstance instance) {
         this.name = definition.name;
-        this.id = instance.handle;
-        this.objectInfo = instance.objectInfo;
-        this.layerId = instance.layer;
-        this.x = instance.x;
-        this.y = instance.y;
+        this.id = instance.getHandle();
+        this.objectInfo = instance.getObjectInfo();
+        this.layerId = instance.getLayer();
+        this.x = instance.getX();
+        this.y = instance.getY();
 
-        if (definition.properties.isCommon) {
-            isVisible = ((ObjectCommon) definition.properties.properties).isVisibleAtStart();
+        if (definition.properties.isCommon()) {
+            isVisible = ((ObjectCommon) definition.properties.getProperties()).isVisibleAtStart();
         }
     }
 

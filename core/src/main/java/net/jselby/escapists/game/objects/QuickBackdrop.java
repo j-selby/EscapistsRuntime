@@ -18,7 +18,7 @@ public class QuickBackdrop extends ObjectInstance {
         super(definition, instance);
 
         net.jselby.escapists.data.objects.QuickBackdrop data
-                = (net.jselby.escapists.data.objects.QuickBackdrop) definition.properties.properties;
+                = (net.jselby.escapists.data.objects.QuickBackdrop) definition.properties.getProperties();
         image = EscapistsRuntime.getRuntime()
                 .getApplication().images[
                 data.shape.image + 1];
@@ -26,12 +26,12 @@ public class QuickBackdrop extends ObjectInstance {
 
     @Override
     public float getWidth() {
-        return image.image.getWidth();
+        return image.getImage().getWidth();
     }
 
     @Override
     public float getHeight() {
-        return image.image.getHeight();
+        return image.getImage().getHeight();
     }
 
     @Override
@@ -47,7 +47,7 @@ public class QuickBackdrop extends ObjectInstance {
 
         if (image != null) {
             // TODO: Does this need {x,y}Hotspots?
-            g.drawSprite(image.image, getX(), getY());
+            g.drawSprite(image.getImage(), getX(), getY());
         }
     }
 }

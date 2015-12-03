@@ -1,4 +1,4 @@
-package net.jselby.escapists.data.objects;
+package net.jselby.escapists.data;
 
 import com.badlogic.gdx.graphics.Color;
 import net.jselby.escapists.util.ByteReader;

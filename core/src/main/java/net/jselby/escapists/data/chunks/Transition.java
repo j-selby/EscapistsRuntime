@@ -22,7 +22,7 @@ public abstract class Transition extends Chunk {
 
     @Override
     public void init(ByteReader buffer, int length) {
-        int currentPosition = buffer.position();
+        int currentPosition = buffer.getPosition();
 
         this.module = buffer.getBytes(4);
         this.name = buffer.getBytes(4);
@@ -37,10 +37,10 @@ public abstract class Transition extends Chunk {
         int parameterOffset = buffer.getInt();
         int parameterSize = buffer.getInt();
 
-        buffer.position(currentPosition + nameOffset);
+        buffer.setPosition(currentPosition + nameOffset);
         this.moduleFile = buffer.getString();
 
-        buffer.position(currentPosition + parameterOffset);
+        buffer.setPosition(currentPosition + parameterOffset);
         this.parameterData = buffer.getBytes(parameterSize);
     }
 

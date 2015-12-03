@@ -1,9 +1,10 @@
+apply plugin: "kotlin"
 apply plugin: "java"
+
 sourceCompatibility = 1.6
+
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
 eclipse.project {
     name = appName + "-core"
-}
-
-dependencies {
 }

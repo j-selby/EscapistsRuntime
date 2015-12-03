@@ -11,7 +11,7 @@ public class Shaders extends Chunk {
 
     @Override
     public void init(ByteReader buffer, int length) {
-        int initialPosition = buffer.position();
+        int initialPosition = buffer.getPosition();
 
         int count = buffer.getInt();
         int[] offsets = new int[count];
@@ -21,7 +21,7 @@ public class Shaders extends Chunk {
 
         shaders = new Shader[count];
         for (int i = 0; i < offsets.length; i++) {
-            buffer.position(initialPosition + offsets[i]);
+            buffer.setPosition(initialPosition + offsets[i]);
             // TODO: Fix buffer underflow - garbage data?
             //    \_ Anaconda documentation appears wrong here
             //shaders[i] = new Shader(buffer);
@@ -47,22 +47,22 @@ public class Shaders extends Chunk {
         public final int bgTexture;
 
         public Shader(ByteReader buffer) {
-            int initialPosition = buffer.position();
+            int initialPosition = buffer.getPosition();
 
             int nameOffset = buffer.getInt();
             int dataOffset = buffer.getInt();
             int paramOffset = buffer.getInt();
             bgTexture = buffer.getInt();
 
-            buffer.position(initialPosition + nameOffset);
+            buffer.setPosition(initialPosition + nameOffset);
             name = buffer.getString();
 
-            buffer.position(initialPosition + dataOffset);
+            buffer.setPosition(initialPosition + dataOffset);
             data = buffer.getString();
 
             if (paramOffset != 0) {
                 paramOffset += initialPosition;
-                buffer.position(paramOffset);
+                buffer.setPosition(paramOffset);
 
                 int paramCount = buffer.getInt();
 
@@ -74,12 +74,12 @@ public class Shaders extends Chunk {
                 int typeOffset = buffer.getInt();
                 int namesOffset = buffer.getInt();
 
-                buffer.position(paramCount + typeOffset);
+                buffer.setPosition(paramCount + typeOffset);
                 for (Parameter parameter : params) {
                     parameter.type = buffer.getByte();
                 }
 
-                buffer.position(paramCount + namesOffset);
+                buffer.setPosition(paramCount + namesOffset);
                 for (Parameter parameter : params) {
                     parameter.name = buffer.getString();
                 }

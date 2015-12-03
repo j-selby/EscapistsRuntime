@@ -58,11 +58,11 @@ public class Events extends Chunk {
                 buffer.getInt(); // size
             } else if (Arrays.equals(identifier, EVENTGROUP_DATA)) {
                 int size = buffer.getInt();
-                int endPosition = buffer.position() + size;
+                int endPosition = buffer.getPosition() + size;
 
                 List<EventGroup> groups = new ArrayList<EventGroup>();
 
-                while(buffer.position() < endPosition) {
+                while(buffer.getPosition() < endPosition) {
                     groups.add(new EventGroup(buffer));
                 }
 
@@ -213,7 +213,7 @@ public class Events extends Chunk {
         public final Action[] actions;
 
         public EventGroup(ByteReader buffer) {
-            int initialPosition = buffer.position();
+            int initialPosition = buffer.getPosition();
             int size = buffer.getShort() * -1;
 
             int numberOfConditions = buffer.getUnsignedByte();
@@ -235,7 +235,7 @@ public class Events extends Chunk {
                 actions[i] = new Action(buffer);
             }
 
-            buffer.position(initialPosition + size);
+            buffer.setPosition(initialPosition + size);
         }
 
         @Override
@@ -265,7 +265,7 @@ public class Events extends Chunk {
         public final Parameter[] items;
 
         public Condition(ByteReader buffer) {
-            int currentPosition = buffer.position();
+            int currentPosition = buffer.getPosition();
             int size = buffer.getUnsignedShort();
 
             objectType = buffer.getShort();
@@ -292,7 +292,7 @@ public class Events extends Chunk {
                 method = Conditions.getMethodForCondition(name);
             }
 
-            buffer.position(currentPosition + size);
+            buffer.setPosition(currentPosition + size);
         }
 
         public boolean inverted() {
@@ -327,7 +327,7 @@ public class Events extends Chunk {
         public final Parameter[] items;
 
         public Action(ByteReader buffer) {
-            int currentPosition = buffer.position();
+            int currentPosition = buffer.getPosition();
             int size = buffer.getUnsignedShort();
 
             objectType = buffer.getShort();
@@ -354,7 +354,7 @@ public class Events extends Chunk {
                 method = Actions.getMethodForAction(name);
             }
 
-            buffer.position(currentPosition + size);
+            buffer.setPosition(currentPosition + size);
         }
 
         @Override
@@ -374,7 +374,7 @@ public class Events extends Chunk {
         public ParameterValue value;
 
         public Parameter(ByteReader buffer) {
-            int currentPosition = buffer.position();
+            int currentPosition = buffer.getPosition();
             int size = buffer.getShort();
             code = buffer.getShort();
             loader = ParameterLoader.getParamByID(code);
@@ -384,7 +384,7 @@ public class Events extends Chunk {
                 value = ParameterValue.getParameter(loader.name(), buffer);
             }
 
-            buffer.position(currentPosition + size);
+            buffer.setPosition(currentPosition + size);
 
         }
 

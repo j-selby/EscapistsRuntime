@@ -1,4 +1,8 @@
+
+
 buildscript {
+    ext.kotlinVersion = '1.0.0-beta-2423'
+
     repositories {
         mavenCentral()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
@@ -8,6 +12,7 @@ buildscript {
     dependencies {
         classpath 'com.battlebardgames.parcl:parcl:1.0.6'
         classpath 'com.android.tools.build:gradle:1.2.3'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     }
 }
 
@@ -38,6 +43,7 @@ allprojects {
 
 project(":core") {
     apply plugin: "java"
+    apply plugin: "kotlin"
 
     dependencies {
         compile "org.mini2Dx:mini2Dx-core:$mini2DxVersion"
@@ -45,6 +51,7 @@ project(":core") {
         compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
         compile 'org.apache.commons:commons-lang3:3.4'
         compile 'org.mozilla:rhino:1.7.7'
+        compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
     }
 }
 

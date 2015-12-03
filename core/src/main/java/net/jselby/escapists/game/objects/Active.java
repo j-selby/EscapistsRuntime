@@ -29,7 +29,7 @@ public class Active extends ObjectInstance {
                   ObjectInstances.ObjectInstance instance) {
         super(definition, instance);
 
-        ObjectCommon common = ((ObjectCommon) definition.properties.properties);
+        ObjectCommon common = ((ObjectCommon) definition.properties.getProperties());
         animations = common.animations;
 
         // Calculate dimensions
@@ -46,10 +46,10 @@ public class Active extends ObjectInstance {
 
             if (frame != 0) {
                 ImageBank.ImageItem image = EscapistsRuntime.getRuntime().getApplication().images[frame + 1];
-                width = image.image.getWidth();
-                height = image.image.getHeight();
-                xHotspot = image.xHotspot;
-                yHotspot = image.yHotspot;
+                width = image.getImage().getWidth();
+                height = image.getImage().getHeight();
+                xHotspot = image.getXHotspot();
+                yHotspot = image.getYHotspot();
             }
         }
     }
@@ -110,6 +110,6 @@ public class Active extends ObjectInstance {
         }
 
         ImageBank.ImageItem image = EscapistsRuntime.getRuntime().getApplication().images[frame + 1];
-        g.drawSprite(image.image, getX(), getY());
+        g.drawSprite(image.getImage(), getX(), getY());
     }
 }

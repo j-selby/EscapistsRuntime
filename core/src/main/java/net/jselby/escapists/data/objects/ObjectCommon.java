@@ -2,10 +2,12 @@ package net.jselby.escapists.data.objects;
 
 import com.badlogic.gdx.graphics.Color;
 import net.jselby.escapists.data.chunks.ObjectProperties;
+import net.jselby.escapists.data.chunks.ObjectsKt;
 import net.jselby.escapists.data.objects.sections.*;
 import net.jselby.escapists.util.ByteReader;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * An ObjectCommon is a object definition's properties that is declared as generic.
@@ -47,7 +49,7 @@ public class ObjectCommon extends ObjectDefinitionProperties {
 
     @Override
     public void read(ByteReader buffer, int length) {
-        int currentPosition = buffer.position();
+        int currentPosition = buffer.getPosition();
 
         int size = buffer.getInt();
 
@@ -62,7 +64,7 @@ public class ObjectCommon extends ObjectDefinitionProperties {
 
         flags = buffer.getUnsignedInt();
 
-        int end = buffer.position() + 8 * 2;
+        int end = buffer.getPosition() + 8 * 2;
         qualifiers = new ArrayList<Short>();
         for (int i = 0; i < 8; i++) {
             short qualifier = buffer.getShort();
@@ -74,7 +76,7 @@ public class ObjectCommon extends ObjectDefinitionProperties {
             qualifiers.add(qualifier);
         }
 
-        buffer.position(end);
+        buffer.setPosition(end);
 
         short systemObjectOffset = buffer.getShort();
 
@@ -90,37 +92,37 @@ public class ObjectCommon extends ObjectDefinitionProperties {
         fadeInOffset = buffer.getInt();
         fadeOutOffset = buffer.getInt();
 
-        ObjectProperties.ObjectTypes type = ObjectProperties.ObjectTypes.getById(objectType);
+        ObjectProperties.ObjectTypes type = ObjectsKt.getById(objectType);
 
         if (movementsOffset != 0) {
-            buffer.position(currentPosition + movementsOffset);
+            buffer.setPosition(currentPosition + movementsOffset);
             movements = new Movements[] { new Movements(buffer) };
         } else {
             movements = new Movements[0];
         }
 
         if (valuesOffset != 0) {
-            buffer.position(currentPosition + valuesOffset);
+            buffer.setPosition(currentPosition + valuesOffset);
             values = new AlterableValues(buffer);
         }
 
         if (stringsOffset != 0) {
-            buffer.position(currentPosition + stringsOffset);
+            buffer.setPosition(currentPosition + stringsOffset);
             strings = new AlterableStrings(buffer);
         }
 
         if (animationsOffset != 0) {
-            buffer.position(currentPosition + animationsOffset);
+            buffer.setPosition(currentPosition + animationsOffset);
             animations = new AnimationHeader(buffer);
         }
 
         if (counterOffset != 0) {
-            buffer.position(currentPosition + counterOffset);
+            buffer.setPosition(currentPosition + counterOffset);
             counter = new Counter(buffer);
         }
 
         if (extensionOffset != 0) {
-            buffer.position(currentPosition + extensionOffset);
+            buffer.setPosition(currentPosition + extensionOffset);
             int dataSize = buffer.getInt() - 20;
             buffer.skipBytes(4);
 
@@ -142,7 +144,7 @@ public class ObjectCommon extends ObjectDefinitionProperties {
         }
 
         if (systemObjectOffset != 0) {
-            buffer.position(currentPosition + systemObjectOffset);
+            buffer.setPosition(currentPosition + systemObjectOffset);
 
             if (type == ObjectProperties.ObjectTypes.Text || type == ObjectProperties.ObjectTypes.Question) {
                 // Text

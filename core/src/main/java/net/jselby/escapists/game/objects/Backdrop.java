@@ -19,17 +19,17 @@ public class Backdrop extends ObjectInstance {
 
         image = EscapistsRuntime.getRuntime()
                 .getApplication().images[
-                ((net.jselby.escapists.data.objects.Backdrop) definition.properties.properties).image + 1];
+                ((net.jselby.escapists.data.objects.Backdrop) definition.properties.getProperties()).image + 1];
     }
 
     @Override
     public float getWidth() {
-        return image.image.getWidth();
+        return image.getImage().getWidth();
     }
 
     @Override
     public float getHeight() {
-        return image.image.getHeight();
+        return image.getImage().getHeight();
     }
 
     @Override
@@ -45,7 +45,7 @@ public class Backdrop extends ObjectInstance {
 
         if (image != null) {
             // TODO: Does this need {x,y}Hotspots?
-            g.drawSprite(image.image, getX(), getY());
+            g.drawSprite(image.getImage(), getX(), getY());
         }
     }
 }

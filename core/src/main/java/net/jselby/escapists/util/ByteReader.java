@@ -126,7 +126,7 @@ public class ByteReader {
      * Sets the position of the byte buffer.
      * @param pos A byte position
      */
-    public void position(int pos) {
+    public void setPosition(int pos) {
         buf.position(pos);
     }
 
@@ -134,7 +134,7 @@ public class ByteReader {
      * Returns the current position of the byte buffer.
      * @return A position
      */
-    public int position() {
+    public int getPosition() {
         return buf.position();
     }
 

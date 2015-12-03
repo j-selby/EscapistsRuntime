@@ -15,7 +15,7 @@ public class Expression {
     private short objectInfoList;
 
     public Expression(ByteReader buffer) {
-        int currentPosition = buffer.position();
+        int currentPosition = buffer.getPosition();
         objectType = buffer.getShort();
         num = buffer.getShort();
         if (objectType == 0 && num == 0) {
@@ -40,7 +40,7 @@ public class Expression {
             e.printStackTrace();
         }
 
-        buffer.position(currentPosition + size);
+        buffer.setPosition(currentPosition + size);
     }
 
     @Override

@@ -49,14 +49,15 @@ public class Scene {
 
     public Scene(EscapistsRuntime runtime, Frame frame, EscapistsGame game) {
         this.runtime = runtime;
-        name = frame.name;
-        background = frame.background;
-        objectInstanceDefs = frame.objects.instances;
-        layerDefinitions = frame.layers.layers;
-        events = frame.events;
+        assert frame != null;
+        name = frame.getName();
+        background = frame.getBackground();
+        objectInstanceDefs = frame.getObjects().instances;
+        layerDefinitions = frame.getLayers().layers;
+        events = frame.getEvents();
 
-        width = frame.width;
-        height = frame.height;
+        width = frame.getWidth();
+        height = frame.getHeight();
 
         scope = new Scope(game, this);
 
@@ -96,14 +97,14 @@ public class Scene {
         // Create new object instances from their data equivalents
         for (ObjectInstances.ObjectInstance originalDef : objectInstanceDefs) {
             // Find the stats for this object
-            ObjectDefinition objectInfo = runtime.getApplication().objectDefs[originalDef.objectInfo];
+            ObjectDefinition objectInfo = runtime.getApplication().objectDefs[originalDef.getObjectInfo()];
             ObjectInstance newInstance = null;
 
-            if (objectInfo == null || objectInfo.properties == null || objectInfo.properties.objectType == null) {
+            if (objectInfo == null || objectInfo.properties == null || objectInfo.properties.getObjectType() == null) {
                 continue;
             }
 
-            switch(objectInfo.properties.objectType) {
+            switch(objectInfo.properties.getObjectType()) {
                 case Player:
                     break;
                 case Keyboard:
@@ -160,7 +161,7 @@ public class Scene {
 
         firstFrame = true;
 
-        System.out.println(events.toJS());
+        //System.out.println(events.toJS());
 
         frameCount = 0;
         startTime = System.currentTimeMillis();
@@ -191,7 +192,7 @@ public class Scene {
 
                 if (condition.method == null) {
                     conditionsPassed = false;
-                    System.out.println("Condition method failed: " + condition);
+                    //System.out.println("Condition method failed: " + condition);
                     continue;
                 }
 

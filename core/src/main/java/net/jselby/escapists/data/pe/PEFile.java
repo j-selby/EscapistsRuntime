@@ -20,7 +20,7 @@ public class PEFile {
 
     public PEFile(ByteReader buf) throws InvalidFileException {
         // Firstly, check that this file matches the default Windows executable magic, 'MZ'
-        int startPos = buf.position();
+        int startPos = buf.getPosition();
 
         byte[] exeHeader = buf.getBytes(2);
         if (!Arrays.equals(exeHeader, EXE_HEADER)) {
@@ -29,22 +29,22 @@ public class PEFile {
         }
 
         // Secondly, read the header offset
-        buf.position(startPos + 0x30 + 12);
+        buf.setPosition(startPos + 0x30 + 12);
         int peHeaderOffset = buf.getInt();
 
         // Grab data from the PE header
-        buf.position(peHeaderOffset);
+        buf.setPosition(peHeaderOffset);
         buf.getBytes(peSignature);
         machineType = buf.getShort();
         int sectionCount = buf.getShort();
 
-        buf.position(buf.position() + 12);
+        buf.skipBytes(12);
         int optionalHeaderSize = buf.getShort();
         peCharacteristics = buf.getShort();
 
         // Grab data from the optional header
         bitCount = buf.getShort();
-        buf.position(buf.position() - 2 + optionalHeaderSize);
+        buf.setPosition(buf.getPosition() - 2 + optionalHeaderSize);
 
         // Read sections
         sections = new PESection[sectionCount];
@@ -60,13 +60,13 @@ public class PEFile {
             int sectionSize = buf.getInt();
             int sectionPointer = buf.getInt();
 
-            buf.position(buf.position() + 16);
+            buf.skipBytes(16);
 
             sections[i] = new PESection(sectionName, virtualSizeRVA,
                     virtualAddressRVA, sectionSize, sectionPointer);
         }
 
-        buf.position(startPos);
+        buf.setPosition(startPos);
     }
 
     /**

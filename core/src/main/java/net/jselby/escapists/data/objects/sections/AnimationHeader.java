@@ -9,7 +9,7 @@ public class AnimationHeader {
     public final Animation[] loadedAnimations;
 
     public AnimationHeader(ByteReader buffer) {
-        int position = buffer.position();
+        int position = buffer.getPosition();
 
         short size = buffer.getShort();
         short count = buffer.getShort();
@@ -22,7 +22,7 @@ public class AnimationHeader {
         loadedAnimations = new Animation[count];
         for (int i = 0; i < count; i++) {
             if (offsets[i] != 0) {
-                buffer.position(position + offsets[i]);
+                buffer.setPosition(position + offsets[i]);
                 loadedAnimations[i] = new Animation(buffer, i);
             }
         }
@@ -42,7 +42,7 @@ public class AnimationHeader {
         public Animation(ByteReader buffer, int index) {
             this.index = index;
 
-            int currentPosition = buffer.position();
+            int currentPosition = buffer.getPosition();
 
             short[] offsets = new short[32];
             for (int i = 0; i < offsets.length; i++) {
@@ -53,7 +53,7 @@ public class AnimationHeader {
             for (int i = 0; i < offsets.length; i++) {
                 int offset = offsets[i];
                 if (offset != 0) {
-                    buffer.position(currentPosition + offset);
+                    buffer.setPosition(currentPosition + offset);
                     localDirections[i] = new AnimationDirection(buffer, index);
                 }
             }

@@ -24,12 +24,12 @@ public class Text extends ObjectInstance {
 
     public Text(ObjectDefinition def, ObjectInstances.ObjectInstance instanceDef) {
         super(def, instanceDef);
-        rawType = ((ObjectCommon) def.properties.properties).partText;
+        rawType = ((ObjectCommon) def.properties.getProperties()).partText;
 
         net.jselby.escapists.data.objects.sections.Text.Paragraph paragraph = rawType.paragraphs[0];
         compiledStrings = EscapistsRuntime.getRuntime().getApplication()
-                    .fonts[paragraph.font + 1].value.fontCache
-                    .addText(paragraph.value, instanceDef.x, instanceDef.y);
+                    .fonts[paragraph.font + 1].getValue().getFontCache()
+                    .addText(paragraph.value, instanceDef.getX(), instanceDef.getY());
         font = paragraph.font;
         str = paragraph.value;
         //font = new TrueTypeFont(originalFont.value.awtFont, false);
@@ -75,7 +75,7 @@ public class Text extends ObjectInstance {
         }
 
         BitmapFont font = EscapistsRuntime.getRuntime()
-                .getApplication().fonts[paragraph.font + 1].value.font;
+                .getApplication().fonts[paragraph.font + 1].getValue().getFont();
         g.setFont(font);
         g.setColor(paragraph.color);
         g.drawString(str, getX() + drawXAdd, getY() + drawYAdd);
@@ -98,7 +98,7 @@ public class Text extends ObjectInstance {
         }
         str = msg;
         compiledStrings = EscapistsRuntime.getRuntime().getApplication()
-                .fonts[font + 1].value.fontCache
+                .fonts[font + 1].getValue().getFontCache()
                 .addText(str, getX(), getY());
     }
 }

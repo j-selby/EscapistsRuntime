@@ -164,12 +164,17 @@ public abstract class ParameterValue {
                     str += "/*$null(" + expression.objectType + ":" + expression.num + ")$*/";
                 }
             }
+
             return str;
         }
 
         public void compile(Context context) {
-            System.out.println("Compiling expression: " + toString());
-            value = context.compileString(toString(), "expression@" + hashCode(), 1, null);
+            //System.out.println("Compiling expression: " + toString());
+            //System.out.println("Compiling expression: " + toString());
+            try {
+                //value = context.compileString(toString(), "expression@" + hashCode(), 1, null);
+            } catch (Exception ignored) {
+            }
         }
     }
 
@@ -264,9 +269,9 @@ public abstract class ParameterValue {
         public void read(ByteReader buffer) {
             flags = buffer.getUnsignedShort();
 
-            int currentPosition = buffer.position();
+            int currentPosition = buffer.getPosition();
             fileName = buffer.getString();
-            buffer.position(currentPosition + 260);
+            buffer.setPosition(currentPosition + 260);
 
             command = buffer.getString();
         }
@@ -283,7 +288,7 @@ public abstract class ParameterValue {
 
         @Override
         public void read(ByteReader buffer) {
-            offset = buffer.position() - 24;
+            offset = buffer.getPosition() - 24;
             flags = buffer.getUnsignedShort();
             id = buffer.getUnsignedShort();
             name = buffer.getString(96);
@@ -302,7 +307,7 @@ public abstract class ParameterValue {
             id = buffer.getShort();
 
             if (pointer != 0) {
-                pointer += buffer.position();
+                pointer += buffer.getPosition();
             }
         }
     }
