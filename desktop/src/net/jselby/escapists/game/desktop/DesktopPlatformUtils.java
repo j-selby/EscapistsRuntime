@@ -128,6 +128,22 @@ public class DesktopPlatformUtils extends PlatformUtils {
         }
     }
 
+    @Override
+    public File getSaveLocation() {
+        if (isWindows()) {
+            File file = new File(System.getProperty("user.home") + File.separator + "My Documents");
+            if (!file.exists()) {
+                file = new File(System.getProperty("user.home") + File.separator + "Documents");
+            }
+            return file;
+        }
+        return new File(System.getProperty("user.home"));
+    }
+
+    public boolean isWindows() {
+        return System.getProperty("os.name").toLowerCase().contains("win");
+    }
+
     public void dialog(String s) {
         JOptionPane.showMessageDialog(null, s, "Escapists Runtime", JOptionPane.INFORMATION_MESSAGE);
     }

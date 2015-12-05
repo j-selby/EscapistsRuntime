@@ -10,12 +10,16 @@ import java.util.zip.Inflater;
  */
 public class CompressionUtils {
     public static ByteReader decompress(ByteReader buffer) {
+        int decompressedSize = (int) buffer.getUnsignedInt();
+        int compressedData = (int) buffer.getUnsignedInt();
+        return decompress(buffer, compressedData, decompressedSize);
+    }
+
+    public static ByteReader decompress(ByteReader buffer, int compressedSize, int decompressedSize) {
         // Decompress
         Inflater inflater = new Inflater();
 
-        int decompressedSize = (int) buffer.getUnsignedInt();
-        int compressedData = (int) buffer.getUnsignedInt();
-        byte[] data = new byte[compressedData];
+        byte[] data = new byte[compressedSize];
         buffer.getBytes(data);
 
         try {

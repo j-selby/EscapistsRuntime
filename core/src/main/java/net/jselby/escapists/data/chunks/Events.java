@@ -94,8 +94,10 @@ public class Events extends Chunk {
         for (EventGroup group : groups) {
             // Check for groups
             if (group.conditions.length != 0 && group.conditions[0].name != null && group.conditions[0].name.equalsIgnoreCase("NewGroup")) {
-                builder.append(StringUtils.repeat(' ', indent)).append("{ // ")
+                builder.append(StringUtils.repeat(' ', indent)).append("if (groupActive(\"")
                         .append(((ParameterValue.Group) group.conditions[0].items[0].value).name)
+                        .append("\")) { // Flags: ")
+                        .append(Integer.toBinaryString(((ParameterValue.Group) group.conditions[0].items[0].value).flags))
                         .append("\n");
                 indent += 4;
                 continue;
@@ -107,16 +109,11 @@ public class Events extends Chunk {
 
             // Build conditions for group
             String conditions = "";
+            boolean lastWasOr = false;
             for (Condition condition : group.conditions) {
                 /*if (condition.name != null && condition.name.equalsIgnoreCase("Always")) {
                     continue;
                 }*/
-                if (conditions.length() != 0) {
-                    conditions += " && ";
-                }
-                if (condition.inverted()) {
-                    conditions += "!";
-                }
 
 
                 ObjectDefinition object = null;
@@ -124,11 +121,31 @@ public class Events extends Chunk {
                     object = EscapistsRuntime.getRuntime().getApplication().objectDefs[condition.objectInfo];
                 }
 
-                conditions += (condition.name == null ? (condition.objectType + ":" + condition.num) : condition.name)
-                        + "(" + (object == null ? "null" + condition.objectInfo : object.name) + ")(";
+                int id = (object == null ? -1 : object.handle);
+                String objName = (id + " /*" + (object == null ? "null" + condition.objectInfo : object.name)
+                        + "*/").trim();
+                String objDeclaration = "env." + (id == 0 ? "" : ("withObjects(" + objName + ")."));
+                String objMethod = (condition.name == null ? (condition.objectType + ":" + condition.num) : condition.name).trim();
+
+                if (objMethod.equalsIgnoreCase("OrFiltered")) {
+                    conditions += " || ";
+                    lastWasOr = true;
+                    continue;
+                } else if (!lastWasOr && conditions.length() != 0) {
+                    conditions += " && ";
+                } else {
+                    lastWasOr = false;
+                }
+
+                if (condition.inverted()) {
+                    conditions += "!";
+                }
+
+                conditions += objDeclaration + objMethod + "(";
+
                 int paramCount = 0;
                 for (Parameter param : condition.items) {
-                    conditions += (paramCount != 0 ? ", " : "") + param.value + ":" + param.code;//param.loader.name() + " " + param.name.toLowerCase();
+                    conditions += (paramCount != 0 ? ", " : "") + param.value;// + ":" + param.code;//param.loader.name() + " " + param.name.toLowerCase();
                     paramCount++;
                 }
                 conditions += ")";
@@ -153,22 +170,30 @@ public class Events extends Chunk {
                     object = EscapistsRuntime.getRuntime().getApplication().objectDefs[action.objectInfo];
                 }
 
-                actions += (action.name == null ? (action.objectType + ":" + action.num) : action.name)
-                        + "(" + (object == null ? "null" + action.objectInfo : object.name) + ")" + "(";
+
+                int id = (object == null ? -1 : object.handle);
+                String objName = (id + " /*" + (object == null ? "null" + action.objectInfo : object.name)
+                        + (action.name == null ? "* /" : "*/")).trim();
+                String objDeclaration = "env." + (id == 0 ? "" : ("withObjects(" + objName + ")."));
+                String objMethod = (action.name == null ? (action.objectType + ":" + action.num) : action.name).trim();
+
+                actions += objDeclaration + objMethod + "(";
 
                 int paramCount = 0;
                 for (Parameter param : action.items) {
-                    actions += (paramCount != 0 ? ", " : "") + param.value + ":" + param.code;//param.loader.name() + " " + param.name.toLowerCase();
+                    actions += (paramCount != 0 ? ", " : "") + param.value;// + ":" + param.code;//param.loader.name() + " " + param.name.toLowerCase();
                     paramCount++;
                 }
 
-                actions += "); // ID: " + action.num;
+                actions += ");";
+
                 if (action.name == null) {
                     actions += " */";
                 }
 
                 actions += "\n";
             }
+
             indent -= 4;
 
             if (actions.length() == 0) {
@@ -288,9 +313,9 @@ public class Events extends Chunk {
             }
 
             // Grab the appropriate method to invoke this Condition
-            if (name != null) {
+            /*if (name != null) {
                 method = Conditions.getMethodForCondition(name);
-            }
+            }*/
 
             buffer.setPosition(currentPosition + size);
         }
@@ -350,9 +375,9 @@ public class Events extends Chunk {
             }
 
             // Grab the appropriate method to invoke this Action
-            if (name != null) {
+            /*if (name != null) {
                 method = Actions.getMethodForAction(name);
-            }
+            }*/
 
             buffer.setPosition(currentPosition + size);
         }

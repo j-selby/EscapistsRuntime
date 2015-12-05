@@ -2,6 +2,7 @@ package net.jselby.escapists.util;
 
 import com.badlogic.gdx.graphics.Color;
 
+import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
@@ -81,8 +82,16 @@ public class ByteReader {
      */
     public byte[] getBytes(int length) {
         byte[] data = new byte[length];
-        buf.get(data);
+        getBytes(data);
         return data;
+    }
+
+    /**
+     * Reads a set of bytes from the ByteBuffer, and creates a new ByteReader for it.
+     * @return A new ByteReader
+     */
+    public ByteReader getReader(int length) {
+        return new ByteReader(getBytes(length));
     }
 
     /**
@@ -148,7 +157,7 @@ public class ByteReader {
 
     public String getString() {
         StringBuilder builder = new StringBuilder();
-        while(true) {
+        while (true) {
             char character = buf.getChar();
             if (character == '\0') {
                 break;

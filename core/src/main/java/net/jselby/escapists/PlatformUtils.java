@@ -41,4 +41,10 @@ public abstract class PlatformUtils {
      * Hides the mouse.
      */
     public abstract void hideMouse();
+
+    /**
+     * Gets the save location for this platform
+     * @return A save location
+     */
+    public abstract File getSaveLocation();
 }

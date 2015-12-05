@@ -16,6 +16,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
 import java.util.Arrays;
 import java.util.List;
 import java.util.zip.DataFormatException;
@@ -79,11 +81,16 @@ public class EscapistsRuntime {
             return false;
         }
 
-        FileInputStream fileIn = new FileInputStream(new File(escapistsDirectory, "TheEscapists_eur.exe"));
+        File escapistsFile = new File(escapistsDirectory, "TheEscapists_eur.exe");
 
-        ByteBuffer bufIn = ByteBuffer.wrap(IOUtils.toByteArray(fileIn)).order(ByteOrder.LITTLE_ENDIAN);
-        fileIn.close();
-        bufIn.rewind();
+        FileInputStream fileIn = new FileInputStream(escapistsFile);
+        MappedByteBuffer bufIn = (MappedByteBuffer) fileIn.getChannel().map(FileChannel.MapMode.READ_ONLY, 0,
+                escapistsFile.length()).order(ByteOrder.LITTLE_ENDIAN);
+        System.out.println("JVM decided to cache in memory: " + bufIn.isLoaded());
+
+        //ByteBuffer bufIn = ByteBuffer.wrap(IOUtils.toByteArray(fileIn)).order(ByteOrder.LITTLE_ENDIAN);
+        //fileIn.close();
+        //bufIn.rewind();
         ByteReader buf = new ByteReader(bufIn);
 
         game.setLoadingMessage("Parsing file structure...");
@@ -111,7 +118,6 @@ public class EscapistsRuntime {
         }
 
         // Read pack
-        int packStart = buf.getPosition() - 8;
         if (buf.getInt() != 32) { // Pack header size
             System.out.println("Bad pack header size. Is this the correct Escapists file (TheEscapists_eur.exe)?");
             game.fatalPrompt("Game failed validation check (PACK_HEADER_SIZE). Is the correct Escapists file (TheEscapists_eur.exe)?");
@@ -120,7 +126,7 @@ public class EscapistsRuntime {
 
         System.out.println("Game header and size validated.");
 
-        buf.setPosition(packStart + 16);
+        buf.skipBytes(4);
         // Pack metadata
         int formatVersion = buf.getInt();
         if (buf.getInt() != 0 || buf.getInt() != 0) {

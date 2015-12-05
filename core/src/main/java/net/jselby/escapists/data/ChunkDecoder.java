@@ -50,17 +50,16 @@ public class ChunkDecoder {
 
             if ((flags & 1) != 0) { // Compression
                 if ((flags & 2) != 0) { // Encryption
-                    byte[] dataCopy = new byte[data.length - 4];
-                    System.arraycopy(data, 4, dataCopy, 0, data.length - 4);
+                    byte[] dataCopy = new byte[size - 4];
+                    System.arraycopy(data, 4, dataCopy, 0, size - 4);
                     dataCopy = ChunkTransforms.transform(dataCopy);
-                    System.arraycopy(dataCopy, 0, data, 4, data.length - 4);
+                    System.arraycopy(dataCopy, 0, data, 4, size - 4);
                 }
 
-                ByteBuffer decompressionSizing = ByteBuffer.wrap(data).order(ByteOrder.LITTLE_ENDIAN);
+                ByteReader decompressionSizing = new ByteReader(data);
                 int decompressedSize = decompressionSizing.getInt();
                 decompressionSizing.getInt(); // Compressed size
-                data = new byte[size - 8];
-                decompressionSizing.get(data);
+                data = decompressionSizing.getBytes(size - decompressionSizing.getPosition());
 
                 try {
                     byte[] decompData = new byte[decompressedSize];
@@ -88,7 +87,11 @@ public class ChunkDecoder {
                 threadManager.submit(new Runnable() {
                     @Override
                     public void run() {
-                        chunk.init(new ByteReader(ByteBuffer.wrap(finalData).order(ByteOrder.LITTLE_ENDIAN)), finalData.length);
+                        try {
+                            chunk.init(new ByteReader(ByteBuffer.wrap(finalData).order(ByteOrder.LITTLE_ENDIAN)), finalData.length);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 });
 

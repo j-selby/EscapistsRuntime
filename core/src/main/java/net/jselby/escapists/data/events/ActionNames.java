@@ -267,6 +267,10 @@ public class ActionNames {
         map.put(65, tempMap);
 
         tempMap = new HashMap<Integer, String>();
+        tempMap.put(95, "CreateDirectory");
+        map.put(66, tempMap);
+
+        tempMap = new HashMap<Integer, String>();
         tempMap.put(82, "CreateDirectory");
         map.put(13, tempMap);
 

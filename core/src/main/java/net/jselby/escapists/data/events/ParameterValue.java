@@ -41,6 +41,11 @@ public abstract class ParameterValue {
             timer = buffer.getInt();
             loops = buffer.getInt();
         }
+
+        @Override
+        public java.lang.String toString() {
+            return "" + timer;
+        }
     }
 
     public static class Short extends ParameterValue {
@@ -53,7 +58,7 @@ public abstract class ParameterValue {
 
         @Override
         public java.lang.String toString() {
-            return "Short=" + value;
+            return "" + value;
         }
     }
 
@@ -69,7 +74,7 @@ public abstract class ParameterValue {
 
         @Override
         public java.lang.String toString() {
-            return "Int=" + value;
+            return "" + value;
         }
     }
 
@@ -130,6 +135,11 @@ public abstract class ParameterValue {
         public void read(ByteReader buffer) {
             key = buffer.getShort();
         }
+
+        @Override
+        public java.lang.String toString() {
+            return "" + key;
+        }
     }
 
     public static class ExpressionParameter extends ParameterValue {
@@ -161,7 +171,7 @@ public abstract class ParameterValue {
                 if (expression.value != null) {
                     str += expression.value.toString();
                 } else {
-                    str += "/*$null(" + expression.objectType + ":" + expression.num + ")$*/";
+                    str += "$null(" + expression.objectType + ":" + expression.num + ")$";
                 }
             }
 
@@ -310,6 +320,11 @@ public abstract class ParameterValue {
                 pointer += buffer.getPosition();
             }
         }
+
+        @Override
+        public java.lang.String toString() {
+            return "" + pointer;
+        }
     }
 
     public static class String extends ParameterValue {
@@ -377,6 +392,11 @@ public abstract class ParameterValue {
         public void read(ByteReader buffer) {
             click = buffer.getByte();
             doubleVal = buffer.getByte() > 0;
+        }
+
+        @Override
+        public java.lang.String toString() {
+            return click + "," + doubleVal;
         }
     }
 

@@ -8,13 +8,18 @@ import net.jselby.escapists.data.chunks.Frame;
 import net.jselby.escapists.data.chunks.Layers;
 import net.jselby.escapists.data.chunks.ObjectInstances;
 import net.jselby.escapists.data.events.ParameterValue;
+import net.jselby.escapists.game.events.Actions;
+import net.jselby.escapists.game.events.Conditions;
 import net.jselby.escapists.game.events.Scope;
 import net.jselby.escapists.game.objects.Active;
 import net.jselby.escapists.game.objects.Backdrop;
 import net.jselby.escapists.game.objects.Text;
+import org.apache.commons.lang3.StringUtils;
 import org.mini2Dx.core.graphics.Graphics;
-import org.mozilla.javascript.Context;
+import org.mozilla.javascript.*;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.*;
 
 /**
@@ -46,6 +51,10 @@ public class Scene {
 
     private Scope scope;
     private List<Object> args = new ArrayList<Object>();
+
+    private Context jsContext;
+    private ScriptableObject jsScriptable;
+    private Script jsScript;
 
     public Scene(EscapistsRuntime runtime, Frame frame, EscapistsGame game) {
         this.runtime = runtime;
@@ -161,7 +170,24 @@ public class Scene {
 
         firstFrame = true;
 
-        //System.out.println(events.toJS());
+        // Prepare JS
+        String[] lines = events.toJS().split("\n");
+        for (int i = 0; i < lines.length; i++) {
+            System.out.println(StringUtils.leftPad((i + 1) + ": ", 5) + lines[i]);
+        }
+
+        jsContext = Context.enter();
+        jsScriptable = jsContext.initStandardObjects();
+
+        Object wrappedOut = Context.javaToJS(scope, jsScriptable);
+        ScriptableObject.putProperty(jsScriptable, "env", wrappedOut);
+
+        try {
+            jsScript = jsContext.compileString(events.toJS(), "frame_" + getName() + ".js", 1, null);
+        } catch (EvaluatorException e) {
+            System.err.println("Compile error: " + e.getLocalizedMessage());
+            throw e;
+        }
 
         frameCount = 0;
         startTime = System.currentTimeMillis();
@@ -172,8 +198,10 @@ public class Scene {
     }
 
     public void tick(EscapistsGame game) {
+        jsScript.exec(jsContext, jsScriptable);
+
         // Activate conditional objects
-        for (Events.EventGroup group : events.groups) {
+        /*for (Events.EventGroup group : events.groups) {
             scope.objects.clear();
 
             boolean conditionsPassed = true;
@@ -265,7 +293,7 @@ public class Scene {
                     }
                 }
             }
-        }
+        }*/
 
         firstFrame = false;
 
@@ -295,8 +323,8 @@ public class Scene {
      * Returns the currently allocated objects within this scene.
      * @return A object array
      */
-    public ObjectInstance[] getObjects() {
-        return instances.toArray(new ObjectInstance[instances.size()]);
+    public List<ObjectInstance> getObjects() {
+        return instances;
     }
 
     /**

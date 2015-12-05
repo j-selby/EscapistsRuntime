@@ -8,6 +8,7 @@ import net.jselby.escapists.data.events.ExpressionValue;
 import net.jselby.escapists.data.events.ParameterValue;
 import net.jselby.escapists.game.ObjectInstance;
 
+import java.io.File;
 import java.lang.reflect.Method;
 
 /**
@@ -15,38 +16,27 @@ import java.lang.reflect.Method;
  *
  * @author j_selby
  */
-public class Conditions {
-    public static boolean Always(Scope scope,
-                                        Events.Condition condition) {
+public class Conditions extends Parameters {
+    public boolean Always(
+    ) {
         return true;
     }
 
-    public static boolean Compare(Scope scope,
-                                  Events.Condition condition,
-                                  ParameterValue.ExpressionParameter expression,
-                                  ParameterValue.ExpressionParameter comparison) {
-        // TODO: Compare
-        if (expression.toString().contains("RUN_EDITOR")) {
-            return false;
-        }
-        return true;
+    public boolean Compare(String str1, String str2) {
+        return str1.equals(str2);
     }
 
-    public static boolean StartOfFrame(Scope scope,
-                                        Events.Condition condition) {
+    public boolean StartOfFrame(
+    ) {
         return scope.getScene().firstFrame;
     }
 
-    public static boolean OnLoop(Scope scope,
-                                 Events.Condition condition,
-                                 ParameterValue.ExpressionParameter expString) {
+    public boolean OnLoop(ParameterValue.ExpressionParameter expString) {
         // TODO: Expression expansion
         return false;
     }
 
-    public static boolean MouseOnObject(Scope scope,
-                                        Events.Condition condition,
-                                        ParameterValue.Object object) {
+    public boolean MouseOnObject(ParameterValue.Object object) {
         // Find all objects which correspond to this
         int mouseX = scope.getGame().getMouseX();
         int mouseY = scope.getGame().getMouseY();
@@ -69,9 +59,7 @@ public class Conditions {
         return mouseOver;
     }
 
-    public static boolean MouseClicked(Scope scope,
-                                        Events.Condition condition,
-                                        ParameterValue.Click click) {
+    public boolean MouseClicked(ParameterValue.Click click) {
         // We only get left clicks on mobile platforms
 //System.out.println("Bad click type for platform: " + click.click);
         return !(Gdx.app.getType() != Application.ApplicationType.Desktop && click.click != 0)
@@ -79,10 +67,8 @@ public class Conditions {
 
     }
 
-    public static boolean ObjectClicked(Scope scope,
-                                        Events.Condition condition,
-                                        ParameterValue.Click click,
-                                        ParameterValue.Object object) {
+    public boolean ObjectClicked(ParameterValue.Click click,
+            ParameterValue.Object object) {
         if (Gdx.app.getType() != Application.ApplicationType.Desktop
                 && click.click != 0) {
             // We only get left clicks on mobile platforms
@@ -123,10 +109,8 @@ public class Conditions {
         return mouseOver;
     }
 
-    public static boolean Every(Scope scope,
-                                Events.Condition condition,
-                                ParameterValue.Every every) {
-        String key = "_env_every_" + condition.identifier;
+    public boolean Every(int id, ParameterValue.Every every) {
+        String key = "_env_every_" + id;
         if (scope.getScene().getVariables().containsKey(key)) {
             // Check if it has updated
             long currentTime = System.currentTimeMillis();
@@ -143,9 +127,8 @@ public class Conditions {
         return false;
     }
 
-    public static boolean Once(Scope scope,
-                                Events.Condition condition) {
-        String key = "_env_once_" + condition.identifier;
+    public boolean Once(int id) {
+        String key = "_env_once_" + id;
         if (scope.getScene().getVariables().containsKey(key)) {
             return false;
         } else {
@@ -154,9 +137,7 @@ public class Conditions {
         }
     }
 
-    public static boolean KeyPressed(Scope scope,
-                                     Events.Condition condition,
-                                     ParameterValue.KeyParameter key) {
+    public boolean KeyPressed(ParameterValue.KeyParameter key) {
         // TODO: Key pressed
         //Gdx.input.
         /*if (validate) {
@@ -168,10 +149,8 @@ public class Conditions {
         return false;
     }
 
-    public static boolean CompareGlobalValueIntEqual(Scope scope,
-                                                     Events.Condition condition,
-                                                     ParameterValue.Short id,
-                                                     ParameterValue.ExpressionParameter value) {
+    public boolean CompareGlobalValueIntEqual(ParameterValue.Short id,
+            ParameterValue.ExpressionParameter value) {
         if (scope.getGame().globalInts.containsKey((int) id.value)) {
             return ((ExpressionValue.Long) value.expressions[0].value).value == scope.getGame().globalInts.get((int) id.value);
         } else {
@@ -180,30 +159,27 @@ public class Conditions {
         //return (System.currentTimeMillis() - scope.getScene().getSceneStartTime()) > time.timer;
     }
 
-    public static boolean CompareGlobalString(Scope scope,
-                                                      Events.Condition condition,
-                                                      ParameterValue.Short id,
-                                                      ParameterValue.String value) {
+    public boolean CompareGlobalString(ParameterValue.Short id,
+            ParameterValue.String value) {
         return false;
         //return (System.currentTimeMillis() - scope.getScene().getSceneStartTime()) > time.timer;
     }
 
 
-    public static boolean TimerGreater(Scope scope,
-                                       Events.Condition condition,
-                                       ParameterValue.Time time) {
+    public boolean TimerGreater(ParameterValue.Time time) {
         return (System.currentTimeMillis() - scope.getScene().getSceneStartTime()) > time.timer;
     }
 
-    public static boolean SteamHasGameLicense(Scope scope,
-                                       Events.Condition condition) {
+    public boolean DirectoryExists(String name) {
+        return new File(name).exists();
+    }
+
+    public boolean SteamHasGameLicense() {
         return scope.getGame().getPlatformUtils().verifySteam();
     }
 
 
-    public static boolean extension_FlagOff(Scope scope,
-                                            Events.Condition condition,
-                                            ParameterValue.ExpressionParameter expression) {
+    public boolean extension_FlagOff(ParameterValue.ExpressionParameter expression) {
         // TODO: Evaluate expressions
         int value = expression.expressions[0].num;
 
@@ -215,9 +191,7 @@ public class Conditions {
         }
     }
 
-    public static boolean extension_FlagOn(Scope scope,
-                                           Events.Condition condition,
-                                           ParameterValue.ExpressionParameter expression) {
+    public boolean extension_FlagOn(ParameterValue.ExpressionParameter expression) {
         // TODO: Evaluate expressions
         int value = expression.expressions[0].num;
 
@@ -229,9 +203,7 @@ public class Conditions {
         }
     }
 
-    public static boolean extension_CompareY(Scope scope,
-                                           Events.Condition condition,
-                                           ParameterValue.ExpressionParameter expression) {
+    public boolean extension_CompareY(ParameterValue.ExpressionParameter expression) {
         // TODO: Evaluate expressions
         int value = expression.expressions[0].num;
 
@@ -243,26 +215,23 @@ public class Conditions {
         }
     }
 
-    /*public static boolean GroupActivated(Scope scope,
-                                     Events.Condition condition) {
+    /*public boolean GroupActivated(
+                                     ) {
         // TODO: Support group disabling
         return true;
     }
 
-    public static boolean GroupStart(Scope scope,
-                                   Events.Condition condition) {
+    public boolean GroupStart(
+                                   ) {
         // TODO: Support group disabling
         return true;
     }*/
 
-    public static boolean GroupEnd(Scope scope,
-                                             Events.Condition condition) {
+    public boolean GroupEnd() {
         return true;
     }
 
-    public static boolean extension_AnimationPlaying(Scope scope,
-                                   Events.Condition condition,
-                                                     ParameterValue.Short num) {
+    public boolean extension_AnimationPlaying(ParameterValue.Short num) {
         // TODO: Animations
         return true;
     }
@@ -271,10 +240,11 @@ public class Conditions {
 
     /**
      * Returns a method for a particular condition, or null if one cannot be found.
+     *
      * @param name The name of the condition to return
      * @return A method, or null if one cannot be found
      */
-    public static Method getMethodForCondition(String name) {
+    public Method getMethodForCondition(String name) {
         for (Method method : Conditions.class.getDeclaredMethods()) {
             if (method.getName().equals(name)) {
                 return method;

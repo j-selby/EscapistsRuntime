@@ -13,14 +13,25 @@ import java.util.List;
 /**
  * Scope is the scope in which a condition/action can reach to.
  */
-public class Scope {
+public class Scope extends Actions {
     private EscapistsGame game;
     private Scene scene;
     public List<ObjectInstance> objects = new ArrayList<ObjectInstance>();
 
     public Scope(EscapistsGame game, Scene scene) {
+        this.scope = this;
         this.game = game;
         this.scene = scene;
+    }
+
+    public Scope withObjects(int id) {
+        objects.clear();
+        for (ObjectInstance instance : scene.getObjects()) {
+            if (instance.getObjectInfo() == id) {
+                objects.add(instance);
+            }
+        }
+        return this;
     }
 
     public Scene getScene() {
@@ -29,21 +40,5 @@ public class Scope {
 
     public EscapistsGame getGame() {
         return game;
-    }
-
-    public Object evaluate(Events.Condition condition, ParameterValue.ExpressionParameter expression) {
-        for (Expression expression1 : expression.expressions) {
-            //System.out.println(expression1.value);
-        }
-        return false;
-        /*if (expression.)
-        EQUAL = 0
-        DIFFERENT = 1
-        LOWER_OR_EQUAL = 2
-        LOWER = 3
-        GREATER_OR_EQUAL = 4
-        GREATER = 5
-        expression.expressions[0].
-        return 0;*/
     }
 }

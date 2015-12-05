@@ -224,8 +224,18 @@ public class ExpressionNames {
         map.put(-1, tempMap);
 
         tempMap = new HashMap<Integer, String>();
+        tempMap.put(81, "SteamAccountUserId");
+        tempMap.put(82, "SteamAccountUserName");
+        map.put(39, tempMap);
+
+        tempMap = new HashMap<Integer, String>();
         tempMap.put(107, "GetDataDirectory");
         map.put(42, tempMap);
+
+        tempMap = new HashMap<Integer, String>();
+        tempMap.put(88, "GetItemValue");
+        tempMap.put(89, "GetItemString");
+        map.put(47, tempMap);
 
         extensionMap.put(16, "ExtensionValue");
         extensionMap.put(19, "ExtensionString");

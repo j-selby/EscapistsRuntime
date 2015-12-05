@@ -8,48 +8,39 @@ import net.jselby.escapists.game.Layer;
 import net.jselby.escapists.game.ObjectInstance;
 import net.jselby.escapists.game.objects.Text;
 
+import java.io.File;
 import java.lang.reflect.Method;
 
 /**
  * Events are things that the engine can do to change the execution state.
  */
-public class Actions {
-    public static void Skip(Scope scope,
-                            Events.Action action) {
+public class Actions extends Conditions {
+    public void Skip() {
     }
 
-    public static void NextFrame(Scope scope,
-                            Events.Action action) {
+    public void NextFrame() {
         scope.getGame().loadScene(scope.getGame().getSceneIndex() + 1);
     }
 
-    public static void JumpToFrame(Scope scope,
-                                 Events.Action action,
-                                   ParameterValue.Short scene) {
+    public void JumpToFrame(ParameterValue.Short scene) {
         scope.getGame().loadScene(scene.value);
     }
 
-    public static void EndApplication(Scope scope,
-                                      Events.Action action) {
+    public void EndApplication() {
         // RIP
         scope.getGame().exit();
     }
 
-    public static void SetX(Scope scope,
-                            Events.Action action,
-                            ParameterValue.ExpressionParameter xPos) {
+    public void SetX(ParameterValue.ExpressionParameter xPos) {
         for (ObjectInstance object : scope.objects) {
             if (xPos.expressions[0].value instanceof ExpressionValue.XMouse) {
-                object.setIsVisible(true);
                 object.setX(scope.getGame().getMouseX());
             }
         }
         //System.out.println(scope.objects);
     }
 
-    public static void SetY(Scope scope,
-                            Events.Action action,
-                            ParameterValue.ExpressionParameter xPos) {
+    public void SetY(ParameterValue.ExpressionParameter xPos) {
         for (ObjectInstance object : scope.objects) {
             if (xPos.expressions[0].value instanceof ExpressionValue.YMouse) {
                 object.setY(scope.getGame().getMouseY());
@@ -58,8 +49,7 @@ public class Actions {
         //System.out.println(scope.objects);
     }
 
-    public static void BringToFront(Scope scope,
-                            Events.Action action) {
+    public void BringToFront() {
         for (ObjectInstance object : scope.objects) {
             for (Layer layer : scope.getScene().getLayers()) {
                 layer.objects.remove(object);
@@ -70,16 +60,19 @@ public class Actions {
         //System.out.println(scope.objects);
     }
 
-    public static void Reappear(Scope scope,
-                                 Events.Action action) {
+    public void Disappear() {
+        for (ObjectInstance object : scope.objects) {
+            object.setIsVisible(false);
+        }
+    }
+
+    public void Reappear() {
         for (ObjectInstance object : scope.objects) {
             object.setIsVisible(true);
         }
     }
 
-    public static void SetString(Scope scope,
-                                Events.Action action,
-                                 ParameterValue.ExpressionParameter value) {
+    public void SetString(ParameterValue.ExpressionParameter value) {
         for (ObjectInstance object : scope.objects) {
             if (object instanceof Text && value.expressions[0].value instanceof ExpressionValue.String) {
                 ((Text) object).setString(((ExpressionValue.String) value.expressions[0].value).getValue());
@@ -87,9 +80,15 @@ public class Actions {
         }
     }
 
-    public static void extension_SetDirection(Scope scope,
-                                              Events.Action action,
-                                              ParameterValue.Int newDirection) {
+    public boolean CreateDirectory(String name) {
+        return new File(name).mkdir();
+    }
+
+    public void EmbedFont(String path) {
+        // Fonts are loaded by the runtime at launch, so we are gonna ignore this.
+    }
+
+    public void extension_SetDirection(ParameterValue.Int newDirection) {
         //System.out.println(scope.objects);
     }
 
@@ -100,7 +99,7 @@ public class Actions {
      * @param name The name of the condition to return
      * @return A method, or null if one cannot be found
      */
-    public static Method getMethodForAction(String name) {
+    public Method getMethodForAction(String name) {
         for (Method method : Actions.class.getDeclaredMethods()) {
             if (method.getName().equals(name)) {
                 return method;

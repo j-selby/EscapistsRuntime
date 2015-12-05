@@ -12,6 +12,8 @@ import net.jselby.escapists.data.Chunk
 import net.jselby.escapists.util.ByteReader
 import net.jselby.escapists.util.CompressionUtils
 import org.mini2Dx.core.graphics.Sprite
+import java.io.FileOutputStream
+import java.util.*
 
 /**
  * Assets are chunks storing data such as images, sounds, and fonts.
@@ -292,24 +294,11 @@ class SoundBank : Chunk() {
     override fun init(buffer: ByteReader, length: Int) {
         val itemCount = buffer.int;
 
-        println("Sound count: " + itemCount);
-
         sounds = arrayOfNulls<SoundItem>(itemCount);
 
-        for (i in 0 .. itemCount) {
-
+        for (i in 0 .. itemCount-1) {
+            sounds[i] = SoundItem(buffer);
         }
-        /*
-            itemsToRead = reader.readInt()
-                itemClass = SoundItem
-
-        compressed = true
-
-        self.items = [self.new(itemClass, reader, compressed = compressed)
-            for _ in xrange(itemsToRead)]
-
-        self.names = dict([(item.name, item) for  item in self.items])
-         */
     }
 
     inner class SoundItem(buffer: ByteReader) {
@@ -320,23 +309,41 @@ class SoundBank : Chunk() {
             var references = buffer.int;
             var decompressedLength = buffer.int;
             var flags = buffer.unsignedInt;
+            var reserved = buffer.int;
+            var nameLength = buffer.int;
 
-            /*start = reader.tell()
-        self.handle = reader.readInt(True)
-        self.checksum = reader.readInt()
-        self.references = reader.readInt()
-        decompressedLenght = reader.readInt()
-        self.flags.setFlags(reader.readInt(True))
-        reserved = reader.readInt()
-        nameLenght = reader.readInt()
-        if (self.settings.get('compressed', True) and
-                not self.flags['PlayFromDisk']):
-            size = reader.readInt()
-            data = ByteReader(zlib.decompress(reader.read(size)))
-        else:
-            data = reader.readReader(decompressedLenght)
-        self.name = self.readString(data, nameLenght)
-        self.data = data.read()*/
+            var data : ByteReader;
+            if (((flags.toInt() shr 5) and 1) != 0) {
+                data = buffer.getReader(decompressedLength);
+            } else {
+                val compressedLength = buffer.unsignedInt;
+                data = CompressionUtils.decompress(buffer, compressedLength.toInt(), decompressedLength);
+            }
+
+            val name = data.getString(nameLength * 2);
+            decompressedLength -= nameLength * 2;
+
+            data = data.getReader(decompressedLength);
+
+            // Attempt to identify the file format of this sound
+            var headerString = String(data.getBytes(4));
+
+            var extension : String;
+            if (headerString == "RIFF") {
+                extension = "wav";
+            } else if (headerString == "AIFF") {
+                extension = "aiff";
+            } else if (headerString == "OggS") {
+                extension = "ogg";
+            } else {
+                extension = "mod";
+            }
+
+            data.position = 0;
+
+            /*val out = FileOutputStream("sound/$name.$extension");
+            out.write(data.getBytes(decompressedLength));
+            out.close();*/
         }
     }
 }

@@ -13,7 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 public abstract class ExpressionValue {
     @Override
     public java.lang.String toString() {
-        return getClass().getSimpleName() + "()";
+        return "env." + getClass().getSimpleName() + "()";
     }
 
     /**
@@ -115,7 +115,14 @@ public abstract class ExpressionValue {
     public static class ExtensionValue extends ExtensionCommon {
         @Override
         public java.lang.String toString() {
-            return "ExtensionValue(" + value + ")";
+            return getClass().getSimpleName() + "()";
+        }
+    }
+
+    public static class ExtensionFunction extends ExtensionCommon {
+        @Override
+        public java.lang.String toString() {
+            return getClass().getSimpleName() + "(" + value + ",";
         }
     }
 
@@ -217,6 +224,19 @@ public abstract class ExpressionValue {
     }
 
     public static class GetDataDirectory extends ExpressionValue {
+    }
+
+    public static class GetItemValue extends ExtensionFunction {
+    }
+
+    public static class GetItemString extends ExtensionFunction {
+    }
+
+    // Steam API
+    public static class SteamAccountUserName extends ExpressionValue {
+    }
+
+    public static class SteamAccountUserId extends ExpressionValue {
     }
 
     // Operators

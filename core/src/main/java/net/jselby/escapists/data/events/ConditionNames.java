@@ -171,6 +171,10 @@ public class ConditionNames {
         tempMap.put(-86, "DirectoryExists");
         map.put(42, tempMap);
 
+        tempMap = new HashMap<Integer, String>();
+        tempMap.put(-85, "HasItemValue");
+        map.put(47, tempMap);
+
         // Other extensions
         extensionMap.put(-1, "AnimationFrame");
         extensionMap.put(-2, "AnimationFinished");
