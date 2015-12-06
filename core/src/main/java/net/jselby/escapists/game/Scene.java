@@ -10,8 +10,6 @@ import net.jselby.escapists.data.chunks.Frame;
 import net.jselby.escapists.data.chunks.Layers;
 import net.jselby.escapists.data.chunks.ObjectInstances;
 import net.jselby.escapists.data.events.ParameterValue;
-import net.jselby.escapists.game.events.Actions;
-import net.jselby.escapists.game.events.Conditions;
 import net.jselby.escapists.game.events.Scope;
 import net.jselby.escapists.game.objects.Active;
 import net.jselby.escapists.game.objects.Backdrop;
@@ -20,8 +18,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.mini2Dx.core.graphics.Graphics;
 import org.mozilla.javascript.*;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.*;
 
 /**
@@ -49,6 +45,7 @@ public class Scene {
     public boolean firstFrame = true;
     private Map<String, Object> variables = new HashMap<String, Object>();
     private Map<Integer, Boolean> groupActivated = new HashMap<Integer, Boolean>();
+    private Map<String, Integer> loops = new HashMap<String, Integer>();
     private int frameCount;
     private long startTime;
 
@@ -72,32 +69,6 @@ public class Scene {
         height = frame.getHeight();
 
         scope = new Scope(game, this);
-
-        // Compile events
-        Context context = Context.enter();
-
-        List<ParameterValue.ExpressionParameter> expressions = new ArrayList<ParameterValue.ExpressionParameter>();
-        for (Events.EventGroup group : events.groups) {
-            for (Events.Action action : group.actions) {
-                for (Events.Parameter parameter : action.items) {
-                    if (parameter.value instanceof ParameterValue.ExpressionParameter) {
-                        expressions.add((ParameterValue.ExpressionParameter) parameter.value);
-                    }
-                }
-            }
-
-            for (Events.Condition condition : group.conditions) {
-                for (Events.Parameter parameter : condition.items) {
-                    if (parameter.value instanceof ParameterValue.ExpressionParameter) {
-                        expressions.add((ParameterValue.ExpressionParameter) parameter.value);
-                    }
-                }
-            }
-        }
-
-        for (ParameterValue.ExpressionParameter expression : expressions) {
-            expression.compile(context);
-        }
     }
 
     /**
@@ -107,6 +78,7 @@ public class Scene {
         instances = new ArrayList<ObjectInstance>();
         variables.clear();
         groupActivated.clear();
+        loops.clear();
 
         // Check for event groups
         for (Events.EventGroup group : events.groups) {
@@ -228,100 +200,14 @@ public class Scene {
 
         jsScript.exec(jsContext, jsScriptable);
 
-        // Activate conditional objects
-        /*for (Events.EventGroup group : events.groups) {
-            scope.objects.clear();
-
-            boolean conditionsPassed = true;
-
-            for (Events.Condition condition : group.conditions) {
-                if (condition.name == null) {
-                    continue;
-                }
-
-                if (condition.name.equalsIgnoreCase("NewGroup")
-                        || condition.name.equalsIgnoreCase("GroupEnd")) {
-                    // TODO: Groups
-                    conditionsPassed = false;
-                    continue;
-                }
-
-                if (condition.method == null) {
-                    conditionsPassed = false;
-                    //System.out.println("Condition method failed: " + condition);
-                    continue;
-                }
-
-                args.clear();
-
-                // Build args
-                args.add(scope);
-                args.add(condition);
-                for (Events.Parameter parameter : condition.items) {
-                    args.add(parameter.value);
-                }
-
-                try {
-                    Boolean returnValue = (Boolean) condition.method.invoke(null, args.toArray());
-                    if (returnValue == null || returnValue == condition.inverted()) {
-                        conditionsPassed = false;
-                        break;
-                    }
-                } catch (Exception e) {
-                    if (EscapistsRuntime.DEBUG) {
-                        System.err.print("Condition execution error: ");
-                        e.printStackTrace();
-                        System.err.println("\tWithin " + condition);
-                    }
-                }
+        // TODO: Activate previous OnLoop instances (per condition countdown?)
+        for (Map.Entry<String, Integer> value : loops.entrySet()) {
+            if (value.getValue() <= 1) {
+                loops.remove(value.getKey());
+            } else {
+                value.setValue(value.getValue() - 1);
             }
-
-            if (!conditionsPassed) {
-                continue;
-            }
-
-            // Yay, we can now execute our actions
-            for (Events.Action action : group.actions) {
-                if (action.name == null) {
-                    continue;
-                }
-
-                if (action.method == null) {
-                    //System.out.println("Action method failed: " + action);
-                    continue;
-                }
-
-                args.clear();
-
-
-                // Add objects to scope
-                scope.objects.clear();
-
-                for (ObjectInstance instance : instances) {
-                    if (instance.getObjectInfo() == action.objectInfo) {
-                        scope.objects.add(instance);
-                        //System.out.println(instance.getObjectInfo() + ":" + instance.getName() + ":" + action.objectInfo + ":" + action.name);
-                    }
-                }
-
-                // Build args
-                args.add(scope);
-                args.add(action);
-                for (Events.Parameter parameter : action.items) {
-                    args.add(parameter.value);
-                }
-
-                try {
-                    action.method.invoke(null, args.toArray());
-                } catch (Exception e) {
-                    if (EscapistsRuntime.DEBUG) {
-                        System.err.print("Condition execution error: ");
-                        e.printStackTrace();
-                        System.err.println("\tWithin " + action);
-                    }
-                }
-            }
-        }*/
+        }
 
         firstFrame = false;
         frameCount++;
@@ -383,5 +269,9 @@ public class Scene {
 
     public Map<Integer, Boolean> getActiveGroups() {
         return groupActivated;
+    }
+
+    public Map<String, Integer> getActiveLoops() {
+        return loops;
     }
 }

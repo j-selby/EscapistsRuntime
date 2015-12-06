@@ -18,7 +18,7 @@ public class Conditions extends Parameters {
         return true;
     }
 
-    public boolean Compare(String str1, String str2) {
+    public boolean Compare(Object str1, Object str2) {
         return str1.equals(str2);
     }
 
@@ -27,8 +27,7 @@ public class Conditions extends Parameters {
     }
 
     public boolean OnLoop(String loopName) {
-        // TODO: Loops
-        return false;
+        return scope.getScene().getActiveLoops().containsKey(loopName);
     }
 
     public boolean MouseOnObject(ParameterValue.Object object) {

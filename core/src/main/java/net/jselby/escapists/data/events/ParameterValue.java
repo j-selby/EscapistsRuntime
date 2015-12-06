@@ -381,6 +381,7 @@ public abstract class ParameterValue {
             code = buffer.getShort();
 
             data = buffer.getBytes(size - 6);
+            //System.out.println(type + ":" + code + ":" + (size - 6));
         }
     }
 

@@ -127,7 +127,6 @@ public class Application {
         // Prepare global values
         Number[] values = globalValuesChunk.getValues();
         for (int i = 0; i < values.length; i++) {
-            System.out.println(i + "=" + values[i]);
             game.globalInts.put(i, values[i]);
         }
 

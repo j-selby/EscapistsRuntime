@@ -16,11 +16,11 @@ public class Actions extends Conditions {
     }
 
     public void NextFrame() {
-        //scope.getGame().loadScene(scope.getGame().getSceneIndex() + 1);
+        scope.getGame().loadScene(scope.getGame().getSceneIndex() + 1);
     }
 
     public void JumpToFrame(ParameterValue.Short scene) {
-        //scope.getGame().loadScene(scene.value);
+        scope.getGame().loadScene(scene.value);
     }
 
     public void ActivateGroup(int id) {
@@ -28,7 +28,7 @@ public class Actions extends Conditions {
     }
 
     public void StartLoop(String name, int times) {
-        // TODO: Loops
+        scope.getScene().getActiveLoops().put(name, times);
     }
 
     public void EndApplication() {
