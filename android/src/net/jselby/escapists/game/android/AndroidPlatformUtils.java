@@ -2,6 +2,7 @@ package net.jselby.escapists.game.android;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import com.badlogic.gdx.Gdx;
 import net.jselby.escapists.PlatformUtils;
 import org.apache.commons.lang3.NotImplementedException;
 
@@ -73,5 +74,10 @@ public class AndroidPlatformUtils extends PlatformUtils {
     @Override
     public void hideMouse() {
 
+    }
+
+    @Override
+    public File getSaveLocation() {
+        return new File(Gdx.files.getExternalStoragePath() + File.separator + "The Escapists Saves");
     }
 }

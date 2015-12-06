@@ -17,23 +17,29 @@ class GlobalStrings : Chunk() {
 }
 
 class GlobalValues : Chunk() {
-    var values: FloatArray? = null
+    lateinit var values: Array<Number?>
 
     override fun init(buffer: ByteReader, length: Int) {
-        val numberOfItems = buffer.short.toInt() and 65535
+        val numberOfItems = buffer.unsignedShort
 
-        values = FloatArray(numberOfItems)
+        val tempList = arrayOfNulls<ByteReader?>(numberOfItems);
         for (i in 0..numberOfItems - 1) {
-            val type = buffer.byte.toInt() and 255
-            var value = 0f
-            if (type == 2) {
-                value = buffer.float
-            } else if (type == 0) {
-                value = buffer.int.toFloat()
+            tempList[i] = ByteReader(buffer.getBytes(4));
+        }
+
+        values = arrayOfNulls<Number?>(numberOfItems)
+        for (i in 0..numberOfItems - 1) {
+            val reader = tempList[i]!!;
+            val value : Number;
+            val type = buffer.unsignedByte.toInt()
+            if (type == 2) { // Float/Double
+                value = reader.float
+            } else if (type == 0) { // Int
+                value = reader.int
             } else {
-                System.out.printf("Invalid GlobalValue type %d.\n", type)
+                throw IllegalArgumentException("Invalid GlobalValue type $type.");
             }
-            (values as FloatArray)[i] = value
+            values[i] = value
         }
     }
 }

@@ -145,13 +145,13 @@ public abstract class ExpressionValue {
     public static class FrameHeight extends ExpressionValue {
     }
 
-    public static class UpperString extends ExpressionValue {
+    public static class UpperString extends ExtensionFunction {
     }
 
-    public static class LowerString extends ExpressionValue {
+    public static class LowerString extends ExtensionFunction {
     }
 
-    public static class StringLength extends ExpressionValue {
+    public static class StringLength extends ExtensionFunction {
     }
 
     public static class Random extends ExpressionValue {
@@ -230,6 +230,9 @@ public abstract class ExpressionValue {
     }
 
     public static class GetItemString extends ExtensionFunction {
+    }
+
+    public static class GroupItemString extends ExtensionFunction {
     }
 
     // Steam API

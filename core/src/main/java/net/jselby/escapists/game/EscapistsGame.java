@@ -30,7 +30,7 @@ public class EscapistsGame extends BasicGame {
 
     private PlatformUtils utils;
     private int sceneIndex;
-    public Map<Integer, Integer> globalInts;
+    public Map<Integer, Number> globalInts;
 
     public EscapistsGame(PlatformUtils utils) {
         this.utils = utils;
@@ -38,9 +38,7 @@ public class EscapistsGame extends BasicGame {
 
     @Override
     public void initialise() {
-        globalInts = new HashMap<Integer, Integer>();
-
-        getPlatformUtils().hideMouse();
+        globalInts = new HashMap<Integer, Number>();
 
         loadingLogo = new Sprite(new Texture(Gdx.files.internal("logo.png")));
 

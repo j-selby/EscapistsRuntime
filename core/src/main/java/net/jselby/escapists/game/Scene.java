@@ -1,5 +1,7 @@
 package net.jselby.escapists.game;
 
+import com.badlogic.gdx.*;
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.graphics.Color;
 import net.jselby.escapists.EscapistsRuntime;
 import net.jselby.escapists.data.ObjectDefinition;
@@ -46,6 +48,7 @@ public class Scene {
     // Scripting
     public boolean firstFrame = true;
     private Map<String, Object> variables = new HashMap<String, Object>();
+    private Map<Integer, Boolean> groupActivated = new HashMap<Integer, Boolean>();
     private int frameCount;
     private long startTime;
 
@@ -102,6 +105,18 @@ public class Scene {
      */
     private void create() {
         instances = new ArrayList<ObjectInstance>();
+        variables.clear();
+        groupActivated.clear();
+
+        // Check for event groups
+        for (Events.EventGroup group : events.groups) {
+            // Check for groups
+            if (group.conditions.length != 0 && group.conditions[0].name != null
+                    && group.conditions[0].name.equalsIgnoreCase("NewGroup")) {
+                ParameterValue.Group selectedGroup = ((ParameterValue.Group) group.conditions[0].items[0].value);
+                groupActivated.put(selectedGroup.id, ((selectedGroup.flags & 1) == 0));
+            }
+        }
 
         // Create new object instances from their data equivalents
         for (ObjectInstances.ObjectInstance originalDef : objectInstanceDefs) {
@@ -177,6 +192,10 @@ public class Scene {
         }
 
         jsContext = Context.enter();
+        if (Gdx.app.getType() == Application.ApplicationType.Android) {
+            // Android doesn't support Desktop-style bytecode optimization.
+            jsContext.setOptimizationLevel(-1);
+        }
         jsScriptable = jsContext.initStandardObjects();
 
         Object wrappedOut = Context.javaToJS(scope, jsScriptable);
@@ -198,6 +217,15 @@ public class Scene {
     }
 
     public void tick(EscapistsGame game) {
+        for (Layer layer : getLayers()) {
+            if (!layer.isVisible()) { // "IsShow" flag
+                continue;
+            }
+
+            layer.tick(game);
+
+        }
+
         jsScript.exec(jsContext, jsScriptable);
 
         // Activate conditional objects
@@ -296,16 +324,6 @@ public class Scene {
         }*/
 
         firstFrame = false;
-
-        for (Layer layer : getLayers()) {
-            if (!layer.isVisible()) { // "IsShow" flag
-                continue;
-            }
-
-            layer.tick(game);
-
-        }
-
         frameCount++;
     }
 
@@ -332,7 +350,7 @@ public class Scene {
      * @return The name of the scene.
      */
     public String getName() {
-        return name;
+        return name.trim();
     }
 
     public Color getBackground() {
@@ -361,5 +379,9 @@ public class Scene {
 
     public long getSceneStartTime() {
         return startTime;
+    }
+
+    public Map<Integer, Boolean> getActiveGroups() {
+        return groupActivated;
     }
 }

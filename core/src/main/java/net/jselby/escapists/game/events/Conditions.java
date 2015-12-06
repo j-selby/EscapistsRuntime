@@ -2,9 +2,6 @@ package net.jselby.escapists.game.events;
 
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
-import net.jselby.escapists.EscapistsRuntime;
-import net.jselby.escapists.data.chunks.Events;
-import net.jselby.escapists.data.events.ExpressionValue;
 import net.jselby.escapists.data.events.ParameterValue;
 import net.jselby.escapists.game.ObjectInstance;
 
@@ -17,8 +14,7 @@ import java.lang.reflect.Method;
  * @author j_selby
  */
 public class Conditions extends Parameters {
-    public boolean Always(
-    ) {
+    public boolean Always() {
         return true;
     }
 
@@ -26,13 +22,12 @@ public class Conditions extends Parameters {
         return str1.equals(str2);
     }
 
-    public boolean StartOfFrame(
-    ) {
+    public boolean StartOfFrame() {
         return scope.getScene().firstFrame;
     }
 
-    public boolean OnLoop(ParameterValue.ExpressionParameter expString) {
-        // TODO: Expression expansion
+    public boolean OnLoop(String loopName) {
+        // TODO: Loops
         return false;
     }
 
@@ -59,11 +54,10 @@ public class Conditions extends Parameters {
         return mouseOver;
     }
 
-    public boolean MouseClicked(ParameterValue.Click click) {
+    public boolean MouseClicked(int mouseButton, boolean doubleClick) {
         // We only get left clicks on mobile platforms
-//System.out.println("Bad click type for platform: " + click.click);
-        return !(Gdx.app.getType() != Application.ApplicationType.Desktop && click.click != 0)
-                && Gdx.input.isButtonPressed(click.click);
+        return !(Gdx.app.getType() != Application.ApplicationType.Desktop && mouseButton != 0)
+                && Gdx.input.isButtonPressed(mouseButton);
 
     }
 
@@ -149,14 +143,12 @@ public class Conditions extends Parameters {
         return false;
     }
 
-    public boolean CompareGlobalValueIntEqual(ParameterValue.Short id,
-            ParameterValue.ExpressionParameter value) {
-        if (scope.getGame().globalInts.containsKey((int) id.value)) {
-            return ((ExpressionValue.Long) value.expressions[0].value).value == scope.getGame().globalInts.get((int) id.value);
+    public boolean CompareGlobalValueIntEqual(int id, int value) {
+        if (scope.getGame().globalInts.containsKey(id)) {
+            return value == scope.getGame().globalInts.get(id).intValue();
         } else {
-            return ((ExpressionValue.Long) value.expressions[0].value).value == 0;
+            return value == 0;
         }
-        //return (System.currentTimeMillis() - scope.getScene().getSceneStartTime()) > time.timer;
     }
 
     public boolean CompareGlobalString(ParameterValue.Short id,
@@ -165,9 +157,18 @@ public class Conditions extends Parameters {
         //return (System.currentTimeMillis() - scope.getScene().getSceneStartTime()) > time.timer;
     }
 
+    public boolean TimerEquals(int value, int repeat/*?*/) {
+        //int currentTimer = (int) (scope.getScene().getFrameCount() * (1f / 45f) * 1000);
+        // Convert to frame
+        value /= (1f / 45f) * 1000;
+        return value == scope.getScene().getFrameCount();
+        //System.out.println(value + ":" + currentTimer);
+        //return (System.currentTimeMillis() - scope.getScene().getSceneStartTime()) == value;
+    }
 
-    public boolean TimerGreater(ParameterValue.Time time) {
-        return (System.currentTimeMillis() - scope.getScene().getSceneStartTime()) > time.timer;
+
+    public boolean TimerGreater(int value) {
+        return (System.currentTimeMillis() - scope.getScene().getSceneStartTime()) > value;
     }
 
     public boolean DirectoryExists(String name) {
@@ -215,20 +216,8 @@ public class Conditions extends Parameters {
         }
     }
 
-    /*public boolean GroupActivated(
-                                     ) {
-        // TODO: Support group disabling
-        return true;
-    }
-
-    public boolean GroupStart(
-                                   ) {
-        // TODO: Support group disabling
-        return true;
-    }*/
-
-    public boolean GroupEnd() {
-        return true;
+    public boolean groupActive(int id) {
+        return scope.getScene().getActiveGroups().get(id);
     }
 
     public boolean extension_AnimationPlaying(ParameterValue.Short num) {

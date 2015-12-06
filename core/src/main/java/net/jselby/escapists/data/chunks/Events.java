@@ -25,6 +25,7 @@ public class Events extends Chunk {
     private static byte[] EVENT_COUNT = "ERes".getBytes();
     private static byte[] EVENTGROUP_DATA = "ERev".getBytes();
     private static byte[] END = "<<ER".getBytes();
+    private static String[] EXPRESSION_INSTANCE_REQ = {"Once"};
 
     public int maxObjects;
     public short maxObjectInfo;
@@ -94,10 +95,12 @@ public class Events extends Chunk {
         for (EventGroup group : groups) {
             // Check for groups
             if (group.conditions.length != 0 && group.conditions[0].name != null && group.conditions[0].name.equalsIgnoreCase("NewGroup")) {
-                builder.append(StringUtils.repeat(' ', indent)).append("if (groupActive(\"")
-                        .append(((ParameterValue.Group) group.conditions[0].items[0].value).name)
-                        .append("\")) { // Flags: ")
+                builder.append(StringUtils.repeat(' ', indent)).append("if (env.groupActive(")
+                        .append(((ParameterValue.Group) group.conditions[0].items[0].value).id)
+                        .append(")) { // Flags: ")
                         .append(Integer.toBinaryString(((ParameterValue.Group) group.conditions[0].items[0].value).flags))
+                        .append(", name: ")
+                        .append(((ParameterValue.Group) group.conditions[0].items[0].value).name)
                         .append("\n");
                 indent += 4;
                 continue;
@@ -127,6 +130,14 @@ public class Events extends Chunk {
                 String objDeclaration = "env." + (id == 0 ? "" : ("withObjects(" + objName + ")."));
                 String objMethod = (condition.name == null ? (condition.objectType + ":" + condition.num) : condition.name).trim();
 
+                boolean requiresContext = false;
+                for (String type : EXPRESSION_INSTANCE_REQ) {
+                    if (type.equalsIgnoreCase(objMethod)) {
+                        requiresContext = true;
+                        break;
+                    }
+                }
+
                 if (objMethod.equalsIgnoreCase("OrFiltered")) {
                     conditions += " || ";
                     lastWasOr = true;
@@ -144,6 +155,10 @@ public class Events extends Chunk {
                 conditions += objDeclaration + objMethod + "(";
 
                 int paramCount = 0;
+                if (requiresContext) {
+                    conditions += condition.identifier;
+                    paramCount++;
+                }
                 for (Parameter param : condition.items) {
                     conditions += (paramCount != 0 ? ", " : "") + param.value;// + ":" + param.code;//param.loader.name() + " " + param.name.toLowerCase();
                     paramCount++;

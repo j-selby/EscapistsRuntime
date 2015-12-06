@@ -38,6 +38,7 @@ public class EscapistsRuntime {
     private static EscapistsRuntime runtime;
 
     private Application application;
+    private File escapistsDirectory;
 
     public static EscapistsRuntime getRuntime() {
         return runtime;
@@ -59,7 +60,7 @@ public class EscapistsRuntime {
         }
 
         // Locate the game directory, in Steam/storage root.
-        File escapistsDirectory = new File(Gdx.files.getExternalStoragePath(), "The Escapists");
+        escapistsDirectory = new File(Gdx.files.getExternalStoragePath(), "The Escapists");
         if (Gdx.app.getType() == com.badlogic.gdx.Application.ApplicationType.Desktop) {
             escapistsDirectory = game.getPlatformUtils().findGameFolder();
             if (escapistsDirectory == null) {
@@ -208,5 +209,9 @@ public class EscapistsRuntime {
 
     public Application getApplication() {
         return application;
+    }
+
+    public File getGamePath() {
+        return escapistsDirectory;
     }
 }

@@ -1,5 +1,7 @@
 package net.jselby.escapists.game.events;
 
+import net.jselby.escapists.EscapistsRuntime;
+
 import java.io.File;
 
 /**
@@ -12,12 +14,28 @@ public class Parameters {
         return "";
     }
 
+    public int XMouse() {
+        return scope.getGame().getMouseX();
+    }
+
+    public int YMouse() {
+        return scope.getGame().getMouseY();
+    }
+
+    public String SteamAccountUserName() {
+        return "Escapists Runtime User";
+    }
+
+    public int SteamAccountUserId() {
+        return 0;
+    }
+
     public String GetDataDirectory() {
         return scope.getGame().getPlatformUtils().getSaveLocation().toString();
     }
 
     public String ApplicationDrive() {
-        String absPath = scope.getGame().getPlatformUtils().getSaveLocation().getAbsolutePath();
+        String absPath = EscapistsRuntime.getRuntime().getGamePath().getAbsolutePath();
         for (File file : File.listRoots()) {
             if (absPath.startsWith(file.getAbsolutePath())) {
                 return file.getAbsolutePath();
@@ -28,7 +46,7 @@ public class Parameters {
     }
 
     public String ApplicationDirectory() {
-        return scope.getGame().getPlatformUtils()
-                .getSaveLocation().getAbsolutePath().substring(ApplicationDrive().length());
+        return EscapistsRuntime.getRuntime().getGamePath()
+                .getAbsolutePath().substring(ApplicationDrive().length()) + File.separator;
     }
 }

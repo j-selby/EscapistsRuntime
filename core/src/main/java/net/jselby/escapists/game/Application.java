@@ -1,6 +1,5 @@
 package net.jselby.escapists.game;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap;
 import net.jselby.escapists.EscapistsRuntime;
 import net.jselby.escapists.data.Chunk;
@@ -82,6 +81,8 @@ public class Application {
         assert frameItemsChunk != null;
         assert appHeader != null;
         assert fontBankChunk != null;
+        assert globalValuesChunk != null;
+        assert globalValuesChunk != null;
 
         name = nameChunk.getContent();
         author = authorChunk.getContent();
@@ -121,6 +122,13 @@ public class Application {
         Frame frame;
         while((frame = (Frame) ChunkUtils.popChunk(chunks, Frame.class)) != null) {
             frames.add(new Scene(runtime, frame, game));
+        }
+
+        // Prepare global values
+        Number[] values = globalValuesChunk.getValues();
+        for (int i = 0; i < values.length; i++) {
+            System.out.println(i + "=" + values[i]);
+            game.globalInts.put(i, values[i]);
         }
 
         // Remove bad/unknown chunks

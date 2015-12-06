@@ -1,8 +1,5 @@
 package net.jselby.escapists.game.events;
 
-import com.badlogic.gdx.Gdx;
-import net.jselby.escapists.data.chunks.Events;
-import net.jselby.escapists.data.events.ExpressionValue;
 import net.jselby.escapists.data.events.ParameterValue;
 import net.jselby.escapists.game.Layer;
 import net.jselby.escapists.game.ObjectInstance;
@@ -19,11 +16,19 @@ public class Actions extends Conditions {
     }
 
     public void NextFrame() {
-        scope.getGame().loadScene(scope.getGame().getSceneIndex() + 1);
+        //scope.getGame().loadScene(scope.getGame().getSceneIndex() + 1);
     }
 
     public void JumpToFrame(ParameterValue.Short scene) {
-        scope.getGame().loadScene(scene.value);
+        //scope.getGame().loadScene(scene.value);
+    }
+
+    public void ActivateGroup(int id) {
+        scope.getScene().getActiveGroups().put(id, true);
+    }
+
+    public void StartLoop(String name, int times) {
+        // TODO: Loops
     }
 
     public void EndApplication() {
@@ -31,22 +36,16 @@ public class Actions extends Conditions {
         scope.getGame().exit();
     }
 
-    public void SetX(ParameterValue.ExpressionParameter xPos) {
+    public void SetX(int newX) {
         for (ObjectInstance object : scope.objects) {
-            if (xPos.expressions[0].value instanceof ExpressionValue.XMouse) {
-                object.setX(scope.getGame().getMouseX());
-            }
+            object.setX(newX);
         }
-        //System.out.println(scope.objects);
     }
 
-    public void SetY(ParameterValue.ExpressionParameter xPos) {
+    public void SetY(int newY) {
         for (ObjectInstance object : scope.objects) {
-            if (xPos.expressions[0].value instanceof ExpressionValue.YMouse) {
-                object.setY(scope.getGame().getMouseY());
-            }
+            object.setY(newY);
         }
-        //System.out.println(scope.objects);
     }
 
     public void BringToFront() {
@@ -72,20 +71,43 @@ public class Actions extends Conditions {
         }
     }
 
-    public void SetString(ParameterValue.ExpressionParameter value) {
+    public void SetString(String value) {
         for (ObjectInstance object : scope.objects) {
-            if (object instanceof Text && value.expressions[0].value instanceof ExpressionValue.String) {
-                ((Text) object).setString(((ExpressionValue.String) value.expressions[0].value).getValue());
+            if (object instanceof Text) {
+                ((Text) object).setString(value);
             }
         }
+    }
+
+    public void SetGlobalValueInt(int id, int value) {
+        scope.getGame().globalInts.put(id, value);
+    }
+
+    public void SetGlobalString(int id, String value) {
+        // TODO: Global Strings
+        //scope.getGame().globalInts.put(id, value);
+    }
+
+    public void SetGlobalValue(int id, int value) {
+        // TODO: Global Strings
+        //scope.getGame().globalInts.put(id, value);
     }
 
     public boolean CreateDirectory(String name) {
         return new File(name).mkdir();
     }
 
+    public void HideCursor() {
+        scope.getGame().getPlatformUtils().hideMouse();
+    }
+
     public void EmbedFont(String path) {
         // Fonts are loaded by the runtime at launch, so we are gonna ignore this.
+        System.out.println("Application requested font load: " + path);
+    }
+
+    public void ChangeInputKey(int key, int keycode) {
+        // TODO: Key binds
     }
 
     public void extension_SetDirection(ParameterValue.Int newDirection) {

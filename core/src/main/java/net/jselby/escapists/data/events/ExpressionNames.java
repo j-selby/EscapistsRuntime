@@ -237,6 +237,10 @@ public class ExpressionNames {
         tempMap.put(89, "GetItemString");
         map.put(47, tempMap);
 
+        tempMap = new HashMap<Integer, String>();
+        tempMap.put(85, "GroupItemString");
+        map.put(63, tempMap);
+
         extensionMap.put(16, "ExtensionValue");
         extensionMap.put(19, "ExtensionString");
     }
