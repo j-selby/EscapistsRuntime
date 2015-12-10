@@ -263,6 +263,10 @@ public class ActionNames {
         map.put(42, tempMap);
 
         tempMap = new HashMap<Integer, String>();
+        tempMap.put(158, "LoadPropertiesFile");
+        map.put(47, tempMap);
+
+        tempMap = new HashMap<Integer, String>();
         tempMap.put(80, "EmbedFont");
         map.put(65, tempMap);
 
@@ -277,6 +281,7 @@ public class ActionNames {
         tempMap = new HashMap<Integer, String>();
         tempMap.put(2, "SetX");
         tempMap.put(3, "SetY");
+        tempMap.put(17, "SetAnimation");
         tempMap.put(23, "SetDirection");
         tempMap.put(35, "FlagOn");
         tempMap.put(36, "FlagOff");
@@ -286,6 +291,14 @@ public class ActionNames {
         tempMap = new HashMap<Integer, String>();
         tempMap.put(80, "OpenURL");
         map.put(56, tempMap);
+
+        tempMap = new HashMap<Integer, String>();
+        tempMap.put(91, "ClearObjectVarArray");
+        tempMap.put(80, "SetIntegerVar");
+        tempMap.put(81, "AddIntegerVar");
+        tempMap.put(82, "SubtractIntegerVar");
+        tempMap.put(88, "SetStringVar");
+        map.put(36, tempMap);
 
         /*extensionMap.put(1, "SetPosition");
         extensionMap.put(2, "SetX");

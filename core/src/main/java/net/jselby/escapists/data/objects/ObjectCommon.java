@@ -7,7 +7,6 @@ import net.jselby.escapists.data.objects.sections.*;
 import net.jselby.escapists.util.ByteReader;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 /**
  * An ObjectCommon is a object definition's properties that is declared as generic.

@@ -1,6 +1,8 @@
 package net.jselby.escapists.game.events;
 
 import net.jselby.escapists.EscapistsRuntime;
+import net.jselby.escapists.game.ObjectInstance;
+import net.jselby.escapists.game.objects.Text;
 
 import java.io.File;
 
@@ -10,7 +12,22 @@ import java.io.File;
 public class Parameters {
     protected Scope scope;
 
-    public String CurrentText() { // TODO: Find out what this means. Environmental variable?
+    public String CurrentText(int id) {
+        for (ObjectInstance instance : scope.getScene().getObjects()) {
+            if (instance.getObjectInfo() == id && instance instanceof Text) {
+                String str = (String) ((Text) instance).getString();
+                // Filter for Chowdren flags
+                if (str.startsWith("Chowdren:")) {
+                    String flagName = str.substring(str.indexOf(":") + 1).trim();
+                    if (flagName.equalsIgnoreCase("Platform")) {
+                        str = "jselby's runtime on " + System.getProperty("os.name");
+                    } else {
+                        System.out.printf("Unknown Chowdren flag: %s.\n", flagName);
+                    }
+                }
+                return str;
+            }
+        }
         return "";
     }
 
@@ -28,6 +45,70 @@ public class Parameters {
 
     public int SteamAccountUserId() {
         return 0;
+    }
+
+    public float GetY(int extra, int id) {
+        for (ObjectInstance instance : scope.getScene().getObjects()) {
+            if (instance.getObjectInfo() == extra) {
+                return instance.getY();
+            }
+        }
+        return 0;
+    }
+
+    public String UpperString(int id, String str) {
+        return str.toUpperCase();
+    }
+
+    public String LowerString(int id, String str) {
+        return str.toLowerCase();
+    }
+
+    public Number GlobalValue(int key) {
+        return scope.getGame().globalInts.get(key + 1);
+    }
+
+    public String GlobalString(int key) {
+        return scope.getGame().globalStrings.get(key + 1);
+    }
+
+    public Object GetValue(int objectId, String varName) {
+        for (ObjectInstance instance : scope.getScene().getObjects()) {
+            if (instance.getObjectInfo() == objectId) {
+                if (instance.getVariables().containsKey(varName)) {
+                    System.out.printf("GetValue:%d=%s.\n", objectId, instance.getVariables().get(varName));
+                    return instance.getVariables().get(varName);
+                } else {
+                    return 0;
+                }
+            }
+        }
+        return 0;
+    }
+
+    public String GetItemString(int id, String a, String b, String c) {
+        // TODO: Item properties
+        return "";
+    }
+
+    public String GroupItemString(int id, String category, String key) {
+        // TODO: Um, what?
+        return "";
+    }
+
+    public String Element(int id, int element) {
+        // TODO: Item lists
+        return "";
+    }
+
+    public int ListLength(int id) {
+        // TODO: Item lists
+        return 0;
+    }
+
+    public String Select(int id) {
+        // TODO: Item lists
+        return "";
     }
 
     public String GetDataDirectory() {

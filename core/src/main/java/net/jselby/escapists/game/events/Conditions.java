@@ -6,7 +6,6 @@ import net.jselby.escapists.data.events.ParameterValue;
 import net.jselby.escapists.game.ObjectInstance;
 
 import java.io.File;
-import java.lang.reflect.Method;
 
 /**
  * Implementations of conditions within the engine.
@@ -30,7 +29,18 @@ public class Conditions extends Parameters {
         return scope.getScene().getActiveLoops().containsKey(loopName);
     }
 
-    public boolean MouseOnObject(ParameterValue.Object object) {
+    public boolean OnGroupActivation() {
+        // TODO: Once-only
+        //return scope.getScene().getActiveGroups().containsKey(id);
+        return true;
+    }
+
+    public boolean HasItemValue(String key, String value) {
+        // TODO: Object specific variables
+        return false;
+    }
+
+    public boolean MouseOnObject(int objectId) {
         // Find all objects which correspond to this
         int mouseX = scope.getGame().getMouseX();
         int mouseY = scope.getGame().getMouseY();
@@ -41,12 +51,13 @@ public class Conditions extends Parameters {
 
         boolean mouseOver = false;
         for (ObjectInstance instance : scope.getScene().getObjects()) {
-            if (instance.getObjectInfo() == object.objectInfo
-                    && instance.getX() <= mouseX && instance.getY() <= mouseY
-                    && instance.getX() + instance.getWidth() >= mouseX
-                    && instance.getY() + instance.getHeight() >= mouseY) {
+            if (instance.getObjectInfo() == objectId
+                    && instance.getScreenX() <= mouseX
+                    && instance.getScreenY() <= mouseY
+                    && instance.getScreenX() + instance.getWidth() >= mouseX
+                    && instance.getScreenY() + instance.getHeight() >= mouseY)  {
                 mouseOver = true;
-                scope.objects.add(instance);
+                scope.addObjectToScope(instance);
             }
         }
 
@@ -55,15 +66,23 @@ public class Conditions extends Parameters {
 
     public boolean MouseClicked(int mouseButton, boolean doubleClick) {
         // We only get left clicks on mobile platforms
+        // TODO: Clicked vs held
         return !(Gdx.app.getType() != Application.ApplicationType.Desktop && mouseButton != 0)
                 && Gdx.input.isButtonPressed(mouseButton);
 
     }
 
-    public boolean ObjectClicked(ParameterValue.Click click,
-            ParameterValue.Object object) {
+    public boolean WhileMousePressed(int mouseButton) {
+        // We only get left clicks on mobile platforms
+        return !(Gdx.app.getType() != Application.ApplicationType.Desktop && mouseButton != 0)
+                && Gdx.input.isButtonPressed(mouseButton);
+
+    }
+
+    public boolean ObjectClicked(int mouseButton, boolean doubleClicked,
+            int object) {
         if (Gdx.app.getType() != Application.ApplicationType.Desktop
-                && click.click != 0) {
+                && mouseButton != 0) {
             // We only get left clicks on mobile platforms
             //System.out.println("Bad click type for platform: " + click.click);
             return false;
@@ -72,7 +91,7 @@ public class Conditions extends Parameters {
         // TODO: Support double clicking
         // TODO: Clicked means once
 
-        if (!Gdx.input.isButtonPressed(click.click)) {
+        if (!Gdx.input.isButtonPressed(mouseButton)) {
             return false;
         }
 
@@ -86,12 +105,13 @@ public class Conditions extends Parameters {
 
         boolean mouseOver = false;
         for (ObjectInstance instance : scope.getScene().getObjects()) {
-            if (instance.getObjectInfo() == object.objectInfo
-                    && instance.getX() <= mouseX && instance.getY() <= mouseY
-                    && instance.getX() + instance.getWidth() >= mouseX
-                    && instance.getY() + instance.getHeight() >= mouseY) {
+            if (instance.getObjectInfo() == object
+                    && instance.getScreenX() <= mouseX
+                    && instance.getScreenY() <= mouseY
+                    && instance.getScreenX() + instance.getWidth() >= mouseX
+                    && instance.getScreenY() + instance.getHeight() >= mouseY) {
                 mouseOver = true;
-                scope.objects.add(instance);
+                scope.addObjectToScope(instance);
             }
         }
 
@@ -102,15 +122,15 @@ public class Conditions extends Parameters {
         return mouseOver;
     }
 
-    public boolean Every(int id, ParameterValue.Every every) {
-        String key = "_env_every_" + id;
+    public boolean Every(int every) {
+        String key = "_env_every_"; // TODO: Pass object ID here
         if (scope.getScene().getVariables().containsKey(key)) {
             // Check if it has updated
             long currentTime = System.currentTimeMillis();
             long lastTime = (Long) scope.getScene().getVariables().get(key);
             long diff = currentTime - lastTime;
-            if (diff > every.delay) {
-                currentTime -= diff - every.delay;
+            if (diff > every) {
+                currentTime -= diff - every;
                 scope.getScene().getVariables().put(key, currentTime);
                 return true;
             }
@@ -130,7 +150,7 @@ public class Conditions extends Parameters {
         }
     }
 
-    public boolean KeyPressed(ParameterValue.KeyParameter key) {
+    public boolean KeyPressed(int key) {
         // TODO: Key pressed
         //Gdx.input.
         /*if (validate) {
@@ -150,10 +170,18 @@ public class Conditions extends Parameters {
         }
     }
 
-    public boolean CompareGlobalString(ParameterValue.Short id,
-            ParameterValue.String value) {
+    public boolean CompareGlobalString(int id,
+            String value) {
+        return value.equals(scope.getGame().globalStrings.get(id));
+    }
+
+    public boolean CompareAlterableValueInt(int id, int value) {
+        for (ObjectInstance item : scope.getObjects()) {
+            if (item.getVariables().containsKey("" + id)) {
+                return value == (Integer) item.getVariables().get("" + id);
+            }
+        }
         return false;
-        //return (System.currentTimeMillis() - scope.getScene().getSceneStartTime()) > time.timer;
     }
 
     public boolean TimerEquals(int value, int repeat/*?*/) {
@@ -178,11 +206,7 @@ public class Conditions extends Parameters {
         return scope.getGame().getPlatformUtils().verifySteam();
     }
 
-
-    public boolean extension_FlagOff(ParameterValue.ExpressionParameter expression) {
-        // TODO: Evaluate expressions
-        int value = expression.expressions[0].num;
-
+    public boolean IsFlagOff(int value) {
         String key = "_env_flag_" + value;
         if (scope.getScene().getVariables().containsKey(key)) {
             return !((Boolean) scope.getScene().getVariables().get(key));
@@ -191,10 +215,7 @@ public class Conditions extends Parameters {
         }
     }
 
-    public boolean extension_FlagOn(ParameterValue.ExpressionParameter expression) {
-        // TODO: Evaluate expressions
-        int value = expression.expressions[0].num;
-
+    public boolean IsFlagOn(int value) {
         String key = "_env_flag_" + value;
         if (scope.getScene().getVariables().containsKey(key)) {
             return (Boolean) scope.getScene().getVariables().get(key);
@@ -203,41 +224,47 @@ public class Conditions extends Parameters {
         }
     }
 
-    public boolean extension_CompareY(ParameterValue.ExpressionParameter expression) {
-        // TODO: Evaluate expressions
-        int value = expression.expressions[0].num;
-
-        String key = "_env_flag_" + value;
-        if (scope.getScene().getVariables().containsKey(key)) {
-            return (Boolean) scope.getScene().getVariables().get(key);
-        } else {
+    public boolean CompareY(int y) {
+        ObjectInstance[] objects = scope.getObjects();
+        if (objects.length == 0) {
             return false;
         }
-    }
-
-    public boolean groupActive(int id) {
-        return scope.getScene().getActiveGroups().get(id);
-    }
-
-    public boolean extension_AnimationPlaying(ParameterValue.Short num) {
-        // TODO: Animations
+        // TODO: More then? Less then?
+        for (ObjectInstance instance : objects) {
+            if (y == 57 && instance.getY() <= 57) {
+                return true;
+            } else if (y == 60 && instance.getY() >= 60) {
+                return true;
+            } else {
+                return false;
+            }
+        }
         return true;
     }
 
-    // Utility methods
+    public boolean IsLayerVisible(int layer) {
+        return scope.getScene().getLayers()[layer - 1].isVisible();
+    }
 
-    /**
-     * Returns a method for a particular condition, or null if one cannot be found.
-     *
-     * @param name The name of the condition to return
-     * @return A method, or null if one cannot be found
-     */
-    public Method getMethodForCondition(String name) {
-        for (Method method : Conditions.class.getDeclaredMethods()) {
-            if (method.getName().equals(name)) {
-                return method;
+    public boolean FacingInDirection(int direction) {
+        // TODO: Directions
+        return true;
+    }
+
+    public boolean GroupActivated(int id) {
+        return scope.getScene().getActiveGroups().get(id);
+    }
+
+    public boolean AnimationPlaying(int num) {
+        ObjectInstance[] objects = scope.getObjects();
+        if (objects.length == 0) {
+            return false;
+        }
+        for (ObjectInstance instance : objects) {
+            if (instance.getAnimation() != num) {
+                return false;
             }
         }
-        return null;
+        return true;
     }
 }

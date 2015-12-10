@@ -1,8 +1,5 @@
 package net.jselby.escapists.game.events;
 
-import net.jselby.escapists.data.chunks.Events;
-import net.jselby.escapists.data.events.Expression;
-import net.jselby.escapists.data.events.ParameterValue;
 import net.jselby.escapists.game.EscapistsGame;
 import net.jselby.escapists.game.ObjectInstance;
 import net.jselby.escapists.game.Scene;
@@ -16,7 +13,7 @@ import java.util.List;
 public class Scope extends Actions {
     private EscapistsGame game;
     private Scene scene;
-    public List<ObjectInstance> objects = new ArrayList<ObjectInstance>();
+    private List<ObjectInstance> objects = new ArrayList<ObjectInstance>();
 
     public Scope(EscapistsGame game, Scene scene) {
         this.scope = this;
@@ -34,11 +31,21 @@ public class Scope extends Actions {
         return this;
     }
 
+    protected ObjectInstance[] getObjects() {
+        ObjectInstance[] dump = objects.toArray(new ObjectInstance[objects.size()]);
+        objects.clear();
+        return dump;
+    }
+
     public Scene getScene() {
         return scene;
     }
 
     public EscapistsGame getGame() {
         return game;
+    }
+
+    public void addObjectToScope(ObjectInstance instance) {
+        objects.add(instance);
     }
 }

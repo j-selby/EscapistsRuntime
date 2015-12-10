@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import net.jselby.escapists.EscapistsRuntime;
 import net.jselby.escapists.data.ObjectDefinition;
+import net.jselby.escapists.data.chunks.FontBank;
 import net.jselby.escapists.data.chunks.ObjectInstances;
 import net.jselby.escapists.data.objects.ObjectCommon;
 import net.jselby.escapists.game.EscapistsGame;
@@ -17,7 +18,7 @@ import org.mini2Dx.core.graphics.Graphics;
  */
 public class Text extends ObjectInstance {
     private final net.jselby.escapists.data.objects.sections.Text rawType;
-    private GlyphLayout compiledStrings;
+    private GlyphLayout[] compiledStrings;
     private int font;
     private String str;
     //private final TrueTypeFont font;
@@ -27,12 +28,20 @@ public class Text extends ObjectInstance {
         rawType = ((ObjectCommon) def.properties.getProperties()).partText;
 
         net.jselby.escapists.data.objects.sections.Text.Paragraph paragraph = rawType.paragraphs[0];
-        compiledStrings = EscapistsRuntime.getRuntime().getApplication()
-                    .fonts[paragraph.font + 1].getValue().getFontCache()
-                    .addText(paragraph.value, instanceDef.getX(), instanceDef.getY());
+        compileString(EscapistsRuntime.getRuntime().getApplication()
+                .fonts[paragraph.font + 1].getValue(),
+                paragraph.value, instanceDef.getX(), instanceDef.getY());
         font = paragraph.font;
         str = paragraph.value;
         //font = new TrueTypeFont(originalFont.value.awtFont, false);
+    }
+
+    private void compileString(FontBank.LogFont value, String msg, float x, float y) {
+        String[] msgs = msg.split("\n");
+        compiledStrings = new GlyphLayout[msgs.length];
+        for (int i = 0; i < msgs.length; i++) {
+            compiledStrings[i] = value.getFontCache().addText(msgs[i], x, y);
+        }
     }
 
     @Override
@@ -58,27 +67,33 @@ public class Text extends ObjectInstance {
 
         net.jselby.escapists.data.objects.sections.Text.Paragraph paragraph = rawType.paragraphs[0];
 
-        float width = compiledStrings.width;
-        float height = compiledStrings.height;
-
-        float drawXAdd = 0;
-        if (paragraph.isCentered()) {
-            drawXAdd = rawType.width / 2 - width / 2;
-        } else if (paragraph.isRightAligned()) {
-            drawXAdd = rawType.width - width;
-        }
-        float drawYAdd = 0;
-        if (paragraph.isVerticallyCentered()) {
-            drawYAdd = rawType.height / 2 - height / 2;
-        } else if (paragraph.isBottomAligned()) {
-            drawYAdd = rawType.height - height;
-        }
-
         BitmapFont font = EscapistsRuntime.getRuntime()
                 .getApplication().fonts[paragraph.font + 1].getValue().getFont();
         g.setFont(font);
         g.setColor(paragraph.color);
-        g.drawString(str, getX() + drawXAdd, getY() + drawYAdd);
+
+        String[] msgs = str.split("\n");
+
+        for (int i = 0; i < compiledStrings.length; i++) {
+            GlyphLayout compiledString = compiledStrings[i];
+            float width = compiledString.width;
+            float height = compiledString.height * compiledStrings.length;
+
+            float drawXAdd = 0;
+            if (paragraph.isCentered()) {
+                drawXAdd = rawType.width / 2 - width / 2;
+            } else if (paragraph.isRightAligned()) {
+                drawXAdd = rawType.width - width;
+            }
+            float drawYAdd = 0;
+            if (paragraph.isVerticallyCentered()) {
+                drawYAdd = rawType.height / 2 - height / 2;
+            } else if (paragraph.isBottomAligned()) {
+                drawYAdd = rawType.height - height;
+            }
+            g.drawString(msgs[i], getX() + drawXAdd, getY() + drawYAdd +
+                    (font.getLineHeight() * i));
+        }
 
         //font.setColor(paragraph.color);
         //font.draw(batch, compiledStrings[i], getX(), getY());
@@ -97,8 +112,11 @@ public class Text extends ObjectInstance {
             return;
         }
         str = msg;
-        compiledStrings = EscapistsRuntime.getRuntime().getApplication()
-                .fonts[font + 1].getValue().getFontCache()
-                .addText(str, getX(), getY());
+        compileString(EscapistsRuntime.getRuntime().getApplication()
+                .fonts[font + 1].getValue(), str, getX(), getY());
+    }
+
+    public Object getString() {
+        return str;
     }
 }

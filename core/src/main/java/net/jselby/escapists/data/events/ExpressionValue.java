@@ -2,7 +2,6 @@ package net.jselby.escapists.data.events;
 
 import net.jselby.escapists.util.ByteReader;
 import org.apache.commons.lang3.StringEscapeUtils;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * Values of expressions.
@@ -74,25 +73,13 @@ public abstract class ExpressionValue {
     // External values
     public abstract static class GlobalCommon extends ExpressionValue {
         public short value;
+        public short value2;
 
         @Override
         public void read(ByteReader buffer) {
-            buffer.skipBytes(4);
+            //buffer.skipBytes(4);
+            value2 = buffer.getShort();
             value = buffer.getShort();
-        }
-    }
-
-    public static class GlobalString extends GlobalCommon {
-        @Override
-        public java.lang.String toString() {
-            return "GlobalString(" + value + ")";
-        }
-    }
-
-    public static class GlobalValue extends GlobalCommon {
-        @Override
-        public java.lang.String toString() {
-            return "GlobalValue(" + value + ")";
         }
     }
 
@@ -115,14 +102,35 @@ public abstract class ExpressionValue {
     public static class ExtensionValue extends ExtensionCommon {
         @Override
         public java.lang.String toString() {
-            return getClass().getSimpleName() + "()";
+            return "env." + getClass().getSimpleName() + "()";
+        }
+    }
+
+    public static class ExtensionFunctionOneParam extends ExtensionCommon {
+        @Override
+        public java.lang.String toString() {
+            return "env." + getClass().getSimpleName() + "(" + value + ")";
         }
     }
 
     public static class ExtensionFunction extends ExtensionCommon {
         @Override
         public java.lang.String toString() {
-            return getClass().getSimpleName() + "(" + value + ",";
+            return "env." + getClass().getSimpleName() + "(" + value + ", ";
+        }
+    }
+
+    public static class GlobalString extends GlobalCommon {
+        @Override
+        public java.lang.String toString() {
+            return "env.GlobalString(" + value2 + ")";
+        }
+    }
+
+    public static class GlobalValue extends GlobalCommon {
+        @Override
+        public java.lang.String toString() {
+            return "env.GlobalValue(" + value2 + ")";
         }
     }
 
@@ -131,6 +139,14 @@ public abstract class ExpressionValue {
     }
 
     public static class Find extends ExpressionValue {
+    }
+
+    public static class GetY extends GlobalCommon {
+
+        @Override
+        public java.lang.String toString() {
+            return "env.GetY(" + value2 + "," + value + ")";
+        }
     }
 
     public static class XMouse extends ExpressionValue {
@@ -154,6 +170,9 @@ public abstract class ExpressionValue {
     public static class StringLength extends ExtensionFunction {
     }
 
+    public static class ReplaceSubstring extends ExtensionFunction {
+    }
+
     public static class Random extends ExpressionValue {
     }
 
@@ -172,7 +191,7 @@ public abstract class ExpressionValue {
     public static class ApplicationDirectory extends ExpressionValue {
     }
 
-    public static class CurrentText extends ExpressionValue {
+    public static class CurrentText extends ExtensionFunctionOneParam {
     }
 
     public static class XLeftFrame extends ExpressionValue {
@@ -226,6 +245,7 @@ public abstract class ExpressionValue {
     public static class GetDataDirectory extends ExpressionValue {
     }
 
+
     public static class GetItemValue extends ExtensionFunction {
     }
 
@@ -233,6 +253,22 @@ public abstract class ExpressionValue {
     }
 
     public static class GroupItemString extends ExtensionFunction {
+    }
+
+    public static class GetValue extends ExtensionFunction {
+    }
+
+    public static class GetString extends ExtensionFunction {
+    }
+
+    // List API
+    public static class Element extends ExtensionFunction {
+    }
+
+    public static class Select extends ExtensionFunctionOneParam {
+    }
+
+    public static class ListLength extends ExtensionFunctionOneParam {
     }
 
     // Steam API
@@ -268,16 +304,16 @@ public abstract class ExpressionValue {
     public static abstract class Operation extends ExpressionValue {
     }
 
-    public static class ToNumber extends Operation {
+    public static class ToNumber extends ExtensionFunction {
     }
 
-    public static class ToInt extends Operation {
+    public static class ToInt extends ExtensionFunction {
     }
 
-    public static class FloatToString extends Operation {
+    public static class FloatToString extends ExtensionFunction {
     }
 
-    public static class ToString extends Operation {
+    public static class ToString extends ExtensionFunction {
     }
 
     public static class Plus extends Operation {

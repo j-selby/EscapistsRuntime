@@ -168,8 +168,17 @@ public class ConditionNames {
         map.put(64, tempMap);
 
         tempMap = new HashMap<Integer, String>();
+        tempMap.put(-88, "SteamHasOtherGameLicense");
+        map.put(39, tempMap);
+
+        tempMap = new HashMap<Integer, String>();
         tempMap.put(-86, "DirectoryExists");
+        tempMap.put(-83, "IsFileReadable");
         map.put(42, tempMap);
+
+        tempMap = new HashMap<Integer, String>();
+        tempMap.put(-91, "IsLayerVisible");
+        map.put(48, tempMap);
 
         tempMap = new HashMap<Integer, String>();
         tempMap.put(-85, "HasItemValue");
@@ -199,8 +208,8 @@ public class ConditionNames {
         extensionMap.put(-21, "PathFinished");
         extensionMap.put(-22, "NearWindowBorder");
         extensionMap.put(-23, "IsOverlappingBackground");
-        extensionMap.put(-24, "FlagOff");
-        extensionMap.put(-25, "FlagOn");
+        extensionMap.put(-24, "IsFlagOff");
+        extensionMap.put(-25, "IsFlagOn");
         extensionMap.put(-26, "CompareFixedValue");
         extensionMap.put(-27, "CompareAlterableValue");
         extensionMap.put(-28, "ObjectInvisible");
@@ -225,7 +234,7 @@ public class ConditionNames {
         if (map.containsKey(categoryID) && map.get(categoryID).containsKey(itemID)) {
             return map.get(categoryID).get(itemID);
         } else if (extensionMap.containsKey(itemID)) {
-            return "extension_" + extensionMap.get(itemID);
+            return extensionMap.get(itemID);
         } else {
             return null;
         }

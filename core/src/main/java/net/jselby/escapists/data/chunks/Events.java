@@ -3,15 +3,13 @@ package net.jselby.escapists.data.chunks;
 import net.jselby.escapists.EscapistsRuntime;
 import net.jselby.escapists.data.Chunk;
 import net.jselby.escapists.data.ObjectDefinition;
-import net.jselby.escapists.data.events.*;
-import net.jselby.escapists.game.EscapistsGame;
-import net.jselby.escapists.game.Scene;
-import net.jselby.escapists.game.events.Actions;
-import net.jselby.escapists.game.events.Conditions;
+import net.jselby.escapists.data.events.ActionNames;
+import net.jselby.escapists.data.events.ConditionNames;
+import net.jselby.escapists.data.events.ParameterNames;
+import net.jselby.escapists.data.events.ParameterValue;
 import net.jselby.escapists.util.ByteReader;
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.FileOutputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -95,7 +93,7 @@ public class Events extends Chunk {
         for (EventGroup group : groups) {
             // Check for groups
             if (group.conditions.length != 0 && group.conditions[0].name != null && group.conditions[0].name.equalsIgnoreCase("NewGroup")) {
-                builder.append(StringUtils.repeat(' ', indent)).append("if (env.groupActive(")
+                builder.append(StringUtils.repeat(' ', indent)).append("if (env.GroupActivated(")
                         .append(((ParameterValue.Group) group.conditions[0].items[0].value).id)
                         .append(")) { // Flags: ")
                         .append(Integer.toBinaryString(((ParameterValue.Group) group.conditions[0].items[0].value).flags))
@@ -110,14 +108,27 @@ public class Events extends Chunk {
                 continue;
             }
 
-            // Build conditions for group
+            // Check for ORs within the group
+            boolean hasOR = false;
+            if (group.conditions.length > 3) {
+                for (Condition condition : group.conditions) {
+                    if (condition.name != null && condition.name.trim().equalsIgnoreCase("OrFiltered")) {
+                        hasOR = true;
+                        break;
+                    }
+                }
+            }
+
             String conditions = "";
+            int count = 0;
+
+            if (hasOR) {
+                conditions += "(";
+            }
+
+            // Build conditions for group
             boolean lastWasOr = false;
             for (Condition condition : group.conditions) {
-                /*if (condition.name != null && condition.name.equalsIgnoreCase("Always")) {
-                    continue;
-                }*/
-
 
                 ObjectDefinition object = null;
                 if (EscapistsRuntime.getRuntime().getApplication().objectDefs.length > condition.objectInfo) {
@@ -139,10 +150,10 @@ public class Events extends Chunk {
                 }
 
                 if (objMethod.equalsIgnoreCase("OrFiltered")) {
-                    conditions += " || ";
+                    conditions += (hasOR ? ")" : "") + " || " + (hasOR ? "(" : "");
                     lastWasOr = true;
                     continue;
-                } else if (!lastWasOr && conditions.length() != 0) {
+                } else if (!lastWasOr && count != 0) {
                     conditions += " && ";
                 } else {
                     lastWasOr = false;
@@ -163,6 +174,11 @@ public class Events extends Chunk {
                     conditions += (paramCount != 0 ? ", " : "") + param.value;// + ":" + param.code;//param.loader.name() + " " + param.name.toLowerCase();
                     paramCount++;
                 }
+                conditions += ")";
+                count++;
+            }
+
+            if (hasOR) {
                 conditions += ")";
             }
 

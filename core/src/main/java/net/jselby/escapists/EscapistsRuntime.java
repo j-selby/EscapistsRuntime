@@ -8,13 +8,10 @@ import net.jselby.escapists.data.pe.PESection;
 import net.jselby.escapists.game.Application;
 import net.jselby.escapists.game.EscapistsGame;
 import net.jselby.escapists.util.ByteReader;
-import org.apache.commons.io.IOUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;

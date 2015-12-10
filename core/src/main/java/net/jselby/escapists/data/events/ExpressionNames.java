@@ -26,6 +26,7 @@ public class ExpressionNames {
         map.put(0, tempMap);
 
         tempMap = new HashMap<Integer, String>();
+        tempMap.put(1, "GetY");
         tempMap.put(80, "GetColorAt");
         tempMap.put(81, "GetXScale");
         tempMap.put(82, "GetYScale");
@@ -224,9 +225,23 @@ public class ExpressionNames {
         map.put(-1, tempMap);
 
         tempMap = new HashMap<Integer, String>();
+        tempMap.put(80, "GetValue");
+        tempMap.put(81, "GetString");
+        map.put(36, tempMap);
+
+        tempMap = new HashMap<Integer, String>();
         tempMap.put(81, "SteamAccountUserId");
         tempMap.put(82, "SteamAccountUserName");
         map.put(39, tempMap);
+
+        tempMap = new HashMap<Integer, String>();
+        tempMap.put(80, "Select");
+        tempMap.put(87, "ListLength");
+        map.put(32, tempMap);
+
+        tempMap = new HashMap<Integer, String>();
+        tempMap.put(81, "Element");
+        map.put(34, tempMap);
 
         tempMap = new HashMap<Integer, String>();
         tempMap.put(107, "GetDataDirectory");
@@ -236,6 +251,10 @@ public class ExpressionNames {
         tempMap.put(88, "GetItemValue");
         tempMap.put(89, "GetItemString");
         map.put(47, tempMap);
+
+        tempMap = new HashMap<Integer, String>();
+        tempMap.put(81, "ReplaceSubstring");
+        map.put(49, tempMap);
 
         tempMap = new HashMap<Integer, String>();
         tempMap.put(85, "GroupItemString");

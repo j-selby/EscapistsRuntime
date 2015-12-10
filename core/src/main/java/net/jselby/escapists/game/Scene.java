@@ -1,7 +1,7 @@
 package net.jselby.escapists.game;
 
-import com.badlogic.gdx.*;
 import com.badlogic.gdx.Application;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import net.jselby.escapists.EscapistsRuntime;
 import net.jselby.escapists.data.ObjectDefinition;
@@ -13,12 +13,20 @@ import net.jselby.escapists.data.events.ParameterValue;
 import net.jselby.escapists.game.events.Scope;
 import net.jselby.escapists.game.objects.Active;
 import net.jselby.escapists.game.objects.Backdrop;
+import net.jselby.escapists.game.objects.QuickBackdrop;
 import net.jselby.escapists.game.objects.Text;
-import org.apache.commons.lang3.StringUtils;
 import org.mini2Dx.core.graphics.Graphics;
-import org.mozilla.javascript.*;
+import org.mozilla.javascript.Context;
+import org.mozilla.javascript.EvaluatorException;
+import org.mozilla.javascript.Script;
+import org.mozilla.javascript.ScriptableObject;
 
-import java.util.*;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A scene is a particular set of layouts. This can be used for levels, etc.
@@ -101,7 +109,19 @@ public class Scene {
             }
 
             switch(objectInfo.properties.getObjectType()) {
-                case Player:
+                case Backdrop:
+                    newInstance = new Backdrop(objectInfo, originalDef);
+                    break;
+                case Active:
+                    newInstance = new Active(objectInfo, originalDef);
+                    break;
+                case Text:
+                    newInstance = new Text(objectInfo, originalDef);
+                    break;
+                case QuickBackdrop:
+                    newInstance = new QuickBackdrop(objectInfo, originalDef);
+                    break;
+                /*case Player:
                     break;
                 case Keyboard:
                     break;
@@ -115,17 +135,6 @@ public class Scene {
                     break;
                 case System:
                     break;
-                case QuickBackdrop:
-                    break;
-                case Backdrop:
-                    newInstance = new Backdrop(objectInfo, originalDef);
-                    break;
-                case Active:
-                    newInstance = new Active(objectInfo, originalDef);
-                    break;
-                case Text:
-                    newInstance = new Text(objectInfo, originalDef);
-                    break;
                 case Question:
                     break;
                 case Score:
@@ -137,7 +146,9 @@ public class Scene {
                 case RTF:
                     break;
                 case SubApplication:
-                    break;
+                    break;*/
+                default:
+                    System.out.println("Object type failed @ creation: " + objectInfo.properties.getObjectType());
             }
 
             if (newInstance == null) {
@@ -158,9 +169,12 @@ public class Scene {
         firstFrame = true;
 
         // Prepare JS
-        String[] lines = events.toJS().split("\n");
-        for (int i = 0; i < lines.length; i++) {
-            System.out.println(StringUtils.leftPad((i + 1) + ": ", 5) + lines[i]);
+        try {
+            FileOutputStream out = new FileOutputStream("frame_" + getName() + ".js");
+            out.write(events.toJS().getBytes());
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         jsContext = Context.enter();
@@ -201,7 +215,8 @@ public class Scene {
         jsScript.exec(jsContext, jsScriptable);
 
         // TODO: Activate previous OnLoop instances (per condition countdown?)
-        for (Map.Entry<String, Integer> value : loops.entrySet()) {
+        for (Object rawvalue : loops.entrySet().toArray()) {
+            Map.Entry<String, Integer> value = (Map.Entry<String, Integer>) rawvalue;
             if (value.getValue() <= 1) {
                 loops.remove(value.getKey());
             } else {

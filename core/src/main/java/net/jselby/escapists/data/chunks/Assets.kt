@@ -1,7 +1,6 @@
 package net.jselby.escapists.data.chunks
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.Texture
@@ -12,8 +11,6 @@ import net.jselby.escapists.data.Chunk
 import net.jselby.escapists.util.ByteReader
 import net.jselby.escapists.util.CompressionUtils
 import org.mini2Dx.core.graphics.Sprite
-import java.io.FileOutputStream
-import java.util.*
 
 /**
  * Assets are chunks storing data such as images, sounds, and fonts.

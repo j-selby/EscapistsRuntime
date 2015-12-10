@@ -31,6 +31,7 @@ public class EscapistsGame extends BasicGame {
     private PlatformUtils utils;
     private int sceneIndex;
     public Map<Integer, Number> globalInts;
+    public Map<Integer, String> globalStrings;
 
     public EscapistsGame(PlatformUtils utils) {
         this.utils = utils;
@@ -39,6 +40,7 @@ public class EscapistsGame extends BasicGame {
     @Override
     public void initialise() {
         globalInts = new HashMap<Integer, Number>();
+        globalStrings = new HashMap<Integer, String>();
 
         loadingLogo = new Sprite(new Texture(Gdx.files.internal("logo.png")));
 
@@ -83,7 +85,7 @@ public class EscapistsGame extends BasicGame {
                             System.out.println("Callback from app, all assets prepared.");
                             try {
                                 app.init(EscapistsGame.this);
-                                loadScene(0); // 2 = title screen, 6 = game
+                                loadScene(2); // 2 = title screen, 6 = game
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }

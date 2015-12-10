@@ -82,7 +82,7 @@ public class Application {
         assert appHeader != null;
         assert fontBankChunk != null;
         assert globalValuesChunk != null;
-        assert globalValuesChunk != null;
+        assert globalStringsChunk != null;
 
         name = nameChunk.getContent();
         author = authorChunk.getContent();
@@ -128,6 +128,11 @@ public class Application {
         Number[] values = globalValuesChunk.getValues();
         for (int i = 0; i < values.length; i++) {
             game.globalInts.put(i, values[i]);
+        }
+
+        String[] stringValues = globalStringsChunk.getData();
+        for (int i = 0; i < stringValues.length; i++) {
+            game.globalStrings.put(i, stringValues[i]);
         }
 
         // Remove bad/unknown chunks

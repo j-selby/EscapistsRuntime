@@ -1,12 +1,10 @@
 package net.jselby.escapists.data.events;
 
-import net.jselby.escapists.EscapistsRuntime;
 import net.jselby.escapists.util.ByteReader;
-import org.mozilla.javascript.Context;
-import org.mozilla.javascript.Script;
+import org.apache.commons.lang3.NotImplementedException;
+import org.apache.commons.lang3.StringEscapeUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -29,6 +27,11 @@ public abstract class ParameterValue {
             objectInfoList = buffer.getShort();
             objectInfo = buffer.getUnsignedShort();
             objectType = buffer.getShort();
+        }
+
+        @Override
+        public java.lang.String toString() {
+            return "" + objectInfo;
         }
     }
 
@@ -89,6 +92,11 @@ public abstract class ParameterValue {
             flags = buffer.getUnsignedShort();
             name = buffer.getString();
         }
+
+        @Override
+        public java.lang.String toString() {
+            return handle + "," + flags + ",\"" + StringEscapeUtils.escapeEcmaScript(name) + "\"";
+        }
     }
 
     public static class Create extends ParameterValue {
@@ -145,7 +153,6 @@ public abstract class ParameterValue {
     public static class ExpressionParameter extends ParameterValue {
         public short comparison;
         public Expression[] expressions;
-        private Script value;
 
         @Override
         public void read(ByteReader buffer) {
@@ -176,15 +183,6 @@ public abstract class ParameterValue {
             }
 
             return str;
-        }
-
-        public void compile(Context context) {
-            //System.out.println("Compiling expression: " + toString());
-            //System.out.println("Compiling expression: " + toString());
-            try {
-                //value = context.compileString(toString(), "expression@" + hashCode(), 1, null);
-            } catch (Exception ignored) {
-            }
         }
     }
 
@@ -266,6 +264,11 @@ public abstract class ParameterValue {
         @Override
         public void read(ByteReader buffer) {
             value = buffer.getColor();
+        }
+
+        @Override
+        public java.lang.String toString() {
+            return "" + value.toIntBits();
         }
     }
 
@@ -372,16 +375,32 @@ public abstract class ParameterValue {
     public static class Extension extends ParameterValue {
         public short type;
         public short code;
+        public int size;
         public byte[] data;
+        public short dataShort;
 
         @Override
         public void read(ByteReader buffer) {
-            int size = buffer.getShort();
+            size = buffer.getShort() - 6;
             type = buffer.getShort();
             code = buffer.getShort();
 
-            data = buffer.getBytes(size - 6);
+            if (size == 4) {
+                // Data type is short
+                dataShort = buffer.getShort();
+            } else {
+                data = buffer.getBytes(size);
+            }
             //System.out.println(type + ":" + code + ":" + (size - 6));
+        }
+
+        @Override
+        public java.lang.String toString() {
+            if (data == null) {
+                return dataShort + "";
+            } else {
+                throw new NotImplementedException("Extension type not implemented: " + type + " of size " + size);
+            }
         }
     }
 

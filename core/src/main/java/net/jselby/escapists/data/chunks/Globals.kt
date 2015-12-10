@@ -4,14 +4,15 @@ import net.jselby.escapists.data.Chunk
 import net.jselby.escapists.util.ByteReader
 
 class GlobalStrings : Chunk() {
-    var data: Array<String?>? = null
+    lateinit var data: Array<String?>
 
     override fun init(buffer: ByteReader, length: Int) {
-        val l = (buffer.int.toLong() and 0xffffffffL)
-        data = arrayOfNulls<String>(l.toInt())
+        val l = buffer.unsignedInt.toInt()
+        data = arrayOfNulls<String>(l)
 
         for (i in 0..l - 1) {
-            (data as Array<String?>)[i.toInt()] = buffer.string
+            data[i] = buffer.string
+            System.out.println(data[i])
         }
     }
 }

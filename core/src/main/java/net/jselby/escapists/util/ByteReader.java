@@ -2,7 +2,6 @@ package net.jselby.escapists.util;
 
 import com.badlogic.gdx.graphics.Color;
 
-import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 

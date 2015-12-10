@@ -1,6 +1,5 @@
 package net.jselby.escapists.game.objects;
 
-import com.badlogic.gdx.Gdx;
 import net.jselby.escapists.EscapistsRuntime;
 import net.jselby.escapists.data.ObjectDefinition;
 import net.jselby.escapists.data.chunks.ImageBank;
@@ -65,15 +64,14 @@ public class Active extends ObjectInstance {
     }
 
     @Override
-    public float getX() {
+    public float getScreenX() {
         return super.getX() - xHotspot;
     }
 
     @Override
-    public float getY() {
+    public float getScreenY() {
         return super.getY() - yHotspot;
     }
-
 
     @Override
     public void tick(EscapistsGame container) {
@@ -110,6 +108,6 @@ public class Active extends ObjectInstance {
         }
 
         ImageBank.ImageItem image = EscapistsRuntime.getRuntime().getApplication().images[frame + 1];
-        g.drawSprite(image.getImage(), getX(), getY());
+        g.drawSprite(image.getImage(), getScreenX(), getScreenY());
     }
 }
