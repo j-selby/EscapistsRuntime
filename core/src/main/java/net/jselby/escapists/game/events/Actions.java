@@ -1,11 +1,17 @@
 package net.jselby.escapists.game.events;
 
 import net.jselby.escapists.data.events.ParameterValue;
+import net.jselby.escapists.data.ini.PropertiesFile;
+import net.jselby.escapists.data.ini.PropertiesSection;
 import net.jselby.escapists.game.Layer;
 import net.jselby.escapists.game.ObjectInstance;
+import net.jselby.escapists.game.objects.Active;
 import net.jselby.escapists.game.objects.Text;
+import org.apache.commons.io.IOUtils;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.Map;
 
 /**
  * Events are things that the engine can do to change the execution state.
@@ -118,6 +124,27 @@ public class Actions extends Conditions {
     public void SetStringVar(String name, String val) {
         for (ObjectInstance object : scope.getObjects()) {
             object.getVariables().put(name, val);
+        }
+    }
+
+    public void LoadIniFile(String path) {
+        System.out.println("Loading configuration file: " + path);
+        File file = new File(path);
+        String contents;
+        try {
+            contents = IOUtils.toString(file.toURI());
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+        PropertiesFile propertiesFile = new PropertiesFile(contents);
+
+        for (ObjectInstance object : scope.getObjects()) {
+            for (Map.Entry<String, PropertiesSection> section : propertiesFile.entrySet()) {
+                for (Map.Entry<String, Object> item : section.getValue().entrySet()) {
+                    object.getVariables().put(section.getKey() + ":" + item.getKey(), item.getValue());
+                }
+            }
         }
     }
 

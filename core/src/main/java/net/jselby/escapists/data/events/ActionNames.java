@@ -267,6 +267,10 @@ public class ActionNames {
         map.put(47, tempMap);
 
         tempMap = new HashMap<Integer, String>();
+        tempMap.put(86, "LoadIniFile");
+        map.put(63, tempMap);
+
+        tempMap = new HashMap<Integer, String>();
         tempMap.put(80, "EmbedFont");
         map.put(65, tempMap);
 

@@ -1,5 +1,7 @@
 package net.jselby.escapists.game.events;
 
+import net.jselby.escapists.EscapistsRuntime;
+import net.jselby.escapists.data.ObjectDefinition;
 import net.jselby.escapists.game.EscapistsGame;
 import net.jselby.escapists.game.ObjectInstance;
 import net.jselby.escapists.game.Scene;
@@ -14,6 +16,7 @@ public class Scope extends Actions {
     private EscapistsGame game;
     private Scene scene;
     private List<ObjectInstance> objects = new ArrayList<ObjectInstance>();
+    private int lastRef = -1;
 
     public Scope(EscapistsGame game, Scene scene) {
         this.scope = this;
@@ -22,6 +25,7 @@ public class Scope extends Actions {
     }
 
     public Scope withObjects(int id) {
+        lastRef = id;
         objects.clear();
         for (ObjectInstance instance : scene.getObjects()) {
             if (instance.getObjectInfo() == id) {

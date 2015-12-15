@@ -65,18 +65,24 @@ public class Parameters {
     }
 
     public Number GlobalValue(int key) {
-        return scope.getGame().globalInts.get(key + 1);
+        return scope.getGame().globalInts.get(key);
     }
 
     public String GlobalString(int key) {
-        return scope.getGame().globalStrings.get(key + 1);
+        String val = scope.getGame().globalStrings.get(key);
+        if (key == 1) { // Version String
+            val += " (UER)";
+        } else if (key == 6) { // Inject Language
+            return "eng";
+        }
+        return val;
     }
 
     public Object GetValue(int objectId, String varName) {
         for (ObjectInstance instance : scope.getScene().getObjects()) {
             if (instance.getObjectInfo() == objectId) {
                 if (instance.getVariables().containsKey(varName)) {
-                    System.out.printf("GetValue:%d=%s.\n", objectId, instance.getVariables().get(varName));
+                    //System.out.printf("GetValue:%d=%s.\n", objectId, instance.getVariables().get(varName));
                     return instance.getVariables().get(varName);
                 } else {
                     return 0;
@@ -92,7 +98,14 @@ public class Parameters {
     }
 
     public String GroupItemString(int id, String category, String key) {
-        // TODO: Um, what?
+        for (ObjectInstance instance : scope.getScene().getObjects()) {
+            if (instance.getObjectInfo() == id) {
+                if (instance.getVariables().containsKey(category + ":" + key)) {
+                    System.out.printf("GroupItemString;%d;%s=%s\n", id, category + ":" + key, instance.getVariables().get(category + ":" + key));
+                    return (String) instance.getVariables().get(category + ":" + key);
+                }
+            }
+        }
         return "";
     }
 

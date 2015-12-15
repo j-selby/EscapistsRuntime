@@ -102,57 +102,11 @@ public class Scene {
         for (ObjectInstances.ObjectInstance originalDef : objectInstanceDefs) {
             // Find the stats for this object
             ObjectDefinition objectInfo = runtime.getApplication().objectDefs[originalDef.getObjectInfo()];
-            ObjectInstance newInstance = null;
 
-            if (objectInfo == null || objectInfo.properties == null || objectInfo.properties.getObjectType() == null) {
-                continue;
-            }
-
-            switch(objectInfo.properties.getObjectType()) {
-                case Backdrop:
-                    newInstance = new Backdrop(objectInfo, originalDef);
-                    break;
-                case Active:
-                    newInstance = new Active(objectInfo, originalDef);
-                    break;
-                case Text:
-                    newInstance = new Text(objectInfo, originalDef);
-                    break;
-                case QuickBackdrop:
-                    newInstance = new QuickBackdrop(objectInfo, originalDef);
-                    break;
-                /*case Player:
-                    break;
-                case Keyboard:
-                    break;
-                case Create:
-                    break;
-                case Timer:
-                    break;
-                case Game:
-                    break;
-                case Speaker:
-                    break;
-                case System:
-                    break;
-                case Question:
-                    break;
-                case Score:
-                    break;
-                case Lives:
-                    break;
-                case Counter:
-                    break;
-                case RTF:
-                    break;
-                case SubApplication:
-                    break;*/
-                default:
-                    System.out.println("Object type failed @ creation: " + objectInfo.properties.getObjectType());
-            }
+            ObjectInstance newInstance = objectInfo.createWorldInstance(originalDef);
 
             if (newInstance == null) {
-                //System.err.printf("Bad object: %s (Type: %s).\n", objectInfo, objectInfo.properties.objectType);
+                System.err.printf("Bad object: %s (Type: %s).\n", objectInfo, objectInfo.properties.getObjectType());
                 continue;
             }
 

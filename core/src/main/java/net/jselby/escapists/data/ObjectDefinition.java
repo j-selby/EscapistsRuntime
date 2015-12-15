@@ -1,6 +1,11 @@
 package net.jselby.escapists.data;
 
+import net.jselby.escapists.data.chunks.FrameItems;
+import net.jselby.escapists.data.chunks.ObjectInstances;
 import net.jselby.escapists.data.chunks.ObjectProperties;
+import net.jselby.escapists.game.ObjectInstance;
+import net.jselby.escapists.game.objects.*;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 /**
  * An object definition is the raw definition of a object, including name, id, etc.
@@ -28,5 +33,58 @@ public class ObjectDefinition {
     @Override
     public String toString() {
         return name;
+    }
+
+    public ObjectInstance createWorldInstance(ObjectInstances.ObjectInstance info) {
+        ObjectInstance newInstance = null;
+
+        if (properties == null || properties.getObjectType() == null) {
+            System.err.printf("Warning: Creating null object @ %s.\n", toString());
+            return new Empty(this, info);
+        }
+
+        switch(properties.getObjectType()) {
+            case Backdrop:
+                newInstance = new Backdrop(this, info);
+                break;
+            case Active:
+                newInstance = new Active(this, info);
+                break;
+            case Text:
+                newInstance = new Text(this, info);
+                break;
+            case QuickBackdrop:
+                newInstance = new QuickBackdrop(this, info);
+                break;
+                /*case Player:
+                    break;
+                case Keyboard:
+                    break;
+                case Create:
+                    break;
+                case Timer:
+                    break;
+                case Game:
+                    break;
+                case Speaker:
+                    break;
+                case System:
+                    break;
+                case Question:
+                    break;
+                case Score:
+                    break;
+                case Lives:
+                    break;
+                case Counter:
+                    break;
+                case RTF:
+                    break;
+                case SubApplication:
+                    break;*/
+            default:
+                System.out.println("Object type failed @ creation: " + properties.getObjectType());
+        }
+        return newInstance;
     }
 }

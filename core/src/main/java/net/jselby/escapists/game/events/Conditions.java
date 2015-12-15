@@ -122,8 +122,8 @@ public class Conditions extends Parameters {
         return mouseOver;
     }
 
-    public boolean Every(int every) {
-        String key = "_env_every_"; // TODO: Pass object ID here
+    public boolean Every(int id, int every) {
+        String key = "_env_every_" + id;
         if (scope.getScene().getVariables().containsKey(key)) {
             // Check if it has updated
             long currentTime = System.currentTimeMillis();

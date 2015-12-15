@@ -12,7 +12,6 @@ class GlobalStrings : Chunk() {
 
         for (i in 0..l - 1) {
             data[i] = buffer.string
-            System.out.println(data[i])
         }
     }
 }

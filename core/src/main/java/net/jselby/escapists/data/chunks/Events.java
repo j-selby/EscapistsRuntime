@@ -23,7 +23,7 @@ public class Events extends Chunk {
     private static byte[] EVENT_COUNT = "ERes".getBytes();
     private static byte[] EVENTGROUP_DATA = "ERev".getBytes();
     private static byte[] END = "<<ER".getBytes();
-    private static String[] EXPRESSION_INSTANCE_REQ = {"Once"};
+    private static String[] EXPRESSION_INSTANCE_REQ = {"Once", "Every", "CompareY"};
 
     public int maxObjects;
     public short maxObjectInfo;
@@ -317,7 +317,6 @@ public class Events extends Chunk {
         public final short identifier;
 
         public final String name;
-        public Method method;
         public final Parameter[] items;
 
         public Condition(ByteReader buffer) {
@@ -343,10 +342,7 @@ public class Events extends Chunk {
                 items[i] = new Parameter(buffer);
             }
 
-            // Grab the appropriate method to invoke this Condition
-            /*if (name != null) {
-                method = Conditions.getMethodForCondition(name);
-            }*/
+            assert (currentPosition + size) == buffer.getPosition();
 
             buffer.setPosition(currentPosition + size);
         }

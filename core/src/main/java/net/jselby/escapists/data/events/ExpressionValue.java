@@ -74,11 +74,13 @@ public abstract class ExpressionValue {
     public abstract static class GlobalCommon extends ExpressionValue {
         public short value;
         public short value2;
+        public short value3;
 
         @Override
         public void read(ByteReader buffer) {
             //buffer.skipBytes(4);
             value2 = buffer.getShort();
+            value3 = buffer.getShort();
             value = buffer.getShort();
         }
     }
@@ -113,6 +115,13 @@ public abstract class ExpressionValue {
         }
     }
 
+    public static class ExtensionFunctionIgnoreData extends ExtensionCommon {
+        @Override
+        public java.lang.String toString() {
+            return "env." + getClass().getSimpleName() + "(" + value + ", ";
+        }
+    }
+
     public static class ExtensionFunction extends ExtensionCommon {
         @Override
         public java.lang.String toString() {
@@ -123,14 +132,14 @@ public abstract class ExpressionValue {
     public static class GlobalString extends GlobalCommon {
         @Override
         public java.lang.String toString() {
-            return "env.GlobalString(" + value2 + ")";
+            return "env.GlobalString(" + value + ")";
         }
     }
 
     public static class GlobalValue extends GlobalCommon {
         @Override
         public java.lang.String toString() {
-            return "env.GlobalValue(" + value2 + ")";
+            return "env.GlobalValue(" + value + ")";
         }
     }
 
@@ -161,16 +170,16 @@ public abstract class ExpressionValue {
     public static class FrameHeight extends ExpressionValue {
     }
 
-    public static class UpperString extends ExtensionFunction {
+    public static class UpperString extends ExtensionFunctionIgnoreData {
     }
 
-    public static class LowerString extends ExtensionFunction {
+    public static class LowerString extends ExtensionFunctionIgnoreData {
     }
 
-    public static class StringLength extends ExtensionFunction {
+    public static class StringLength extends ExtensionFunctionIgnoreData {
     }
 
-    public static class ReplaceSubstring extends ExtensionFunction {
+    public static class ReplaceSubstring extends ExtensionFunctionIgnoreData {
     }
 
     public static class Random extends ExpressionValue {
