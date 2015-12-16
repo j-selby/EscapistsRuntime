@@ -7,10 +7,13 @@ import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.BitmapFontCache
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
+import net.jselby.escapists.EscapistsRuntime
 import net.jselby.escapists.data.Chunk
 import net.jselby.escapists.util.ByteReader
 import net.jselby.escapists.util.CompressionUtils
 import org.mini2Dx.core.graphics.Sprite
+import java.io.File
+import java.io.FileOutputStream
 
 /**
  * Assets are chunks storing data such as images, sounds, and fonts.
@@ -338,9 +341,14 @@ class SoundBank : Chunk() {
 
             data.position = 0;
 
-            /*val out = FileOutputStream("sound/$name.$extension");
+            val directory = EscapistsRuntime.getRuntime().gamePath.absolutePath + File.separator + "audio" + File.separator;
+            val directoryFile = File(directory);
+            if (!directoryFile.exists() && !directoryFile.mkdirs()) {
+                throw IllegalStateException("Failed to create audio directory.");
+            }
+            val out = FileOutputStream("$directory$name.$extension");
             out.write(data.getBytes(decompressedLength));
-            out.close();*/
+            out.close();
         }
     }
 }

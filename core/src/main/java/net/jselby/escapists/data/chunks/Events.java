@@ -4,10 +4,8 @@ import kotlin.Pair;
 import net.jselby.escapists.EscapistsRuntime;
 import net.jselby.escapists.data.Chunk;
 import net.jselby.escapists.data.ObjectDefinition;
-import net.jselby.escapists.data.events.ExpressionValue;
 import net.jselby.escapists.data.events.ParameterNames;
 import net.jselby.escapists.data.events.ParameterValue;
-import net.jselby.escapists.game.events.Condition;
 import net.jselby.escapists.util.ByteReader;
 import org.apache.commons.lang3.StringUtils;
 

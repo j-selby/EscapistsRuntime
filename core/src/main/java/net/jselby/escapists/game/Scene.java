@@ -132,12 +132,12 @@ public class Scene {
                         isScene = line.substring(1).trim().equalsIgnoreCase(getName().trim());
                     } else if (isScene) {
                         if (line.startsWith("@")) { // Swap
-                            int lineId = Integer.parseInt(line.split(":")[0].substring(1));
+                            int lineId = Integer.parseInt(line.split(":")[0].substring(1)) - 1;
                             String jsSwap = line.substring(line.indexOf(":") + 1);
 
                             lines[lineId] = jsSwap;
                         } else if (line.startsWith(">")) { // Insert before line
-                            int lineId = Integer.parseInt(line.split(":")[0].substring(1));
+                            int lineId = Integer.parseInt(line.split(":")[0].substring(1)) - 1;
                             String jsLine = line.substring(line.indexOf(":") + 1);
 
                             String[] pre = new String[lineId];

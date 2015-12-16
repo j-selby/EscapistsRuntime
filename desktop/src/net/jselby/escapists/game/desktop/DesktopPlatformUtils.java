@@ -154,7 +154,13 @@ public class DesktopPlatformUtils extends PlatformUtils {
     }
 
     public void dialog(String s) {
-        JOptionPane.showMessageDialog(null, s, "Escapists Runtime", JOptionPane.INFORMATION_MESSAGE);
-        System.out.println("Escaped!");
+        JFrame frame = new JFrame();
+        frame.setLocationRelativeTo(null);
+        frame.setAlwaysOnTop(true);
+        frame.setVisible(true);
+        frame.requestFocusInWindow();
+        JOptionPane.showMessageDialog(frame, s, "Escapists Runtime",
+                JOptionPane.INFORMATION_MESSAGE);
+        frame.dispose();
     }
 }

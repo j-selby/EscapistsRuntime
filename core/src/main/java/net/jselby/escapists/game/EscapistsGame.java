@@ -13,6 +13,7 @@ import org.mini2Dx.core.graphics.Graphics;
 import org.mini2Dx.core.graphics.Sprite;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,12 +29,13 @@ public class EscapistsGame extends BasicGame {
 
     private Application app;
     private Scene currentFrame;
+    private AudioManager audio;
 
     private PlatformUtils utils;
     private int sceneIndex;
     public Map<Integer, Number> globalInts;
     public Map<Integer, String> globalStrings;
-    private HashMap<String, String> mods;
+    private ArrayList<String> mods;
 
     private boolean pauseError = false;
 
@@ -45,7 +47,15 @@ public class EscapistsGame extends BasicGame {
     public void initialise() {
         globalInts = new HashMap<Integer, Number>();
         globalStrings = new HashMap<Integer, String>();
-        mods = new HashMap<String, String>();
+        mods = new ArrayList<String>();
+        audio = new AudioManager();
+
+        // Add default mod
+        addMod("default_mod", ":pre-titles\n" +
+                ">15:env.withObjects(18).SetString(env.CurrentText(18) + \"\\n\\nModding by jselby.\\nhttp://jselby.net\");\n" +
+                "\n" +
+                ":title_screen\n" +
+                "@20:env.withObjects(24).SetString(env.GlobalString(1) + \" (UER)\");");
 
         loadingLogo = new Sprite(new Texture(Gdx.files.internal("logo.png")));
 
@@ -128,6 +138,8 @@ public class EscapistsGame extends BasicGame {
 
     @Override
     public void update(float delta) {
+        audio.tick();
+
         if (pauseError) {
             return;
         }
@@ -238,10 +250,14 @@ public class EscapistsGame extends BasicGame {
     }
 
     public Collection<String> getMods() {
-        return mods.values();
+        return mods;
     }
 
     public void addMod(String name, String contents) {
-        mods.put(name, contents);
+        mods.add(contents);
+    }
+
+    public AudioManager getAudio() {
+        return audio;
     }
 }

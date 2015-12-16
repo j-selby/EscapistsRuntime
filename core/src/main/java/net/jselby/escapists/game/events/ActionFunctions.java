@@ -1,5 +1,6 @@
 package net.jselby.escapists.game.events;
 
+import net.jselby.escapists.EscapistsRuntime;
 import net.jselby.escapists.data.ini.PropertiesFile;
 import net.jselby.escapists.data.ini.PropertiesSection;
 import net.jselby.escapists.game.Layer;
@@ -235,20 +236,25 @@ public class ActionFunctions extends ConditionFunctions {
         scope.getGame().globalInts.put(id, value);
     }
 
+    @Action(subId = -2, id = 29)
     public void PlayLoopingChannelFileSample(String location, int channel, int times) {
-        // TODO: Audio
+
+        scope.getGame().getAudio().playFile(location, channel, times);
     }
 
+    @Action(subId = -2, id = 11)
     public void PlayChannelSample(int unknown1, int unknown2, String name, int channel) {
-        // TODO: Audio
+        scope.getGame().getAudio().playFile(EscapistsRuntime.getRuntime().getGamePath().getAbsolutePath()
+                + File.separator + "audio" + File.separator + name + ".wav", channel, 1);
     }
 
     public void SetChannelVolume(int channel, int volume) {
         // TODO: Audio
     }
 
+    @Action(subId = -2, id = 15)
     public void StopChannel(int channel) {
-        // TODO: Audio
+        scope.getGame().getAudio().stopChannel(channel);
     }
 
     @Actions({
