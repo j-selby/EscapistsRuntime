@@ -13,7 +13,7 @@ public class DesktopLauncher {
     public static void main(String[] args) {
         DesktopMini2DxConfig config = new DesktopMini2DxConfig(EscapistsGame.GAME_IDENTIFIER);
         config.title = "The Escapists";
-        config.targetFPS = config.backgroundFPS = config.foregroundFPS = 60;
+        config.vSyncEnabled = true;
         config.width = 944;
         config.height = 684;
         config.samples = 1;
