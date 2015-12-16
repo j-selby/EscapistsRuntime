@@ -9,7 +9,7 @@ import java.io.File;
 /**
  * Implementations of parameter functions that can be utilised by the scripting engine at runtime.
  */
-public class Parameters {
+public class ParameterFunctions {
     protected Scope scope;
 
     public String CurrentText(int id) {

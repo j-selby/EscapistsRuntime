@@ -7,6 +7,7 @@ import net.jselby.escapists.data.pe.PEFile;
 import net.jselby.escapists.data.pe.PESection;
 import net.jselby.escapists.game.Application;
 import net.jselby.escapists.game.EscapistsGame;
+import net.jselby.escapists.game.events.FunctionRegister;
 import net.jselby.escapists.util.ByteReader;
 
 import java.io.File;
@@ -35,6 +36,7 @@ public class EscapistsRuntime {
     private static EscapistsRuntime runtime;
 
     private Application application;
+    private FunctionRegister register = new FunctionRegister();
     private File escapistsDirectory;
 
     public static EscapistsRuntime getRuntime() {
@@ -210,5 +212,9 @@ public class EscapistsRuntime {
 
     public File getGamePath() {
         return escapistsDirectory;
+    }
+
+    public FunctionRegister getRegister() {
+        return register;
     }
 }

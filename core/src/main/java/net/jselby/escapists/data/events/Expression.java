@@ -47,22 +47,4 @@ public class Expression {
     public String toString() {
         return "HA" + (value == null ? "null1" : value.toString());
     }
-
-    /*
-    cdef int currentPosition = reader.tell()
-        self.objectType = reader.readShort()
-        self.num = reader.readShort()
-        if self.objectType == 0 and self.num == 0:
-            return
-        cdef int size = reader.readShort(True)
-        if self.objectType in systemLoaders and self.num in systemLoaders[self.objectType]:
-            self.loader = self.new(
-                systemLoaders[self.objectType][self.num], reader)
-        elif self.objectType >= 2 or self.objectType == -7:
-            self.objectInfo = reader.readShort(True)
-            self.objectInfoList = reader.readShort()
-            if self.num in extensionLoaders:
-                self.loader = self.new(extensionLoaders[self.num], reader)
-        reader.seek(currentPosition + size)
-     */
 }

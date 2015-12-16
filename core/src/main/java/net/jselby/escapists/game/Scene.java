@@ -11,10 +11,6 @@ import net.jselby.escapists.data.chunks.Layers;
 import net.jselby.escapists.data.chunks.ObjectInstances;
 import net.jselby.escapists.data.events.ParameterValue;
 import net.jselby.escapists.game.events.Scope;
-import net.jselby.escapists.game.objects.Active;
-import net.jselby.escapists.game.objects.Backdrop;
-import net.jselby.escapists.game.objects.QuickBackdrop;
-import net.jselby.escapists.game.objects.Text;
 import org.mini2Dx.core.graphics.Graphics;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.EvaluatorException;
@@ -135,6 +131,8 @@ public class Scene {
         if (Gdx.app.getType() == Application.ApplicationType.Android) {
             // Android doesn't support Desktop-style bytecode optimization.
             jsContext.setOptimizationLevel(-1);
+        } else {
+            jsContext.setOptimizationLevel(9);
         }
         jsScriptable = jsContext.initStandardObjects();
 

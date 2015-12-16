@@ -1,7 +1,5 @@
 package net.jselby.escapists.game.events;
 
-import net.jselby.escapists.EscapistsRuntime;
-import net.jselby.escapists.data.ObjectDefinition;
 import net.jselby.escapists.game.EscapistsGame;
 import net.jselby.escapists.game.ObjectInstance;
 import net.jselby.escapists.game.Scene;
@@ -12,7 +10,7 @@ import java.util.List;
 /**
  * Scope is the scope in which a condition/action can reach to.
  */
-public class Scope extends Actions {
+public class Scope extends ActionFunctions {
     private EscapistsGame game;
     private Scene scene;
     private List<ObjectInstance> objects = new ArrayList<ObjectInstance>();

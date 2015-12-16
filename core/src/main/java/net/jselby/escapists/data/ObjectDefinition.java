@@ -1,11 +1,9 @@
 package net.jselby.escapists.data;
 
-import net.jselby.escapists.data.chunks.FrameItems;
 import net.jselby.escapists.data.chunks.ObjectInstances;
 import net.jselby.escapists.data.chunks.ObjectProperties;
 import net.jselby.escapists.game.ObjectInstance;
 import net.jselby.escapists.game.objects.*;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 
 /**
  * An object definition is the raw definition of a object, including name, id, etc.

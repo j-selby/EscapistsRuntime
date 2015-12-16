@@ -1,11 +1,9 @@
 package net.jselby.escapists.game.events;
 
-import net.jselby.escapists.data.events.ParameterValue;
 import net.jselby.escapists.data.ini.PropertiesFile;
 import net.jselby.escapists.data.ini.PropertiesSection;
 import net.jselby.escapists.game.Layer;
 import net.jselby.escapists.game.ObjectInstance;
-import net.jselby.escapists.game.objects.Active;
 import net.jselby.escapists.game.objects.Text;
 import org.apache.commons.io.IOUtils;
 
@@ -16,59 +14,71 @@ import java.util.Map;
 /**
  * Events are things that the engine can do to change the execution state.
  */
-public class Actions extends Conditions {
+public class ActionFunctions extends ConditionFunctions {
+    @Action(subId = -1, id = 0)
     public void Skip() {
     }
 
+    @Action(subId = -3, id = 0)
     public void NextFrame() {
         scope.getGame().loadScene(scope.getGame().getSceneIndex() + 1);
     }
 
-    public void JumpToFrame(ParameterValue.Short scene) {
-        scope.getGame().loadScene(scene.value);
+    @Action(subId = -3, id = 2)
+    public void JumpToFrame(int scene) {
+        scope.getGame().loadScene(scene);
     }
 
+    @Action(subId = -1, id = 6)
     public void ActivateGroup(int id) {
         System.out.printf("Starting group: %d.\n", id);
         scope.getScene().getActiveGroups().put(id, true);
     }
 
+    @Action(subId = -1, id = 7)
     public void DeactivateGroup(int id) {
         System.out.printf("Stopping group: %d.\n", id);
         scope.getScene().getActiveGroups().put(id, false);
     }
 
+    @Action(subId = -1, id = 14)
     public void StartLoop(String name, int times) {
         scope.getScene().getActiveLoops().put(name, times);
     }
 
+    @Action(subId = -3, id = 4)
     public void EndApplication() {
         // RIP
         scope.getGame().exit();
     }
 
+    @Action(subId = 2, id = 35)
     public void FlagOn(int value) {
         String key = "_env_flag_" + value;
         scope.getScene().getVariables().put(key, true);
     }
 
+    @Action(subId = 2, id = 36)
     public void FlagOff(int value) {
         String key = "_env_flag_" + value;
         scope.getScene().getVariables().put(key, false);
     }
 
+    @Action(subId = 2, id = 2)
     public void SetX(int newX) {
         for (ObjectInstance object : scope.getObjects()) {
             object.setX(newX);
         }
     }
 
+    @Action(subId = 2, id = 3)
     public void SetY(int newY) {
         for (ObjectInstance object : scope.getObjects()) {
             object.setY(newY);
         }
     }
 
+    @Action(subId = 2, id = 57)
     public void BringToFront() {
         for (ObjectInstance object : scope.getObjects()) {
             for (Layer layer : scope.getScene().getLayers()) {
@@ -79,28 +89,38 @@ public class Actions extends Conditions {
         }
     }
 
+    @Action(subId = 3, id = 26)
     public void Disappear() {
         for (ObjectInstance object : scope.getObjects()) {
             object.setVisible(false);
         }
     }
 
+    @Action(subId = 3, id = 27)
     public void Reappear() {
         for (ObjectInstance object : scope.getObjects()) {
             object.setVisible(true);
         }
     }
 
+    @Action(subId = 2, id = 23)
     public void SetDirection(int newDir) {
         // TODO: Better Animation implementation that supports this
     }
 
+    @Action(subId = 2, id = 17)
     public void SetAnimation(int newAnimation) {
         for (ObjectInstance object : scope.getObjects()) {
             object.setAnimation(newAnimation);
         }
     }
 
+    @Action(subId = 2, id = 15)
+    public void StopAnimation() {
+        // TODO: Better Animation implementation
+    }
+
+    @Action(subId = 3, id = 88)
     public void SetString(String value) {
         for (ObjectInstance object : scope.getObjects()) {
             if (object instanceof Text) {
@@ -109,27 +129,31 @@ public class Actions extends Conditions {
         }
     }
 
+    @Action(subId = 36, id = 91)
     public void ClearObjectVarArray() {
         for (ObjectInstance object : scope.getObjects()) {
             object.getVariables().clear();
         }
     }
 
+    @Action(subId = 36, id = 80)
     public void SetIntegerVar(String name, int val) {
         for (ObjectInstance object : scope.getObjects()) {
             object.getVariables().put(name, val);
         }
     }
 
+    @Action(subId = 36, id = 88)
     public void SetStringVar(String name, String val) {
         for (ObjectInstance object : scope.getObjects()) {
             object.getVariables().put(name, val);
         }
     }
 
+    @Action(subId = 63, id = 86)
     public void LoadIniFile(String path) {
         System.out.println("Loading configuration file: " + path);
-        File file = new File(path);
+        File file = new File(translateFilePath(path));
         String contents;
         try {
             contents = IOUtils.toString(file.toURI());
@@ -148,14 +172,26 @@ public class Actions extends Conditions {
         }
     }
 
+    /**
+     * Translates file paths for this platform.
+     * @param path The path to translate
+     * @return A translated path
+     */
+    private String translateFilePath(String path) {
+        return path.replace("/", "\\").replace("\\", File.separator);
+    }
+
+    @Action(subId = -1, id = 27)
     public void SetGlobalValueInt(int id, int value) {
         scope.getGame().globalInts.put(id, value);
     }
 
+    @Action(subId = -1, id = 19)
     public void SetGlobalString(int id, String value) {
         scope.getGame().globalStrings.put(id, value);
     }
 
+    @Action(subId = -1, id = 3)
     public void SetGlobalValue(int id, Number value) {
         scope.getGame().globalInts.put(id, value);
     }
@@ -180,20 +216,34 @@ public class Actions extends Conditions {
 
     }
 
+    @Actions({
+            @Action(subId = 42, id = 82),
+            @Action(subId = 66, id = 95),
+            @Action(subId = 13, id = 82)
+    })
     public boolean CreateDirectory(String name) {
         return new File(name).mkdir();
     }
 
+    @Action(subId = -6, id = 0)
     public void HideCursor() {
         scope.getGame().getPlatformUtils().hideMouse();
     }
 
+    @Action(subId = 65, id = 80)
     public void EmbedFont(String path) {
         // Fonts are loaded by the runtime at launch, so we are gonna ignore this.
         System.out.println("Application requested font load: " + path);
     }
 
+    @Action(subId = -7, id = 9)
     public void ChangeInputKey(int key, int keycode) {
         // TODO: Key binds
+    }
+
+    @Action(subId = 46, id = 80)
+    public void initBlowfishEncryption(String key) {
+        // Fonts are loaded by the runtime at launch, so we are gonna ignore this.
+        System.out.println("Blowfish encryption key: " + key);
     }
 }

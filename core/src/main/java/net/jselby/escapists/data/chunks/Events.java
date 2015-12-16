@@ -3,8 +3,6 @@ package net.jselby.escapists.data.chunks;
 import net.jselby.escapists.EscapistsRuntime;
 import net.jselby.escapists.data.Chunk;
 import net.jselby.escapists.data.ObjectDefinition;
-import net.jselby.escapists.data.events.ActionNames;
-import net.jselby.escapists.data.events.ConditionNames;
 import net.jselby.escapists.data.events.ParameterNames;
 import net.jselby.escapists.data.events.ParameterValue;
 import net.jselby.escapists.util.ByteReader;
@@ -318,6 +316,7 @@ public class Events extends Chunk {
 
         public final String name;
         public final Parameter[] items;
+        private final Method method;
 
         public Condition(ByteReader buffer) {
             int currentPosition = buffer.getPosition();
@@ -335,7 +334,15 @@ public class Events extends Chunk {
             defType = buffer.getByte();
             identifier = buffer.getShort(); // Event identifier
 
-            name = ConditionNames.getByID(objectType, num);
+            method = EscapistsRuntime.getRuntime().getRegister().getFunction(objectType, num);
+            if (method != null) {
+                name = method.getName();
+            } else {
+                /*System.out.println("No action declared for " + objectType + ":" + num
+                        + (ActionNames.getByID(objectType, num) != null ?
+                        (" (Possibly " + ActionNames.getByID(objectType, num) + ")") : ""));*/
+                name = null;
+            }
 
             items = new Parameter[paramCount];
             for (int i = 0; i < paramCount; i++) {
@@ -394,7 +401,15 @@ public class Events extends Chunk {
             int paramCount = buffer.getByte();
             defType = buffer.getByte();
 
-            name = ActionNames.getByID(objectType, num);
+            method = EscapistsRuntime.getRuntime().getRegister().getFunction(objectType, num);
+            if (method != null) {
+                name = method.getName();
+            } else {
+                /*System.out.println("No action declared for " + objectType + ":" + num
+                        + (ActionNames.getByID(objectType, num) != null ?
+                        (" (Possibly " + ActionNames.getByID(objectType, num) + ")") : ""));*/
+                name = null;
+            }
 
             items = new Parameter[paramCount];
             for (int i = 0; i < paramCount; i++) {
