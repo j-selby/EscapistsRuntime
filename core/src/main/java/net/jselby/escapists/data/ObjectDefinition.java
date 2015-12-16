@@ -37,7 +37,8 @@ public class ObjectDefinition {
         ObjectInstance newInstance = null;
 
         if (properties == null || properties.getObjectType() == null) {
-            System.err.printf("Warning: Creating null object @ %s.\n", toString());
+            //System.err.printf("Warning: Creating null object @ %s.\n", toString());
+            // TODO: Find out what these null objects are
             return new Empty(this, info);
         }
 

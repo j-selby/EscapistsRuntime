@@ -50,7 +50,6 @@ public class PropertiesFile {
 
             if (state == ReadState.UNDEFINED) {
                 // Bad section
-                System.out.println("Parse warning: Section not defined @ ln " + humanLineNum);
                 continue;
             }
 
@@ -63,9 +62,6 @@ public class PropertiesFile {
                 String value = trimmedLine.substring(index + 1);
 
                 section.put(key, value);
-            } else {
-                // Completely unknown line
-                System.out.println("Parse error: Unknown syntax @ ln " + humanLineNum);
             }
         }
 
