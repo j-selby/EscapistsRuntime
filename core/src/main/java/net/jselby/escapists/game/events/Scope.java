@@ -11,10 +11,9 @@ import java.util.List;
  * Scope is the scope in which a condition/action can reach to.
  */
 public class Scope extends ActionFunctions {
-    private EscapistsGame game;
-    private Scene scene;
-    private List<ObjectInstance> objects = new ArrayList<ObjectInstance>();
-    private int lastRef = -1;
+    private final EscapistsGame game;
+    private final Scene scene;
+    private final List<ObjectInstance> objects = new ArrayList<ObjectInstance>();
 
     public Scope(EscapistsGame game, Scene scene) {
         this.scope = this;
@@ -23,7 +22,6 @@ public class Scope extends ActionFunctions {
     }
 
     public Scope withObjects(int id) {
-        lastRef = id;
         objects.clear();
         for (ObjectInstance instance : scene.getObjects()) {
             if (instance.getObjectInfo() == id) {
