@@ -17,7 +17,7 @@ import org.mini2Dx.core.graphics.Graphics;
  */
 public class Active extends ObjectInstance {
     private final AnimationHeader animations;
-    private int frame;
+    private int frame = 0;
 
     private float width;
     private float height;
@@ -31,26 +31,7 @@ public class Active extends ObjectInstance {
         ObjectCommon common = ((ObjectCommon) definition.properties.getProperties());
         animations = common.animations;
 
-        // Calculate dimensions
-        int frame = -1;
-        AnimationHeader.Animation animation = animations.loadedAnimations[0];
-
-        if (animation != null) {
-            for (AnimationHeader.AnimationDirection dir
-                    : animation.localDirections) {
-                if (dir != null && dir.frames != null) {
-                    frame = dir.frames[0];
-                }
-            }
-
-            if (frame != 0) {
-                ImageBank.ImageItem image = EscapistsRuntime.getRuntime().getApplication().images[frame + 1];
-                width = image.getImage().getWidth();
-                height = image.getImage().getHeight();
-                xHotspot = image.getXHotspot();
-                yHotspot = image.getYHotspot();
-            }
-        }
+        tick(null);
     }
 
     @Override
@@ -75,6 +56,33 @@ public class Active extends ObjectInstance {
 
     @Override
     public void tick(EscapistsGame container) {
+        // Calculate dimensions
+        AnimationHeader.Animation animation = animations.loadedAnimations[getAnimation()];
+
+        if (animation != null) {
+            for (AnimationHeader.AnimationDirection dir
+                    : animation.localDirections) {
+                if (dir != null && dir.frames != null) {
+                    frame = dir.frames[0];
+                    break;
+                }
+            }
+        }
+
+        if (frame != 0) {
+            ImageBank.ImageItem image = EscapistsRuntime.getRuntime().getApplication().images[frame + 1];
+            if (image == null) {
+                return;
+            }
+            width = image.getImage().getWidth();
+            height = image.getImage().getHeight();
+            xHotspot = image.getXHotspot();
+            yHotspot = image.getYHotspot();
+        }
+
+        if (container == null) {
+            return;
+        }
         // TODO: Animation implementation
         //frame++;
     }
@@ -86,28 +94,16 @@ public class Active extends ObjectInstance {
         }
 
         // TODO: Please no hack
-
-        // Find first applicable direction
-        int frame = -1;
-        AnimationHeader.Animation animation = animations.loadedAnimations[0];
-
-        if (animation == null) {
-            return;
-        }
-
-        for (AnimationHeader.AnimationDirection dir
-                : animation.localDirections) {
-            if (dir != null && dir.frames != null) {
-                frame = dir.frames[0];
-            }
-        }
-
         if (frame == 0) {
-            // Nope. Nope. Nope.
             return;
         }
 
         ImageBank.ImageItem image = EscapistsRuntime.getRuntime().getApplication().images[frame + 1];
+        if (image == null) {
+            return;
+        }
+        image.getImage().setAlpha(((float) getImageAlpha()) / 256f);
         g.drawSprite(image.getImage(), getScreenX(), getScreenY());
+        image.getImage().setAlpha(1f);
     }
 }

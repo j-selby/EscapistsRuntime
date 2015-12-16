@@ -35,7 +35,9 @@ abstract class ObjectInstance(definition: ObjectDefinition, instance: ObjectInst
 
     open var x: Float = 0f
     open var y: Float = 0f
+
     var animation = 0
+    var imageAlpha = 255
 
     var isVisible = true
     val variables: Map<String, Any> = HashMap()

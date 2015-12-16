@@ -71,6 +71,8 @@ public class Text extends ObjectInstance {
         BitmapFont font = EscapistsRuntime.getRuntime()
                 .getApplication().fonts[paragraph.font + 1].getValue().getFont();
         g.setFont(font);
+        float oldAlpha = paragraph.color.a;
+        paragraph.color.a *= ((float) getImageAlpha()) / 256f;
         g.setColor(paragraph.color);
 
         String[] msgs = str.split("\n");
@@ -97,6 +99,7 @@ public class Text extends ObjectInstance {
         }
 
         g.setFont(originalFont);
+        paragraph.color.a = oldAlpha;
         //font.setColor(paragraph.color);
         //font.draw(batch, compiledStrings[i], getX(), getY());
         //compiledStrings[i]

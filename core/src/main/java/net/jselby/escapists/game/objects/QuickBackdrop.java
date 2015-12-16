@@ -24,7 +24,7 @@ public class QuickBackdrop extends ObjectInstance {
         imageBase = data.shape.image;
         image = EscapistsRuntime.getRuntime()
                 .getApplication().images[
-                imageBase + 1 + getAnimation()];
+                imageBase + 1];
     }
 
     @Override
@@ -39,9 +39,6 @@ public class QuickBackdrop extends ObjectInstance {
 
     @Override
     public void tick(EscapistsGame container) {
-        image = EscapistsRuntime.getRuntime()
-                .getApplication().images[
-                imageBase + 1 + getAnimation()];
     }
 
     @Override
@@ -52,7 +49,9 @@ public class QuickBackdrop extends ObjectInstance {
 
         if (image != null) {
             // TODO: Does this need {x,y}Hotspots?
+            image.getImage().setAlpha(((float) getImageAlpha()) / 256f);
             g.drawSprite(image.getImage(), getX(), getY());
+            image.getImage().setAlpha(1f);
         }
     }
 }

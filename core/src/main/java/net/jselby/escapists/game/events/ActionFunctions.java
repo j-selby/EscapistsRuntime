@@ -1,5 +1,6 @@
 package net.jselby.escapists.game.events;
 
+import com.badlogic.gdx.Gdx;
 import net.jselby.escapists.EscapistsRuntime;
 import net.jselby.escapists.data.ini.PropertiesFile;
 import net.jselby.escapists.data.ini.PropertiesSection;
@@ -120,6 +121,18 @@ public class ActionFunctions extends ConditionFunctions {
     @Action(subId = 2, id = 15)
     public void StopAnimation() {
         // TODO: Better Animation implementation
+    }
+
+    @Action(subId = 3, id = 83)
+    public void SetColor(int value) {
+        // TODO: Set color
+    }
+
+    @Action(subId = 2, id = 65)
+    public void SetAlphaCoefficient(int value) {
+        for (ObjectInstance object : scope.getObjects()) {
+            object.setImageAlpha(256 - value);
+        }
     }
 
     @Action(subId = 3, id = 88)
@@ -269,6 +282,11 @@ public class ActionFunctions extends ConditionFunctions {
     @Action(subId = -6, id = 0)
     public void HideCursor() {
         scope.getGame().getPlatformUtils().hideMouse();
+    }
+
+    @Action(subId = 56, id = 80)
+    public void OpenURL(String url) {
+        Gdx.net.openURI(url);
     }
 
     @Action(subId = 65, id = 80)

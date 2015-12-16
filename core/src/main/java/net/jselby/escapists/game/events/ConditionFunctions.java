@@ -103,23 +103,17 @@ public class ConditionFunctions extends ParameterFunctions {
         int mouseX = scope.getGame().getMouseX();
         int mouseY = scope.getGame().getMouseY();
 
-        if (mouseX == -1 && mouseY == -1) {
-            return false;
-        }
-
-        boolean mouseOver = false;
         for (ObjectInstance instance : scope.getScene().getObjects()) {
             if (instance.getObjectInfo() == objectId
                     && instance.getScreenX() <= mouseX
                     && instance.getScreenY() <= mouseY
                     && instance.getScreenX() + instance.getWidth() >= mouseX
                     && instance.getScreenY() + instance.getHeight() >= mouseY)  {
-                mouseOver = true;
-                scope.addObjectToScope(instance);
+                return true;
             }
         }
 
-        return mouseOver;
+        return false;
     }
 
     @Condition(subId = -6, id = -5)
