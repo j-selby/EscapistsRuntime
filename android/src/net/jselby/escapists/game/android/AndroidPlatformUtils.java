@@ -78,6 +78,6 @@ public class AndroidPlatformUtils extends PlatformUtils {
 
     @Override
     public File getSaveLocation() {
-        return new File(Gdx.files.getExternalStoragePath() + File.separator + "The Escapists Saves");
+        return new File(Gdx.files.getExternalStoragePath());
     }
 }

@@ -13,6 +13,7 @@ import org.mini2Dx.core.graphics.Graphics;
 import org.mini2Dx.core.graphics.Sprite;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,6 +33,9 @@ public class EscapistsGame extends BasicGame {
     private int sceneIndex;
     public Map<Integer, Number> globalInts;
     public Map<Integer, String> globalStrings;
+    private HashMap<String, String> mods;
+
+    private boolean pauseError = false;
 
     public EscapistsGame(PlatformUtils utils) {
         this.utils = utils;
@@ -41,6 +45,7 @@ public class EscapistsGame extends BasicGame {
     public void initialise() {
         globalInts = new HashMap<Integer, Number>();
         globalStrings = new HashMap<Integer, String>();
+        mods = new HashMap<String, String>();
 
         loadingLogo = new Sprite(new Texture(Gdx.files.internal("logo.png")));
 
@@ -85,7 +90,7 @@ public class EscapistsGame extends BasicGame {
                             System.out.println("Callback from app, all assets prepared.");
                             try {
                                 app.init(EscapistsGame.this);
-                                loadScene(2); // 2 = title screen, 6 = game
+                                loadScene(0); // 2 = title screen, 6 = game
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -123,6 +128,10 @@ public class EscapistsGame extends BasicGame {
 
     @Override
     public void update(float delta) {
+        if (pauseError) {
+            return;
+        }
+
         if (currentFrame == null) {
             return;
         }
@@ -139,6 +148,10 @@ public class EscapistsGame extends BasicGame {
     
     @Override
     public void render(Graphics g) {
+        if (pauseError) {
+            return;
+        }
+
         BitmapFont baseFont = g.getFont();
 
         if (currentFrame == null) {
@@ -212,6 +225,7 @@ public class EscapistsGame extends BasicGame {
     }
 
     public void fatalPrompt(final String msg) {
+        pauseError = true;
         utils.showFatalMessageBox("Error", msg);
     }
 
@@ -221,5 +235,13 @@ public class EscapistsGame extends BasicGame {
 
     public PlatformUtils getPlatformUtils() {
         return utils;
+    }
+
+    public Collection<String> getMods() {
+        return mods.values();
+    }
+
+    public void addMod(String name, String contents) {
+        mods.put(name, contents);
     }
 }

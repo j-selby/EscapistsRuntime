@@ -10,6 +10,7 @@ import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Mouse;
 
 import javax.swing.*;
+import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -77,7 +78,14 @@ public class DesktopPlatformUtils extends PlatformUtils {
             @Override
             public void run() {
                 Display.destroy();
-                JOptionPane.showMessageDialog(null, msg, title, JOptionPane.ERROR_MESSAGE);
+                JFrame frame = new JFrame();
+                frame.setLocationRelativeTo(null);
+                frame.setAlwaysOnTop(true);
+                frame.setVisible(true);
+                frame.requestFocusInWindow();
+                JOptionPane.showConfirmDialog(frame, msg, title,
+                        JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
+                frame.dispose();
                 exit();
             }
         });
@@ -147,5 +155,6 @@ public class DesktopPlatformUtils extends PlatformUtils {
 
     public void dialog(String s) {
         JOptionPane.showMessageDialog(null, s, "Escapists Runtime", JOptionPane.INFORMATION_MESSAGE);
+        System.out.println("Escaped!");
     }
 }

@@ -69,20 +69,14 @@ public class ParameterFunctions {
     }
 
     public String GlobalString(int key) {
-        String val = scope.getGame().globalStrings.get(key);
-        if (key == 1) { // Version String
-            val += " (UER)";
-        } else if (key == 6) { // Inject Language
-            return "eng";
-        }
-        return val;
+        return scope.getGame().globalStrings.get(key);
     }
 
     public Object GetValue(int objectId, String varName) {
         for (ObjectInstance instance : scope.getScene().getObjects()) {
             if (instance.getObjectInfo() == objectId) {
                 if (instance.getVariables().containsKey(varName)) {
-                    //System.out.printf("GetValue:%d=%s.\n", objectId, instance.getVariables().get(varName));
+                    //System.out.printf("GetValue:%d;%s=%s.\n", objectId, varName, instance.getVariables().get(varName));
                     return instance.getVariables().get(varName);
                 } else {
                     return 0;
@@ -90,6 +84,20 @@ public class ParameterFunctions {
             }
         }
         return 0;
+    }
+
+    public String GetString(int objectId, String varName) {
+        for (ObjectInstance instance : scope.getScene().getObjects()) {
+            if (instance.getObjectInfo() == objectId) {
+                if (instance.getVariables().containsKey(varName)) {
+                    //System.out.printf("GetString:%d;%s=%s.\n", objectId, varName, instance.getVariables().get(varName));
+                    return (String) instance.getVariables().get(varName);
+                } else {
+                    return "";
+                }
+            }
+        }
+        return "";
     }
 
     public String GetItemString(int id, String a, String b, String c) {

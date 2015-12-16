@@ -67,6 +67,7 @@ public class Text extends ObjectInstance {
 
         net.jselby.escapists.data.objects.sections.Text.Paragraph paragraph = rawType.paragraphs[0];
 
+        BitmapFont originalFont = g.getFont();
         BitmapFont font = EscapistsRuntime.getRuntime()
                 .getApplication().fonts[paragraph.font + 1].getValue().getFont();
         g.setFont(font);
@@ -95,6 +96,7 @@ public class Text extends ObjectInstance {
                     (font.getLineHeight() * i));
         }
 
+        g.setFont(originalFont);
         //font.setColor(paragraph.color);
         //font.draw(batch, compiledStrings[i], getX(), getY());
         //compiledStrings[i]

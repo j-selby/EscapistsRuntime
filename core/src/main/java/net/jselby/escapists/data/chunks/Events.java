@@ -1,13 +1,17 @@
 package net.jselby.escapists.data.chunks;
 
+import kotlin.Pair;
 import net.jselby.escapists.EscapistsRuntime;
 import net.jselby.escapists.data.Chunk;
 import net.jselby.escapists.data.ObjectDefinition;
+import net.jselby.escapists.data.events.ExpressionValue;
 import net.jselby.escapists.data.events.ParameterNames;
 import net.jselby.escapists.data.events.ParameterValue;
+import net.jselby.escapists.game.events.Condition;
 import net.jselby.escapists.util.ByteReader;
 import org.apache.commons.lang3.StringUtils;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,7 +25,6 @@ public class Events extends Chunk {
     private static byte[] EVENT_COUNT = "ERes".getBytes();
     private static byte[] EVENTGROUP_DATA = "ERev".getBytes();
     private static byte[] END = "<<ER".getBytes();
-    private static String[] EXPRESSION_INSTANCE_REQ = {"Once", "Every", "CompareY"};
 
     public int maxObjects;
     public short maxObjectInfo;
@@ -138,14 +141,11 @@ public class Events extends Chunk {
                         + "*/").trim();
                 String objDeclaration = "env." + (id == 0 ? "" : ("withObjects(" + objName + ")."));
                 String objMethod = (condition.name == null ? (condition.objectType + ":" + condition.num) : condition.name).trim();
+                net.jselby.escapists.game.events.Condition annotation
+                        = (((net.jselby.escapists.game.events.Condition) condition.method.getSecond()));
 
-                boolean requiresContext = false;
-                for (String type : EXPRESSION_INSTANCE_REQ) {
-                    if (type.equalsIgnoreCase(objMethod)) {
-                        requiresContext = true;
-                        break;
-                    }
-                }
+                boolean requiresContext = annotation.hasInstanceRef();
+                boolean requiresCondition = annotation.conditionRequired();
 
                 if (objMethod.equalsIgnoreCase("OrFiltered")) {
                     conditions += (hasOR ? ")" : "") + " || " + (hasOR ? "(" : "");
@@ -169,6 +169,10 @@ public class Events extends Chunk {
                     paramCount++;
                 }
                 for (Parameter param : condition.items) {
+                    if (requiresCondition && param.value instanceof ParameterValue.ExpressionParameter) {
+                        conditions += (paramCount != 0 ? ", " : "") + ((ParameterValue.ExpressionParameter) param.value).comparison;
+                        paramCount++;
+                    }
                     conditions += (paramCount != 0 ? ", " : "") + param.value;// + ":" + param.code;//param.loader.name() + " " + param.name.toLowerCase();
                     paramCount++;
                 }
@@ -316,7 +320,7 @@ public class Events extends Chunk {
 
         public final String name;
         public final Parameter[] items;
-        private final Method method;
+        private final Pair<Method, Annotation> method;
 
         public Condition(ByteReader buffer) {
             int currentPosition = buffer.getPosition();
@@ -336,7 +340,7 @@ public class Events extends Chunk {
 
             method = EscapistsRuntime.getRuntime().getRegister().getFunction(objectType, num);
             if (method != null) {
-                name = method.getName();
+                name = method.getFirst().getName().trim();
             } else {
                 /*System.out.println("No action declared for " + objectType + ":" + num
                         + (ActionNames.getByID(objectType, num) != null ?
@@ -382,7 +386,7 @@ public class Events extends Chunk {
         private final byte defType;
 
         public final String name;
-        public Method method;
+        public Pair<Method, Annotation> method;
         public final Parameter[] items;
 
         public Action(ByteReader buffer) {
@@ -403,7 +407,7 @@ public class Events extends Chunk {
 
             method = EscapistsRuntime.getRuntime().getRegister().getFunction(objectType, num);
             if (method != null) {
-                name = method.getName();
+                name = method.getFirst().getName();
             } else {
                 /*System.out.println("No action declared for " + objectType + ":" + num
                         + (ActionNames.getByID(objectType, num) != null ?

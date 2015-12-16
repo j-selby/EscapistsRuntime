@@ -12,14 +12,14 @@ import org.mini2Dx.core.graphics.Graphics;
  * A backdrop is a static image in the background/foreground.
  */
 public class Backdrop extends ObjectInstance {
-    private final ImageBank.ImageItem image;
+    private final short imageBase;
+    private ImageBank.ImageItem image;
 
     public Backdrop(ObjectDefinition definition, ObjectInstances.ObjectInstance instance) {
         super(definition, instance);
-
+        imageBase = ((net.jselby.escapists.data.objects.Backdrop) definition.properties.getProperties()).image;
         image = EscapistsRuntime.getRuntime()
-                .getApplication().images[
-                ((net.jselby.escapists.data.objects.Backdrop) definition.properties.getProperties()).image + 1];
+                .getApplication().images[imageBase + 1 + getAnimation()];
     }
 
     @Override
@@ -34,7 +34,8 @@ public class Backdrop extends ObjectInstance {
 
     @Override
     public void tick(EscapistsGame container) {
-
+        image = EscapistsRuntime.getRuntime()
+                .getApplication().images[imageBase + 1 + getAnimation()];
     }
 
     @Override

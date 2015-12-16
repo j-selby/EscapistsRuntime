@@ -34,9 +34,38 @@ public class ConditionFunctions extends ParameterFunctions {
     }
 
     // Standard commands below
-    @Condition(subId = -1, id = -3)
-    public boolean Compare(Object str1, Object str2) {
-        return str1.equals(str2);
+    @Condition(subId = -1, id = -3, conditionRequired = true)
+    public boolean Compare(int comparison1, Object str1, int comparison2, Object str2) {
+        if (str1 instanceof String) {
+            if (comparison2 == 0) { // EQUAL
+                return str1.equals(str2);
+            } else if (comparison2 == 1) { // DIFFERENT
+                return !str1.equals(str2);
+            } else {
+                throw new IllegalArgumentException("Cannot parse comparsion.");
+            }
+        }
+
+        double num1 = ((Number) str1).doubleValue();
+        double num2 = ((Number) str2).doubleValue();
+
+        //System.out.printf("%s=%s?%d.\n", str1.toString(), str2.toString(), comparison2);
+        // TODO: comparison1, what does it do?
+        if (comparison2 == 0) { // EQUAL
+            return num1 == num2;
+        } else if (comparison2 == 1) { // DIFFERENT
+            return num1 != num2;
+        } else if (comparison2 == 2) { // LOWER_OR_EQUAL
+            return num1 <= num2;
+        } else if (comparison2 == 3) { // LOWER
+            return num1 < num2;
+        } else if (comparison2 == 4) { // GREATER_OR_EQUAL
+            return num1 >= num2;
+        } else if (comparison2 == 5) { // GREATER
+            return num1 > num2;
+        } else {
+            return false;
+        }
     }
 
     @Condition(subId = -3, id = -1)
@@ -93,7 +122,7 @@ public class ConditionFunctions extends ParameterFunctions {
         return mouseOver;
     }
 
-    @Condition(subId = -6, id = -6)
+    @Condition(subId = -6, id = -5)
     public boolean MouseClicked(int mouseButton, boolean doubleClick) {
         // We only get left clicks on mobile platforms
         // TODO: Clicked vs held
@@ -160,19 +189,19 @@ public class ConditionFunctions extends ParameterFunctions {
     })
     public boolean Every(int id, int every) {
         String key = "_env_every_" + id;
-        if (scope.getScene().getVariables().containsKey(key)) {
-            // Check if it has updated
-            long currentTime = System.currentTimeMillis();
-            long lastTime = (Long) scope.getScene().getVariables().get(key);
-            long diff = currentTime - lastTime;
-            if (diff > every) {
-                currentTime -= diff - every;
-                scope.getScene().getVariables().put(key, currentTime);
-                return true;
-            }
-        } else {
+        if (!scope.getScene().getVariables().containsKey(key)) {
             scope.getScene().getVariables().put(key, System.currentTimeMillis());
         }
+
+        // Check if it has updated
+        long currentTime = System.currentTimeMillis();
+        long lastTime = (Long) scope.getScene().getVariables().get(key);
+        long diff = currentTime - lastTime;
+        if (diff > every) {
+            scope.getScene().getVariables().put(key, currentTime);
+            return true;
+        }
+
         return false;
     }
 
@@ -275,7 +304,7 @@ public class ConditionFunctions extends ParameterFunctions {
     }
 
     @Condition(subId = 39, id = -88)
-    public boolean SteamHasOtherGameLicense() {
+    public boolean SteamHasOtherGameLicense(int id) {
         // TODO
         return false;
     }
@@ -300,18 +329,27 @@ public class ConditionFunctions extends ParameterFunctions {
         }
     }
 
-    @Condition(subId = 2, id = -16, hasInstanceRef = true)
+    @Condition(subId = 2, id = -16, conditionRequired = true)
     public boolean CompareY(int comparisonType, int y) {
         ObjectInstance[] objects = scope.getObjects();
         if (objects.length == 0) {
             return false;
         }
-        // TODO: More then? Less then?
+
+        // TODO: Seems to be firing at the wrong times?
         for (ObjectInstance instance : objects) {
-            if (y == 57 && instance.getY() <= 57) {
-                return true;
-            } else if (y == 60 && instance.getY() >= 60) {
-                return true;
+            if (comparisonType == 0) { // EQUAL
+                return instance.getY() == y;
+            } else if (comparisonType == 1) { // DIFFERENT
+                return instance.getY() != y;
+            } else if (comparisonType == 2) { // LOWER_OR_EQUAL
+                return instance.getY() <= y;
+            } else if (comparisonType == 3) { // LOWER
+                return instance.getY() < y;
+            } else if (comparisonType == 4) { // GREATER_OR_EQUAL
+                return instance.getY() >= y;
+            } else if (comparisonType == 5) { // GREATER
+                return instance.getY() > y;
             } else {
                 return false;
             }

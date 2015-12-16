@@ -1,5 +1,6 @@
 package net.jselby.escapists.game;
 
+import com.badlogic.gdx.graphics.Color;
 import net.jselby.escapists.EscapistsRuntime;
 import net.jselby.escapists.data.chunks.Layers;
 import org.mini2Dx.core.graphics.Graphics;
@@ -48,6 +49,14 @@ public class Layer {
     public void draw(EscapistsGame game, Graphics g) {
         for (ObjectInstance instance : objects) {
             instance.draw(game, g);
+            /*if (EscapistsRuntime.DEBUG) {
+                g.setColor(Color.BLUE);
+                g.drawRect(instance.getScreenX(), instance.getScreenY(),
+                        instance.getWidth(), instance.getHeight());
+                g.setColor(Color.WHITE);
+                g.drawString(instance.getName() + ":" + instance.getObjectInfo() + ":" + instance.getAnimation(),
+                        instance.getScreenX(), instance.getScreenY());
+            }*/
         }
     }
 

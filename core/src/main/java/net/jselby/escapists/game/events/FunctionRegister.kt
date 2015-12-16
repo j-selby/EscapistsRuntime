@@ -10,7 +10,7 @@ import java.util.*
  * @author j_selby
  */
 class FunctionRegister {
-    val functions : HashMap<Pair<Int, Int>, Method> = HashMap();
+    val functions : HashMap<Pair<Int, Int>, Pair<Method, Annotation>> = HashMap();
 
     init {
         for (method in Scope::class.java.methods) {
@@ -58,7 +58,7 @@ class FunctionRegister {
 
         val predefinedFunction = getFunction(subId, id);
         if (predefinedFunction == null) {
-            functions.put(Pair(subId, id), method)
+            functions.put(Pair(subId, id), Pair(method, checkAnnotation))
         } else {
             error("Conflict in registering methods: $predefinedFunction and $method.");
         }
@@ -66,7 +66,7 @@ class FunctionRegister {
         //println("Exported function $method.");
     }
 
-    fun getFunction(subId : Int, id : Int) : Method? {
+    fun getFunction(subId : Int, id : Int) : Pair<Method, Annotation>? {
         return functions[Pair(subId, id)];
     }
 }

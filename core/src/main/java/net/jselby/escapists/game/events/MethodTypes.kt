@@ -18,7 +18,8 @@ annotation class Actions(val value : Array<Action>)
 @Retention(AnnotationRetention.RUNTIME)
 @MustBeDocumented
 @Repeatable
-annotation class Condition(val subId : Int, val id : Int, val hasInstanceRef : Boolean = false)
+annotation class Condition(val subId : Int, val id : Int,
+                           val hasInstanceRef : Boolean = false, val conditionRequired : Boolean = false)
 
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)

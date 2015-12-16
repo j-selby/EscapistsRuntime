@@ -12,16 +12,19 @@ import org.mini2Dx.core.graphics.Graphics;
  * A backdrop is a static image in the background/foreground.
  */
 public class QuickBackdrop extends ObjectInstance {
-    private final ImageBank.ImageItem image;
+    private ImageBank.ImageItem image;
+    private final short imageBase;
 
     public QuickBackdrop(ObjectDefinition definition, ObjectInstances.ObjectInstance instance) {
         super(definition, instance);
 
         net.jselby.escapists.data.objects.QuickBackdrop data
                 = (net.jselby.escapists.data.objects.QuickBackdrop) definition.properties.getProperties();
+
+        imageBase = data.shape.image;
         image = EscapistsRuntime.getRuntime()
                 .getApplication().images[
-                data.shape.image + 1];
+                imageBase + 1 + getAnimation()];
     }
 
     @Override
@@ -36,7 +39,9 @@ public class QuickBackdrop extends ObjectInstance {
 
     @Override
     public void tick(EscapistsGame container) {
-
+        image = EscapistsRuntime.getRuntime()
+                .getApplication().images[
+                imageBase + 1 + getAnimation()];
     }
 
     @Override

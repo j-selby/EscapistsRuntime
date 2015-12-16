@@ -119,9 +119,52 @@ public class Scene {
         firstFrame = true;
 
         // Prepare JS
+        String javascript = events.toJS();
+
+        // Inject mods
+        for (String mod : scope.getGame().getMods()) {
+            try {
+                String[] lines = javascript.split("\n");
+
+                boolean isScene = false;
+                for (String line : mod.split("\n")) {
+                    if (line.startsWith(":")) { // Set scene
+                        isScene = line.substring(1).trim().equalsIgnoreCase(getName().trim());
+                    } else if (isScene) {
+                        if (line.startsWith("@")) { // Swap
+                            int lineId = Integer.parseInt(line.split(":")[0].substring(1));
+                            String jsSwap = line.substring(line.indexOf(":") + 1);
+
+                            lines[lineId] = jsSwap;
+                        } else if (line.startsWith(">")) { // Insert before line
+                            int lineId = Integer.parseInt(line.split(":")[0].substring(1));
+                            String jsLine = line.substring(line.indexOf(":") + 1);
+
+                            String[] pre = new String[lineId];
+                            String[] post = new String[lines.length - lineId];
+                            System.arraycopy(lines, 0, pre, 0, pre.length);
+                            System.arraycopy(lines, lineId, post, 0, post.length);
+                            lines = new String[lines.length + 1];
+                            lines[lineId] = jsLine;
+                            System.arraycopy(pre, 0, lines, 0, pre.length);
+                            System.arraycopy(post, 0, lines, pre.length + 1, post.length);
+                        }
+                    }
+                }
+
+                StringBuilder javascriptCP = new StringBuilder();
+                for (String line : lines) {
+                    javascriptCP.append(line).append("\n");
+                }
+                javascript = javascriptCP.toString();
+            } catch (Exception e) {
+                scope.getGame().fatalPrompt("Error while parsing mod: " + e.getLocalizedMessage());
+            }
+        }
+
         try {
             FileOutputStream out = new FileOutputStream("frame_" + getName() + ".js");
-            out.write(events.toJS().getBytes());
+            out.write(javascript.getBytes());
             out.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -140,10 +183,10 @@ public class Scene {
         ScriptableObject.putProperty(jsScriptable, "env", wrappedOut);
 
         try {
-            jsScript = jsContext.compileString(events.toJS(), "frame_" + getName() + ".js", 1, null);
+            jsScript = jsContext.compileString(javascript, "frame_" + getName() + ".js", 1, null);
         } catch (EvaluatorException e) {
-            System.err.println("Compile error: " + e.getLocalizedMessage());
-            throw e;
+            scope.getGame().fatalPrompt("Compile error: " + e.getLocalizedMessage());
+            return;
         }
 
         frameCount = 0;

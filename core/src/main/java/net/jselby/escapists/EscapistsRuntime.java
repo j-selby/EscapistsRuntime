@@ -9,6 +9,7 @@ import net.jselby.escapists.game.Application;
 import net.jselby.escapists.game.EscapistsGame;
 import net.jselby.escapists.game.events.FunctionRegister;
 import net.jselby.escapists.util.ByteReader;
+import org.apache.commons.io.IOUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -200,6 +201,19 @@ public class EscapistsRuntime {
 
         game.setLoadingMessage("Preparing assets...");
         application = new Application(this, chunks);
+
+        File saveLocation = new File(game.getPlatformUtils().getSaveLocation(),
+                "The Escapists" + File.separator + "mods");
+        if (!saveLocation.exists() && !saveLocation.mkdirs()) {
+            game.fatalPrompt("Failed to write to storage.");
+            return false;
+        }
+        for (File child : saveLocation.listFiles()) {
+            if (child.getName().toLowerCase().endsWith(".mod")) {
+                // Load mod in
+                game.addMod(child.getName(), IOUtils.toString(child.toURI()));
+            }
+        }
 
         System.out.println("Chunk parse completed successfully.");
 
