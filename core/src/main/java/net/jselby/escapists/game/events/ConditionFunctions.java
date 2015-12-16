@@ -87,13 +87,19 @@ public class ConditionFunctions extends ParameterFunctions {
 
     @Condition(subId = 47, id = -85)
     public boolean HasItemValue(String key, String value) {
-        // TODO: Object specific variables
+        for (ObjectInstance instance : scope.getScene().getObjects()) {
+            return instance.getVariables().containsKey(key + ":" + value);
+        }
+
         return false;
     }
 
     @Condition(subId = 2, id = -29)
     public boolean ObjectVisible(int objectId) {
-        // TODO: Object visibility
+        scope.withObjects(objectId);
+        for (ObjectInstance instance : scope.getScene().getObjects()) {
+            return instance.isVisible();
+        }
         return false;
     }
 

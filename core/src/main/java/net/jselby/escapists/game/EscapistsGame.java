@@ -212,16 +212,20 @@ public class EscapistsGame extends BasicGame {
             int mouseX = getMouseX();
             int mouseY = getMouseY();
 
-            g.drawString("Mouse X: " + mouseX + ", Mouse Y: " + mouseY, 5, 35);
-            g.drawString("scaleX: " + scaleX + ", scaleY: " + scaleY, 5, 50);
-            g.drawString("Scene: " + currentFrame.getName(), 5, 65);
+            if (EscapistsRuntime.DEBUG) {
+                g.drawString("Mouse X: " + mouseX + ", Mouse Y: " + mouseY, 5, 35);
+                g.drawString("scaleX: " + scaleX + ", scaleY: " + scaleY, 5, 50);
+                g.drawString("Scene: " + currentFrame.getName(), 5, 65);
+            }
         }
 
-        int usedMem = (int) (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024 / 1024;
+        if (EscapistsRuntime.DEBUG) {
+            int usedMem = (int) (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024 / 1024;
 
-        g.drawString("Escapists Runtime v" + EscapistsRuntime.VERSION, 5, 5);
-        g.drawString("FPS: " + Gdx.graphics.getFramesPerSecond() + ", Mem: "
-                + usedMem + " MB", 5, 20);
+            g.drawString("Escapists Runtime v" + EscapistsRuntime.VERSION, 5, 5);
+            g.drawString("FPS: " + Gdx.graphics.getFramesPerSecond() + ", Mem: "
+                    + usedMem + " MB", 5, 20);
+        }
 
     }
 

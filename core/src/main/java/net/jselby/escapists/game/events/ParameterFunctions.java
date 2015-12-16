@@ -100,9 +100,19 @@ public class ParameterFunctions {
         return "";
     }
 
-    public String GetItemString(int id, String a, String b, String c) {
-        // TODO: Item properties
-        return "";
+    public String GetItemString(int id, String section, String key, String defaultVal) {
+        String varName = section + ":" + key;
+        for (ObjectInstance instance : scope.getScene().getObjects()) {
+            if (instance.getObjectInfo() == id) {
+                if (instance.getVariables().containsKey(varName)) {
+                    return (String) instance.getVariables().get(varName);
+                } else {
+                    return defaultVal;
+                }
+            }
+        }
+
+        return defaultVal;
     }
 
     public String GroupItemString(int id, String category, String key) {

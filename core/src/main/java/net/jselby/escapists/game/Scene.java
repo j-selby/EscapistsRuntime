@@ -195,6 +195,7 @@ public class Scene {
 
     public void init(EscapistsGame game) {
         create();
+        tick(game);
     }
 
     public void tick(EscapistsGame game) {
