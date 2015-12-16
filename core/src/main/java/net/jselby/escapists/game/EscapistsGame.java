@@ -20,6 +20,7 @@ import java.util.Map;
 
 public class EscapistsGame extends BasicGame {
 	public static final String GAME_IDENTIFIER = "net.jselby.escapists";
+    private static final long UPDATE_INTERVAL = 1000 / 45;
 
     private Sprite loadingLogo;
     private BitmapFont loadingFont;
@@ -38,6 +39,7 @@ public class EscapistsGame extends BasicGame {
     private ArrayList<String> mods;
 
     private boolean pauseError = false;
+    private long lastFrame;
 
     public EscapistsGame(PlatformUtils utils) {
         this.utils = utils;
@@ -134,6 +136,7 @@ public class EscapistsGame extends BasicGame {
     public void loadScene(int id) {
         sceneIndex = id;
         loadFrame(app.frames.get(id));
+        lastFrame = System.currentTimeMillis();
     }
 
     @Override
@@ -148,7 +151,19 @@ public class EscapistsGame extends BasicGame {
             return;
         }
 
-        currentFrame.tick(this);
+        // Attempt to target 45fps
+        long diff = System.currentTimeMillis() - lastFrame;
+        int times = 0;
+        while (diff > UPDATE_INTERVAL) {
+            lastFrame = System.currentTimeMillis();
+            currentFrame.tick(this);
+            diff -= UPDATE_INTERVAL;
+            times++;
+            if (times > 2) {
+                System.err.println("Cannot keep up! Having to call tick() too many times per frame.");
+                continue;
+            }
+        }
 
         getPlatformUtils().tick();
     }
