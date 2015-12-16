@@ -76,7 +76,6 @@ public class ParameterFunctions {
         for (ObjectInstance instance : scope.getScene().getObjects()) {
             if (instance.getObjectInfo() == objectId) {
                 if (instance.getVariables().containsKey(varName)) {
-                    //System.out.printf("GetValue:%d;%s=%s.\n", objectId, varName, instance.getVariables().get(varName));
                     return instance.getVariables().get(varName);
                 } else {
                     return 0;
@@ -90,7 +89,6 @@ public class ParameterFunctions {
         for (ObjectInstance instance : scope.getScene().getObjects()) {
             if (instance.getObjectInfo() == objectId) {
                 if (instance.getVariables().containsKey(varName)) {
-                    //System.out.printf("GetString:%d;%s=%s.\n", objectId, varName, instance.getVariables().get(varName));
                     return (String) instance.getVariables().get(varName);
                 } else {
                     return "";
@@ -119,7 +117,6 @@ public class ParameterFunctions {
         for (ObjectInstance instance : scope.getScene().getObjects()) {
             if (instance.getObjectInfo() == id) {
                 if (instance.getVariables().containsKey(category + ":" + key)) {
-                    System.out.printf("GroupItemString;%d;%s=%s\n", id, category + ":" + key, instance.getVariables().get(category + ":" + key));
                     return (String) instance.getVariables().get(category + ":" + key);
                 }
             }

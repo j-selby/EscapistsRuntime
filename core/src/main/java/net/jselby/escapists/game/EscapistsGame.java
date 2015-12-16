@@ -124,9 +124,8 @@ public class EscapistsGame extends BasicGame {
 
     private void loadFrame(Scene scene) {
         currentFrame = scene;
-        scene.init(this);
-
         System.out.println("Launching frame: " + currentFrame.getName().trim());
+        scene.init(this);
     }
 
     public int getSceneIndex() {

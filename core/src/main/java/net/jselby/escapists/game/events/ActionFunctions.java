@@ -33,13 +33,11 @@ public class ActionFunctions extends ConditionFunctions {
 
     @Action(subId = -1, id = 6)
     public void ActivateGroup(int id) {
-        System.out.printf("Starting group: %d.\n", id);
         scope.getScene().getActiveGroups().put(id, true);
     }
 
     @Action(subId = -1, id = 7)
     public void DeactivateGroup(int id) {
-        System.out.printf("Stopping group: %d.\n", id);
         scope.getScene().getActiveGroups().put(id, false);
     }
 
@@ -112,7 +110,6 @@ public class ActionFunctions extends ConditionFunctions {
 
     @Action(subId = 2, id = 17)
     public void SetAnimation(int newAnimation) {
-        //System.out.println("Set animation: " + newAnimation);
         for (ObjectInstance object : scope.getObjects()) {
             object.setAnimation(newAnimation);
         }
@@ -174,7 +171,6 @@ public class ActionFunctions extends ConditionFunctions {
 
     @Action(subId = 36, id = 88)
     public void SetStringVar(String name, String val) {
-        System.out.printf("%s=%s.\n", name, val);
         for (ObjectInstance object : scope.getObjects()) {
             object.getVariables().put(name, val);
         }
@@ -182,7 +178,6 @@ public class ActionFunctions extends ConditionFunctions {
 
     @Action(subId = 63, id = 86)
     public void LoadIniFile(String path) {
-        System.out.println("Loading configuration file: " + path);
         File file = new File(translateFilePath(path));
         String contents;
         try {
@@ -204,7 +199,6 @@ public class ActionFunctions extends ConditionFunctions {
 
     @Action(subId = 47, id = 158)
     public void loadIniFileAndClear(String path, int unknown) {
-        System.out.println("Loading configuration file using alternate loader: " + path);
         File file = new File(translateFilePath(path));
         String contents;
         try {
@@ -292,7 +286,6 @@ public class ActionFunctions extends ConditionFunctions {
     @Action(subId = 65, id = 80)
     public void EmbedFont(String path) {
         // Fonts are loaded by the runtime at launch, so we are gonna ignore this.
-        System.out.println("Application requested font load: " + path);
     }
 
     @Action(subId = -7, id = 9)
@@ -302,7 +295,6 @@ public class ActionFunctions extends ConditionFunctions {
 
     @Action(subId = 46, id = 80)
     public void initBlowfishEncryption(String key) {
-        // Fonts are loaded by the runtime at launch, so we are gonna ignore this.
-        System.out.println("Blowfish encryption key: " + key);
+        // TODO: Runtime decryption
     }
 }
