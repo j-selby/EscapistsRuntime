@@ -29,8 +29,8 @@ annotation class Conditions(val value : Array<Condition>)
 @Retention(AnnotationRetention.RUNTIME)
 @MustBeDocumented
 @Repeatable
-annotation class Parameter(val subId : Int, val id : Int, val hasInstanceRef : Boolean = false)
+annotation class Expression(val subId : Int, val id : Int, val hasInstanceRef : Boolean = false)
 
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
-annotation class Parameters(val value : Array<Parameter>)
+annotation class Expressions(val value : Array<Expression>)

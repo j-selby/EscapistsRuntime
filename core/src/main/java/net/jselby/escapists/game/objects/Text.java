@@ -2,6 +2,7 @@ package net.jselby.escapists.game.objects;
 
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import net.jselby.escapists.EscapistsRuntime;
 import net.jselby.escapists.data.ObjectDefinition;
 import net.jselby.escapists.data.chunks.FontBank;
@@ -21,7 +22,6 @@ public class Text extends ObjectInstance {
     private GlyphLayout[] compiledStrings;
     private int font;
     private String str;
-    //private final TrueTypeFont font;
 
     public Text(ObjectDefinition def, ObjectInstances.ObjectInstance instanceDef) {
         super(def, instanceDef);
@@ -33,7 +33,6 @@ public class Text extends ObjectInstance {
                 paragraph.value, instanceDef.getX(), instanceDef.getY());
         font = paragraph.font;
         str = paragraph.value;
-        //font = new TrueTypeFont(originalFont.value.awtFont, false);
     }
 
     private void compileString(FontBank.LogFont value, String msg, float x, float y) {
@@ -88,28 +87,20 @@ public class Text extends ObjectInstance {
             } else if (paragraph.isRightAligned()) {
                 drawXAdd = rawType.width - width;
             }
+
             float drawYAdd = 0;
             if (paragraph.isVerticallyCentered()) {
                 drawYAdd = rawType.height / 2 - height / 2;
             } else if (paragraph.isBottomAligned()) {
                 drawYAdd = rawType.height - height;
             }
+
             g.drawString(msgs[i], getX() + drawXAdd, getY() + drawYAdd +
                     (font.getLineHeight() * i));
         }
 
         g.setFont(originalFont);
         paragraph.color.a = oldAlpha;
-        //font.setColor(paragraph.color);
-        //font.draw(batch, compiledStrings[i], getX(), getY());
-        //compiledStrings[i]
-        /*BitmapFont font = EscapistsRuntime.getRuntime()
-                .getApplication().fonts[paragraph.font].value.font;
-        font.setColor(paragraph.color);
-        g.drawString(paragraph.value, getX(), getY() + adjY);
-        adjY += 10;*/
-
-        //batch.end();
     }
 
     public void setString(String msg) {

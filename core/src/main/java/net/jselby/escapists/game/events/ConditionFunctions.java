@@ -11,7 +11,7 @@ import java.io.File;
  *
  * @author j_selby
  */
-public class ConditionFunctions extends ParameterFunctions {
+public class ConditionFunctions extends ExpressionFunctions {
     @Condition(subId = -1, id = -1)
     public boolean Always() {
         return true;
@@ -24,12 +24,18 @@ public class ConditionFunctions extends ParameterFunctions {
     }
 
     @Condition(subId = -1, id = -10)
-    public boolean NewGroup() {
+    public boolean GroupStart(int id) {
+        scope.getGroupStack().push(id);
         return true;
     }
 
     @Condition(subId = -1, id = -11)
-    public boolean GroupEnd() {
+    public boolean GroupEnd(int id) {
+        if (scope.getGroupStack().peek() == id) {
+            scope.getGroupStack().pop();
+        } else {
+            System.err.println("Stack conflict: " + id);
+        }
         return true;
     }
 
@@ -80,9 +86,7 @@ public class ConditionFunctions extends ParameterFunctions {
 
     @Condition(subId = -1, id = -23)
     public boolean OnGroupActivation() {
-        // TODO: Once-only
-        //return scope.getScene().getActiveGroups().containsKey(id);
-        return true;
+        return scope.getScene().wasGroupJustActivated(scope.getGroupStack().peek());
     }
 
     @Condition(subId = 47, id = -85)
@@ -95,8 +99,7 @@ public class ConditionFunctions extends ParameterFunctions {
     }
 
     @Condition(subId = 2, id = -29)
-    public boolean ObjectVisible(int objectId) {
-        scope.withObjects(objectId);
+    public boolean ObjectVisible() {
         for (ObjectInstance instance : scope.getScene().getObjects()) {
             return instance.isVisible();
         }

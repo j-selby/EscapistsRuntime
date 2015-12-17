@@ -14,6 +14,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Stack;
 
 /**
  * Events are chunks used to invoke various things within the game world.
@@ -89,11 +90,18 @@ public class Events extends Chunk {
         StringBuilder builder = new StringBuilder();
         int indent = 0;
 
+        Stack<Integer> groupStack = new Stack<Integer>();
+
         for (EventGroup group : groups) {
             // Check for groups
-            if (group.conditions.length != 0 && group.conditions[0].name != null && group.conditions[0].name.equalsIgnoreCase("NewGroup")) {
-                builder.append(StringUtils.repeat(' ', indent)).append("if (env.GroupActivated(")
-                        .append(((ParameterValue.Group) group.conditions[0].items[0].value).id)
+            if (group.conditions.length != 0 && group.conditions[0].name != null && group.conditions[0].name.equalsIgnoreCase("GroupStart")) {
+                int id = ((ParameterValue.Group) group.conditions[0].items[0].value).id;
+                groupStack.push(id);
+                builder.append(StringUtils.repeat(' ', indent)).append("env.GroupStart(")
+                        .append(id)
+                        .append(");\n")
+                        .append(StringUtils.repeat(' ', indent)).append("if (env.GroupActivated(")
+                        .append(id)
                         .append(")) { // Flags: ")
                         .append(Integer.toBinaryString(((ParameterValue.Group) group.conditions[0].items[0].value).flags))
                         .append(", name: ")
@@ -103,7 +111,11 @@ public class Events extends Chunk {
                 continue;
             } else if (group.conditions.length != 0 && group.conditions[0].name != null && group.conditions[0].name.equalsIgnoreCase("GroupEnd")) {
                 indent -= 4;
-                builder.append(StringUtils.repeat(' ', indent)).append("}\n");
+                builder.append(StringUtils.repeat(' ', indent)).append("}\n")
+                        .append(StringUtils.repeat(' ', indent))
+                        .append("env.GroupEnd(")
+                        .append(groupStack.pop())
+                        .append(");\n");
                 continue;
             }
 

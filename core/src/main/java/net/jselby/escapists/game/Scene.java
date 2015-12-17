@@ -49,6 +49,7 @@ public class Scene {
     public boolean firstFrame = true;
     private Map<String, Object> variables = new HashMap<String, Object>();
     private Map<Integer, Boolean> groupActivated = new HashMap<Integer, Boolean>();
+    private Map<Integer, Boolean> groupJustActivated = new HashMap<Integer, Boolean>();
     private Map<String, Integer> loops = new HashMap<String, Integer>();
     private int frameCount;
     private long startTime;
@@ -82,13 +83,14 @@ public class Scene {
         instances = new ArrayList<ObjectInstance>();
         variables.clear();
         groupActivated.clear();
+        groupJustActivated.clear();
         loops.clear();
 
         // Check for event groups
         for (Events.EventGroup group : events.groups) {
             // Check for groups
             if (group.conditions.length != 0 && group.conditions[0].name != null
-                    && group.conditions[0].name.equalsIgnoreCase("NewGroup")) {
+                    && group.conditions[0].name.equalsIgnoreCase("GroupStart")) {
                 ParameterValue.Group selectedGroup = ((ParameterValue.Group) group.conditions[0].items[0].value);
                 groupActivated.put(selectedGroup.id, ((selectedGroup.flags & 1) == 0));
             }
@@ -185,6 +187,7 @@ public class Scene {
         try {
             jsScript = jsContext.compileString(javascript, "frame_" + getName() + ".js", 1, null);
         } catch (EvaluatorException e) {
+            e.printStackTrace();
             scope.getGame().fatalPrompt("Compile error: " + e.getLocalizedMessage());
             return;
         }
@@ -219,6 +222,8 @@ public class Scene {
                 value.setValue(value.getValue() - 1);
             }
         }
+
+        groupJustActivated.clear();
 
         firstFrame = false;
         frameCount++;
@@ -284,5 +289,14 @@ public class Scene {
 
     public Map<String, Integer> getActiveLoops() {
         return loops;
+    }
+
+    public void activateGroup(int id) {
+        groupActivated.put(id, true);
+        groupJustActivated.put(id, true);
+    }
+
+    public boolean wasGroupJustActivated(int id) {
+        return groupJustActivated.get(id);
     }
 }

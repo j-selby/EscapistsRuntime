@@ -12,8 +12,11 @@ import net.jselby.escapists.data.Chunk
 import net.jselby.escapists.util.ByteReader
 import net.jselby.escapists.util.CompressionUtils
 import org.mini2Dx.core.graphics.Sprite
+import java.awt.image.BufferedImage
 import java.io.File
 import java.io.FileOutputStream
+import java.io.IOException
+import javax.imageio.ImageIO
 
 /**
  * Assets are chunks storing data such as images, sounds, and fonts.
@@ -224,7 +227,6 @@ class ImageBank : Chunk() {
                 throw IllegalStateException("Unimplemented: Graphics mode != 4 ($graphicMode)")
             }
 
-            val buf = arrayOfNulls<Color>(width * height)
             var pad = 2 - ((width * 3) % 2)
             if (pad == 2) {
                 pad = 0
@@ -241,13 +243,15 @@ class ImageBank : Chunk() {
                     val b = buffer.unsignedByte.toInt()
                     val g = buffer.unsignedByte.toInt()
                     val r = buffer.unsignedByte.toInt()
-                    val `val` = Color.rgba8888(r / 256f, g / 256f, b / 256f, 1f)
-                    if (`val` != transparentVal/* && !alpha*/) {
+                    var a = 256
+                    if (alpha) {
+                        buffer.position = originalPos + (height.toInt() * width.toInt() * 3) + i
+                        a = buffer.unsignedByte.toInt()
+                    }
+                    val `val` = Color.rgba8888(r / 256f, g / 256f, b / 256f, a / 256f)
+                    if (`val` != transparentVal) {
                         pixmap.drawPixel(x, y, `val`)
-                    }// else {
-                    //buf[i] = new Color(((float) r) / 256f, ((float) g) / 256f,
-                    //        ((float) b) / 256f, 1f);
-                    //}
+                    }
 
                     i++
                     n += 3
@@ -256,27 +260,6 @@ class ImageBank : Chunk() {
             }
 
             buffer.position = originalPos + (height.toInt() * width.toInt() * 3)
-
-            /*if (alpha) { // Alpha
-                        i = 0;
-                        for (int y = 0; y < height; y++) {
-                            for (int x = 0; x < width; x++) {
-                                // TODO: Implement alpha, if needed
-                                int a = buffer.getUnsignedByte();
-                                if (!buf[i].equals(transparent)) {
-                                    image.setRGB(x, y, val);
-                                }
-                            }
-                        }
-                    }*.
-
-                    /*try {
-                        ImageIO.write(image, "png", new File("images/" + handle + ".png"));
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }*/
-                }*/
-
         }
 
         /**

@@ -38,9 +38,12 @@ abstract class ObjectInstance(definition: ObjectDefinition, instance: ObjectInst
 
     var animation = 0
     var imageAlpha = 255
+    var bold = false
 
     var isVisible = true
     val variables: Map<String, Any> = HashMap()
+    val listElements: List<String> = ArrayList()
+    var selectedLine = 0
 
     init {
         this.name = definition.name.trim()

@@ -33,7 +33,7 @@ class AudioManager {
 
     fun tick() {
         for (channel in channels) {
-            for (musicItem in channel.value) {
+            for (musicItem in channel.value.entries.toArrayList()) {
                 if (!musicItem.key.isPlaying) {
                     if (musicItem.value == 1) {
                         channel.value.remove(musicItem.key);

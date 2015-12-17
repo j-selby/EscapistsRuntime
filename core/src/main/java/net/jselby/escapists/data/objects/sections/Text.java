@@ -41,18 +41,6 @@ public class Text {
             font = buffer.getUnsignedShort();
             flags = buffer.getUnsignedShort();
 
-            /*
-            PARAGRAPH_FLAGS = BitDict(
-    'HorizontalCenter',
-    'RightAligned',
-    'VerticalCenter',
-    'BottomAligned',
-    None, None, None, None,
-    'Correct',
-    'Relief'
-)
-             */
-
             color = buffer.getColor();
             value = buffer.getString();
         }
@@ -71,6 +59,14 @@ public class Text {
 
         public boolean isBottomAligned() {
             return ((flags >> 3) & 1) != 0;
+        }
+
+        public boolean isCorrected() {
+            return ((flags >> 8) & 1) != 0;
+        }
+
+        public boolean isRelief() {
+            return ((flags >> 9) & 1) != 0;
         }
     }
 }

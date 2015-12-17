@@ -33,7 +33,7 @@ public class ActionFunctions extends ConditionFunctions {
 
     @Action(subId = -1, id = 6)
     public void ActivateGroup(int id) {
-        scope.getScene().getActiveGroups().put(id, true);
+        scope.getScene().activateGroup(id);
     }
 
     @Action(subId = -1, id = 7)
@@ -44,6 +44,16 @@ public class ActionFunctions extends ConditionFunctions {
     @Action(subId = -1, id = 14)
     public void StartLoop(String name, int times) {
         scope.getScene().getActiveLoops().put(name, times);
+    }
+
+    @Action(subId = 48, id = 111)
+    public void ShowLayer(int id) {
+        scope.getScene().getLayers()[id - 1].setVisible(true);
+    }
+
+    @Action(subId = 48, id = 112)
+    public void HideLayer(int id) {
+        scope.getScene().getLayers()[id - 1].setVisible(false);
     }
 
     @Action(subId = -3, id = 4)
@@ -89,14 +99,40 @@ public class ActionFunctions extends ConditionFunctions {
         }
     }
 
-    @Action(subId = 3, id = 26)
+    @Action(subId = 2, id = 61)
+    public void SetLayer(int id) {
+        for (ObjectInstance object : scope.getObjects()) {
+            for (Layer layer : scope.getScene().getLayers()) {
+                layer.objects.remove(object);
+            }
+            scope.getScene().getLayers()[id].objects.add(object);
+        }
+    }
+
+    @Action(subId = 2, id = 24)
+    public void Destroy() {
+        for (ObjectInstance object : scope.getObjects()) {
+            for (Layer layer : scope.getScene().getLayers()) {
+                layer.objects.remove(object);
+            }
+            scope.getScene().getObjects().remove(object);
+        }
+    }
+
+    @Actions({
+            @Action(subId = 2, id = 26),
+            @Action(subId = 3, id = 26)
+    })
     public void Disappear() {
         for (ObjectInstance object : scope.getObjects()) {
             object.setVisible(false);
         }
     }
 
-    @Action(subId = 3, id = 27)
+    @Actions({
+            @Action(subId = 2, id = 27),
+            @Action(subId = 3, id = 27)
+    })
     public void Reappear() {
         for (ObjectInstance object : scope.getObjects()) {
             object.setVisible(true);
@@ -115,6 +151,11 @@ public class ActionFunctions extends ConditionFunctions {
         }
     }
 
+    @Action(subId = 2, id = 40)
+    public void SetAnimationFrame(int frame) {
+        // TODO: Animation frames
+    }
+
     @Action(subId = 2, id = 15)
     public void StopAnimation() {
         // TODO: Better Animation implementation
@@ -125,10 +166,22 @@ public class ActionFunctions extends ConditionFunctions {
         // TODO: Set color
     }
 
+    @Action(subId = 3, id = 56)
+    public void SetFontColor(int value) {
+        // TODO: Set color
+    }
+
     @Action(subId = 2, id = 65)
     public void SetAlphaCoefficient(int value) {
         for (ObjectInstance object : scope.getObjects()) {
             object.setImageAlpha(256 - value);
+        }
+    }
+
+    @Action(subId = 3, id = 52)
+    public void SetBold(int value) {
+        for (ObjectInstance object : scope.getObjects()) {
+            object.setBold(value == 1);
         }
     }
 
@@ -273,6 +326,11 @@ public class ActionFunctions extends ConditionFunctions {
         return new File(name).mkdir();
     }
 
+    @Action(subId = 42, id = 85)
+    public boolean DeleteFile(String name) {
+        return new File(name).delete();
+    }
+
     @Action(subId = -6, id = 0)
     public void HideCursor() {
         scope.getGame().getPlatformUtils().hideMouse();
@@ -296,5 +354,43 @@ public class ActionFunctions extends ConditionFunctions {
     @Action(subId = 46, id = 80)
     public void initBlowfishEncryption(String key) {
         // TODO: Runtime decryption
+    }
+
+    @Action(subId = 32, id = 85)
+    public void ResetList() {
+        for (ObjectInstance object : scope.getObjects()) {
+            object.getListElements().clear();
+            object.setSelectedLine(0);
+        }
+    }
+
+    @Action(subId = 32, id = 89)
+    public void SelectLine(int num) {
+        for (ObjectInstance object : scope.getObjects()) {
+            object.setSelectedLine(num);
+        }
+    }
+
+    @Action(subId = 34, id = 80)
+    public void SplitString(String content, String delimiter) {
+        String[] split = content.split(delimiter);
+        for (int i = 0; i < split.length; i++) {
+            String str = split[i];
+            if (i + 1 == split.length && str.length() == 0) {
+                break;
+            }
+            for (ObjectInstance object : scope.getObjects()) {
+                object.getListElements().add(str);
+                object.setSelectedLine(object.getListElements().size() - 1);
+            }
+        }
+    }
+
+    @Action(subId = 32, id = 86)
+    public void AddListElement(String content) {
+        for (ObjectInstance object : scope.getObjects()) {
+            object.getListElements().add(content);
+            object.setSelectedLine(object.getListElements().size() - 1);
+        }
     }
 }

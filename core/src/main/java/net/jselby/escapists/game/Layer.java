@@ -18,6 +18,7 @@ public class Layer {
     public final List<ObjectInstance> objects;
     private final String name;
     private long flags;
+    private boolean isVisible;
 
     public Layer(EscapistsRuntime runtime, Scene parent, int index, Layers.Layer layerDefinition) {
         this.name = layerDefinition.name;
@@ -30,6 +31,8 @@ public class Layer {
                 objects.add(child);
             }
         }
+
+        isVisible = ((getFlags() >> 17) & 1) == 0;
     }
 
     public Layer(EscapistsRuntime runtime, Scene scene, int i) {
@@ -37,6 +40,8 @@ public class Layer {
 
         // Grab our objects
         objects = new ArrayList<ObjectInstance>();
+
+        isVisible = true;
 
     }
 
@@ -82,6 +87,10 @@ public class Layer {
      * @return A boolean representing this objects visibility.
      */
     public boolean isVisible() {
-        return ((getFlags() >> 17) & 1) == 0;
+        return isVisible;
+    }
+
+    public void setVisible(boolean visible) {
+        this.isVisible = visible;
     }
 }
