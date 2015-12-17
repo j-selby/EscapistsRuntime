@@ -93,6 +93,7 @@ public class Scene {
                     && group.conditions[0].name.equalsIgnoreCase("GroupStart")) {
                 ParameterValue.Group selectedGroup = ((ParameterValue.Group) group.conditions[0].items[0].value);
                 groupActivated.put(selectedGroup.id, ((selectedGroup.flags & 1) == 0));
+                groupJustActivated.put(selectedGroup.id, ((selectedGroup.flags & 1) == 0));
             }
         }
 
@@ -223,7 +224,9 @@ public class Scene {
             }
         }
 
-        groupJustActivated.clear();
+        for (Map.Entry<Integer, Boolean> entry : groupJustActivated.entrySet()) {
+            entry.setValue(false);
+        }
 
         firstFrame = false;
         frameCount++;
