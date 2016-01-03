@@ -1,7 +1,9 @@
 -injars      desktop.jar
+-outjars     desktop_shrink.jar
 -libraryjars <java.home>/lib/rt.jar
 
 -dontobfuscate
+-dontwarn
 
 -keep public class net.jselby.escapists.game.desktop.DesktopLauncher {
     public static void main(java.lang.String[]);
