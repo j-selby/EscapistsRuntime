@@ -7,5 +7,5 @@
 -dontnote
 
 -keep public class net.jselby.** {
-    **;
+    *;
 }
