@@ -329,9 +329,11 @@ class SoundBank : Chunk() {
             if (!directoryFile.exists() && !directoryFile.mkdirs()) {
                 throw IllegalStateException("Failed to create audio directory.");
             }
-            val out = FileOutputStream("$directory$name.$extension");
-            out.write(data.getBytes(decompressedLength));
-            out.close();
+            if (!File("$directory$name.$extension").exists()) {
+                val out = FileOutputStream("$directory$name.$extension");
+                out.write(data.getBytes(decompressedLength));
+                out.close();
+            }
         }
     }
 }

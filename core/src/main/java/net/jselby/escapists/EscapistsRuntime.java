@@ -152,7 +152,7 @@ public class EscapistsRuntime {
             }
             String fileName = builder.toString().trim();
 
-            buf.getInt(); // Magic
+            buf.skipBytes(4); // Magic
 
             int packedFileCompLength = buf.getInt();
 
@@ -180,7 +180,7 @@ public class EscapistsRuntime {
                 }
             }
 
-            //System.out.printf("Discovered packed file %s of length %d (compressed: %d).\n", fileName, len, !uncompressed);
+            //System.out.printf("Discovered packed file %s (compressed: %b).\n", fileName, !uncompressed);
         }
 
         // -- GAME DATA READING

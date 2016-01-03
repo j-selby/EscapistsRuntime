@@ -11,7 +11,7 @@ import java.io.File;
  *
  * @author j_selby
  */
-public class ConditionFunctions extends ExpressionFunctions {
+public class ConditionFunctions extends CallbackFunctions {
     @Condition(subId = -1, id = -1)
     public boolean Always() {
         return true;
@@ -48,7 +48,8 @@ public class ConditionFunctions extends ExpressionFunctions {
             } else if (comparison2 == 1) { // DIFFERENT
                 return !str1.equals(str2);
             } else {
-                throw new IllegalArgumentException("Cannot parse comparsion.");
+                return false;
+                //throw new IllegalArgumentException("Cannot parse comparsion.");
             }
         }
 
@@ -128,9 +129,8 @@ public class ConditionFunctions extends ExpressionFunctions {
     @Condition(subId = -6, id = -5)
     public boolean MouseClicked(int mouseButton, boolean doubleClick) {
         // We only get left clicks on mobile platforms
-        // TODO: Clicked vs held
         return !(Gdx.app.getType() != Application.ApplicationType.Desktop && mouseButton != 0)
-                && Gdx.input.isButtonPressed(mouseButton);
+                && scope.getGame().isButtonClicked(mouseButton);
 
     }
 
@@ -142,7 +142,7 @@ public class ConditionFunctions extends ExpressionFunctions {
 
     }
 
-    @Condition(subId = -6, id = -7)
+    @Condition(subId = -6, id = -7, successCallback = "Vibrate")
     public boolean ObjectClicked(int mouseButton, boolean doubleClicked,
             int object) {
         if (Gdx.app.getType() != Application.ApplicationType.Desktop
@@ -153,9 +153,8 @@ public class ConditionFunctions extends ExpressionFunctions {
         }
 
         // TODO: Support double clicking
-        // TODO: Clicked means once
 
-        if (!Gdx.input.isButtonPressed(mouseButton)) {
+        if (!scope.getGame().isButtonClicked(mouseButton)) {
             return false;
         }
 
@@ -177,10 +176,6 @@ public class ConditionFunctions extends ExpressionFunctions {
                 mouseOver = true;
                 scope.addObjectToScope(instance);
             }
-        }
-
-        if (mouseOver) {
-            Gdx.input.vibrate(100);
         }
 
         return mouseOver;
@@ -208,15 +203,9 @@ public class ConditionFunctions extends ExpressionFunctions {
         return false;
     }
 
-    @Condition(subId = -1, id = -6, hasInstanceRef = true)
+    @Condition(subId = -1, id = -6, hasInstanceRef = true, successCallback = "OnceFinalize")
     public boolean Once(int id) {
-        String key = "_env_once_" + id;
-        if (scope.getScene().getVariables().containsKey(key)) {
-            return false;
-        } else {
-            scope.getScene().getVariables().put(key, true);
-            return true;
-        }
+        return !scope.getScene().getVariables().containsKey("_env_once_" + id);
     }
 
     @Condition(subId = -6, id = -1)

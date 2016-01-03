@@ -153,7 +153,14 @@ public class ActionFunctions extends ConditionFunctions {
 
     @Action(subId = 2, id = 40)
     public void SetAnimationFrame(int frame) {
-        // TODO: Animation frames
+        if (frame < 0) {
+            //throw new IllegalArgumentException("Bad frame: " + frame);
+            return;
+        }
+
+        for (ObjectInstance object : scope.getObjects()) {
+            object.setAnimationFrame(frame);
+        }
     }
 
     @Action(subId = 2, id = 15)
@@ -233,6 +240,10 @@ public class ActionFunctions extends ConditionFunctions {
     public void LoadIniFile(String path) {
         File file = new File(translateFilePath(path));
         String contents;
+        if (!file.exists()) {
+            System.err.println("Failed to open configuration file \"" + file + "\", as it doesn't exist.");
+            return;
+        }
         try {
             contents = IOUtils.toString(file.toURI());
         } catch (IOException e) {
@@ -254,6 +265,10 @@ public class ActionFunctions extends ConditionFunctions {
     public void loadIniFileAndClear(String path, int unknown) {
         File file = new File(translateFilePath(path));
         String contents;
+        if (!file.exists()) {
+            System.err.println("Failed to open configuration file \"" + file + "\", as it doesn't exist.");
+            return;
+        }
         try {
             contents = IOUtils.toString(file.toURI());
         } catch (IOException e) {
@@ -298,7 +313,6 @@ public class ActionFunctions extends ConditionFunctions {
 
     @Action(subId = -2, id = 29)
     public void PlayLoopingChannelFileSample(String location, int channel, int times) {
-
         scope.getGame().getAudio().playFile(location, channel, times);
     }
 
@@ -338,6 +352,7 @@ public class ActionFunctions extends ConditionFunctions {
 
     @Action(subId = 56, id = 80)
     public void OpenURL(String url) {
+        new Throwable().printStackTrace();
         Gdx.net.openURI(url);
     }
 
@@ -374,14 +389,15 @@ public class ActionFunctions extends ConditionFunctions {
     @Action(subId = 34, id = 80)
     public void SplitString(String content, String delimiter) {
         String[] split = content.split(delimiter);
+        ObjectInstance[] objects = scope.getObjects();
         for (int i = 0; i < split.length; i++) {
             String str = split[i];
             if (i + 1 == split.length && str.length() == 0) {
                 break;
             }
-            for (ObjectInstance object : scope.getObjects()) {
+            for (ObjectInstance object : objects) {
                 object.getListElements().add(str);
-                object.setSelectedLine(object.getListElements().size() - 1);
+                //object.setSelectedLine(object.getListElements().size() - 1);
             }
         }
     }

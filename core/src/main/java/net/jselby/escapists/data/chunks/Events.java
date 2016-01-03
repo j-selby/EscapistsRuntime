@@ -139,6 +139,7 @@ public class Events extends Chunk {
 
             // Build conditions for group
             boolean lastWasOr = false;
+            List<String> conditionCallbacks = new ArrayList<String>();
             for (Condition condition : group.conditions) {
 
                 ObjectDefinition object = null;
@@ -174,19 +175,27 @@ public class Events extends Chunk {
                 conditions += objDeclaration + objMethod + "(";
 
                 int paramCount = 0;
+                String args = "";
                 if (requiresContext) {
-                    conditions += condition.identifier;
+                    args += condition.identifier;
                     paramCount++;
                 }
                 for (Parameter param : condition.items) {
                     if (requiresCondition && param.value instanceof ParameterValue.ExpressionParameter) {
-                        conditions += (paramCount != 0 ? ", " : "") + ((ParameterValue.ExpressionParameter) param.value).comparison;
+                        args += (paramCount != 0 ? ", " : "") + ((ParameterValue.ExpressionParameter) param.value).comparison;
                         paramCount++;
                     }
-                    conditions += (paramCount != 0 ? ", " : "") + param.value;// + ":" + param.code;//param.loader.name() + " " + param.name.toLowerCase();
+                    args += (paramCount != 0 ? ", " : "") + param.value;// + ":" + param.code;//param.loader.name() + " " + param.name.toLowerCase();
                     paramCount++;
                 }
+                conditions += args;
                 conditions += ")";
+
+                if (!condition.inverted() && annotation.successCallback().length() != 0) {
+                    // Has a callback, lets actully invoke it
+                    conditionCallbacks.add("env." + annotation.successCallback() + "(" + args + ");");
+                }
+
                 count++;
             }
 
@@ -197,6 +206,10 @@ public class Events extends Chunk {
             // Build actions for group
             String actions = "";
             indent += 4;
+            for (String callback : conditionCallbacks) {
+                actions += StringUtils.repeat(' ', indent) + callback + "\n";
+            }
+
             for (Action action : group.actions) {
                 if (action.name != null && action.name.equalsIgnoreCase("Skip")) {
                     continue;

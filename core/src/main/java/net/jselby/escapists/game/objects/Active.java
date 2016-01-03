@@ -63,7 +63,7 @@ public class Active extends ObjectInstance {
             for (AnimationHeader.AnimationDirection dir
                     : animation.localDirections) {
                 if (dir != null && dir.frames != null) {
-                    frame = dir.frames[0];
+                    frame = dir.frames[getAnimationFrame()];
                     break;
                 }
             }

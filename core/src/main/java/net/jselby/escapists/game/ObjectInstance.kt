@@ -37,7 +37,9 @@ abstract class ObjectInstance(definition: ObjectDefinition, instance: ObjectInst
     open var y: Float = 0f
 
     var animation = 0
+    var animationFrame = 0
     var imageAlpha = 255
+
     var bold = false
 
     var isVisible = true

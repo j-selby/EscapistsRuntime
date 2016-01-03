@@ -1,5 +1,7 @@
 package net.jselby.escapists.game.events
 
+import net.jselby.escapists.util.ByteReader
+
 /**
  * Declares various types of methods accessible at runtime.
  */
@@ -19,7 +21,8 @@ annotation class Actions(val value : Array<Action>)
 @MustBeDocumented
 @Repeatable
 annotation class Condition(val subId : Int, val id : Int,
-                           val hasInstanceRef : Boolean = false, val conditionRequired : Boolean = false)
+                           val hasInstanceRef : Boolean = false, val conditionRequired : Boolean = false,
+                           val successCallback : String = "")
 
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
@@ -29,7 +32,7 @@ annotation class Conditions(val value : Array<Condition>)
 @Retention(AnnotationRetention.RUNTIME)
 @MustBeDocumented
 @Repeatable
-annotation class Expression(val subId : Int, val id : Int, val hasInstanceRef : Boolean = false)
+annotation class Expression(val subId : Int, val id : Int)
 
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)

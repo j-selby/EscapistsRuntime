@@ -41,6 +41,8 @@ public class EscapistsGame extends BasicGame {
     private boolean pauseError = false;
     private long lastFrame;
 
+    private short[] mouseClicked = new short[3];
+
     public EscapistsGame(PlatformUtils utils) {
         this.utils = utils;
     }
@@ -155,7 +157,21 @@ public class EscapistsGame extends BasicGame {
         int times = 0;
         while (diff > UPDATE_INTERVAL) {
             lastFrame = System.currentTimeMillis();
+
+            // Parse input
+            for (int i = 0; i <= 2; i++) {
+                if (Gdx.input.isButtonPressed(i)) {
+                    if (mouseClicked[i] > 0) {
+                        mouseClicked[i] = 2;
+                    } else {
+                        mouseClicked[i] = 1;
+                    }
+                } else {
+                    mouseClicked[i] = 0;
+                }
+            }
             currentFrame.tick(this);
+
             diff -= UPDATE_INTERVAL;
             times++;
             if (times > 2) {
@@ -238,6 +254,10 @@ public class EscapistsGame extends BasicGame {
         return (int) (((float) Gdx.input.getY())
                 / (((float) getHeight())
                 / ((float) EscapistsRuntime.getRuntime().getApplication().getWindowHeight())));
+    }
+
+    public boolean isButtonClicked(int buttonId) {
+        return mouseClicked[buttonId] == 1;
     }
 
     public void setLoadingMessage(final String message) {
