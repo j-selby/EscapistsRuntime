@@ -3,10 +3,47 @@
 -libraryjars <java.home>/lib/rt.jar
 
 -dontobfuscate
--dontwarn
 -dontnote
--optimizations !code/allocation/variable
+
+-dontusemixedcaseclassnames
+-dontskipnonpubliclibraryclasses
+-dontpreverify
+-optimizations !field/*,!code/*
+-keepattributes SourceFile,LineNumberTable
+-keep class org.lwjgl.**
+-keep class com.badlogic.**
+-keep class com.badlogic.backends.**
+-keep class * implements com.badlogic.gdx.utils.Json*
+-keep class com.badlogic.gdx.backends.lwjgl.LwjglApplication.**
+
+-dontwarn java.awt.**
+-dontwarn com.badlogic.gdx.jnigen.**
+-dontwarn de.matthiasmann.**
+-dontwarn com.esotericsoftware.**
+-dontwarn javax.xml.**
+-dontwarn box2dLight.**
+-dontwarn shaders.**
+-dontwarn moo.**
+-dontwarn org.xmlpull.**
+-dontwarn javazoom.jl.**
+-dontwarn com.sun.**
+-dontwarn org.json.**
+-dontwarn org.apache.**
+-dontwarn org.objectweb.**
+-dontwarn org.objenesis.**
+-dontwarn com.jcraft.**
+-dontwarn com.badlogic.**
+-dontwarn org.lwjgl.**
 
 -keep public class net.jselby.** {
     *;
+}
+
+-keepclasseswithmembernames class * {
+    native <methods>;
+}
+
+-keepclassmembers enum * {
+    public static **[] values();
+    public static ** valueOf(java.lang.String);
 }
