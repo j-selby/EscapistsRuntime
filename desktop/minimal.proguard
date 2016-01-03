@@ -5,6 +5,7 @@
 -dontobfuscate
 -dontwarn
 -dontnote
+-optimizations !code/allocation/variable
 
 -keep public class net.jselby.** {
     *;
