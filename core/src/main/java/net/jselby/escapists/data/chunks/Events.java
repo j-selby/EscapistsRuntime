@@ -180,12 +180,16 @@ public class Events extends Chunk {
                     args += condition.identifier;
                     paramCount++;
                 }
-                for (Parameter param : condition.items) {
+                Parameter[] items = condition.items;
+                for (int i = 0; i < items.length; i++) {
+                    Parameter param = items[i];
                     if (requiresCondition && param.value instanceof ParameterValue.ExpressionParameter) {
                         args += (paramCount != 0 ? ", " : "") + ((ParameterValue.ExpressionParameter) param.value).comparison;
                         paramCount++;
                     }
-                    args += (paramCount != 0 ? ", " : "") + param.value;// + ":" + param.code;//param.loader.name() + " " + param.name.toLowerCase();
+                    args += (paramCount != 0 ? ", " : "") + param.value.toString()
+                            .replace("%type%", "\"" + condition.method.getFirst().getParameterTypes()[i].getName() + "\"");
+                    ;// + ":" + param.code;//param.loader.name() + " " + param.name.toLowerCase();
                     paramCount++;
                 }
                 conditions += args;

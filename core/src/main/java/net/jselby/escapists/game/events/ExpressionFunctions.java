@@ -174,13 +174,14 @@ public class ExpressionFunctions {
     }
 
     @Expression(subId = 32, id = 81)
-    public String Select(int id) {
+    public Integer Select(int id) {
         for (ObjectInstance instance : scope.getScene().getObjects()) {
             if (instance.getObjectInfo() == id) {
-                return instance.getListElements().get(instance.getSelectedLine() - 1);
+                return instance.getSelectedLine() - 1;
+                //return instance.getListElements().get(instance.getSelectedLine() - 1);
             }
         }
-        return "";
+        return 0;
     }
 
     @Expression(subId = 42, id = 107)

@@ -10,6 +10,8 @@ import org.apache.commons.lang3.StringEscapeUtils;
  * @author j_selby
  */
 public abstract class ExpressionValue {
+    public boolean requiresType = false;
+
     @Override
     public java.lang.String toString() {
         return "env." + getClass().getSimpleName() + "()";
@@ -111,7 +113,7 @@ public abstract class ExpressionValue {
     public static class ExtensionFunctionOneParam extends ExtensionCommon {
         @Override
         public java.lang.String toString() {
-            return "env." + getClass().getSimpleName() + "(" + value + ")";
+            return "env." + getClass().getSimpleName() + "(" + value + (requiresType ? ", %type%" : "") + ")";
         }
     }
 
@@ -275,6 +277,9 @@ public abstract class ExpressionValue {
     }
 
     public static class Select extends ExtensionFunctionOneParam {
+        public Select() {
+            requiresType = true;
+        }
     }
 
     public static class ListLength extends ExtensionFunctionOneParam {
