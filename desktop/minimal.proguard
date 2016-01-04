@@ -15,6 +15,7 @@
 -keep class com.badlogic.backends.**
 -keep class * implements com.badlogic.gdx.utils.Json*
 -keep class com.badlogic.gdx.backends.lwjgl.LwjglApplication.**
+-keep class com.badlogic.gdx.backends.lwjgl.audio.** { *; }
 -keep class org.mozilla.javascript.**
 -keep class org.mozilla.javascript.optimizer.** { *; }
 
