@@ -241,7 +241,7 @@ public class Events extends Chunk {
 
                 int paramCount = 0;
                 for (Parameter param : action.items) {
-                    actions += (paramCount != 0 ? ", " : "") + param.value.replace("%type%", "\"" + action.method.getFirst().getParameterTypes()[i].getName() + "\"");// + ":" + param.code;//param.loader.name() + " " + param.name.toLowerCase();
+                    actions += (paramCount != 0 ? ", " : "") + param.value.toString().replace("%type%", "\"" + action.method.getFirst().getParameterTypes()[i].getName() + "\"");// + ":" + param.code;//param.loader.name() + " " + param.name.toLowerCase();
                     paramCount++;
                 }
 
