@@ -15,10 +15,7 @@
 -keep class com.badlogic.backends.**
 -keep class * implements com.badlogic.gdx.utils.Json*
 -keep class com.badlogic.gdx.backends.lwjgl.LwjglApplication.**
--keep class org.mozilla.javascript.VMBridge_custom
--keep class org.mozilla.javascript.jdk15.VMBridge_jdk15
--keep class org.mozilla.javascript.jdk13.VMBridge_jdk13
--keep class org.mozilla.javascript.jdk11.VMBridge_jdk11
+-keep class org.mozilla.javascript.**
 
 -dontwarn java.awt.**
 -dontwarn com.badlogic.gdx.jnigen.**
