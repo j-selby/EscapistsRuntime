@@ -174,14 +174,20 @@ public class ExpressionFunctions {
     }
 
     @Expression(subId = 32, id = 81)
-    public Integer Select(int id) {
+    public Object Select(int id, String type) {
+        boolean isInt = type.equals("int");
+
         for (ObjectInstance instance : scope.getScene().getObjects()) {
             if (instance.getObjectInfo() == id) {
-                return instance.getSelectedLine() - 1;
-                //return instance.getListElements().get(instance.getSelectedLine() - 1);
+                if (isInt) {
+                    return instance.getSelectedLine();
+                } else {
+                    return instance.getListElements().get(instance.getSelectedLine() - 1);
+                }
             }
         }
-        return 0;
+
+        return isInt ? 0 : "";
     }
 
     @Expression(subId = 42, id = 107)

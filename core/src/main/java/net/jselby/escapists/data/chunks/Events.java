@@ -240,8 +240,19 @@ public class Events extends Chunk {
                 actions += objDeclaration + objMethod + "(";
 
                 int paramCount = 0;
-                for (Parameter param : action.items) {
-                    actions += (paramCount != 0 ? ", " : "") + param.value.toString().replace("%type%", "\"" + action.method.getFirst().getParameterTypes()[i].getName() + "\"");// + ":" + param.code;//param.loader.name() + " " + param.name.toLowerCase();
+
+                Parameter[] items = action.items;
+                for (int i = 0; i < items.length; i++) {
+                    Parameter param = items[i];
+                    if (action.method == null) {
+                        // Shit... there is no method here, so we can't get
+                        // param information. Lets throw in a dummy implementation.
+                        actions += (paramCount != 0 ? ", " : "") + param.value.toString();
+                    } else {
+                        actions += (paramCount != 0 ? ", " : "") + param.value.toString()
+                                .replace("%type%", "\"" + action.method.getFirst().getParameterTypes()[i].getName() + "\"");
+                    }
+                    // + ":" + param.code;//param.loader.name() + " " + param.name.toLowerCase();
                     paramCount++;
                 }
 

@@ -352,7 +352,6 @@ public class ActionFunctions extends ConditionFunctions {
 
     @Action(subId = 56, id = 80)
     public void OpenURL(String url) {
-        new Throwable().printStackTrace();
         Gdx.net.openURI(url);
     }
 
