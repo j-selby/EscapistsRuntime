@@ -1,5 +1,5 @@
 # Unofficial Escapists Runtime (UER)
-
+[Downloads/CI Builds](https://ci.jselby.net/job/Escapists%20Runtime/)
 UER is a WIP project designed to implement modding and Android support for The Escapists.
 
 Why?
@@ -12,8 +12,7 @@ There are still many elements of the project that aren't ready for primetime yet
 
 - Full rendering capabilities
 - Finishing the base scripting engine
-- Sound
-- Implementing external asset loading (mod scripts/images).
+- Non-standard functionality
 
 See the [TODO](https://github.com/j-selby/EscapistsRuntime/blob/master/TODO.md) file for a more up-to-date TODO list.
 
