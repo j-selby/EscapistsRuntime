@@ -19,6 +19,7 @@ import org.mozilla.javascript.ScriptableObject;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -51,6 +52,7 @@ public class Scene {
     private Map<Integer, Boolean> groupActivated = new HashMap<Integer, Boolean>();
     private Map<Integer, Boolean> groupJustActivated = new HashMap<Integer, Boolean>();
     private Map<String, Integer> loops = new HashMap<String, Integer>();
+    private Map<String, Integer> nextLoops = new HashMap<String, Integer>();
     private int frameCount;
     private long startTime;
 
@@ -224,6 +226,11 @@ public class Scene {
             }
         }
 
+        for (Map.Entry<String, Integer> value : nextLoops.entrySet()) {
+            loops.put(value.getKey(), value.getValue());
+        }
+        nextLoops.clear();
+
         for (Map.Entry<Integer, Boolean> entry : groupJustActivated.entrySet()) {
             entry.setValue(false);
         }
@@ -301,5 +308,9 @@ public class Scene {
 
     public boolean wasGroupJustActivated(int id) {
         return groupJustActivated.get(id);
+    }
+
+    public Map<String, Integer> getNextLoops() {
+        return nextLoops;
     }
 }

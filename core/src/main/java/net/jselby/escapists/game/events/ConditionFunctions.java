@@ -48,8 +48,7 @@ public class ConditionFunctions extends CallbackFunctions {
             } else if (comparison2 == 1) { // DIFFERENT
                 return !str1.equals(str2);
             } else {
-                return false;
-                //throw new IllegalArgumentException("Cannot parse comparsion.");
+                throw new IllegalArgumentException("Cannot parse comparsion.");
             }
         }
 

@@ -43,7 +43,7 @@ public class ActionFunctions extends ConditionFunctions {
 
     @Action(subId = -1, id = 14)
     public void StartLoop(String name, int times) {
-        scope.getScene().getActiveLoops().put(name, times);
+        scope.getScene().getNextLoops().put(name, times);
     }
 
     @Action(subId = 48, id = 111)
@@ -142,6 +142,7 @@ public class ActionFunctions extends ConditionFunctions {
     @Action(subId = 2, id = 23)
     public void SetDirection(int newDir) {
         // TODO: Better Animation implementation that supports this
+        //System.out.println("STUB: Direction == " + newDir);
     }
 
     @Action(subId = 2, id = 17)
@@ -154,8 +155,7 @@ public class ActionFunctions extends ConditionFunctions {
     @Action(subId = 2, id = 40)
     public void SetAnimationFrame(int frame) {
         if (frame < 0) {
-            //throw new IllegalArgumentException("Bad frame: " + frame);
-            return;
+            throw new IllegalArgumentException("Bad frame: " + frame);
         }
 
         for (ObjectInstance object : scope.getObjects()) {
@@ -323,7 +323,8 @@ public class ActionFunctions extends ConditionFunctions {
     }
 
     public void SetChannelVolume(int channel, int volume) {
-        // TODO: Audio
+        System.out.println("Volume: " + volume);
+        scope.getGame().getAudio().setVolume(channel, volume);
     }
 
     @Action(subId = -2, id = 15)
