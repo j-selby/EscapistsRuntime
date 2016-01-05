@@ -235,7 +235,7 @@ public class ExpressionNames {
         map.put(39, tempMap);
 
         tempMap = new HashMap<Integer, String>();
-        tempMap.put(80, "Select"); // TODO: 80?
+        tempMap.put(80, "SelectedLine");
         tempMap.put(81, "Select");
         tempMap.put(87, "ListLength");
         map.put(32, tempMap);

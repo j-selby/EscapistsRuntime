@@ -187,9 +187,8 @@ public class Events extends Chunk {
                         args += (paramCount != 0 ? ", " : "") + ((ParameterValue.ExpressionParameter) param.value).comparison;
                         paramCount++;
                     }
-                    args += (paramCount != 0 ? ", " : "") + param.value.toString()
-                            .replace("%type%", "\"" + condition.method.getFirst().getParameterTypes()[i].getName() + "\"");
-                    ;// + ":" + param.code;//param.loader.name() + " " + param.name.toLowerCase();
+                    args += (paramCount != 0 ? ", " : "") + param.value.toString();
+                    // + ":" + param.code;//param.loader.name() + " " + param.name.toLowerCase();
                     paramCount++;
                 }
                 conditions += args;
@@ -244,14 +243,7 @@ public class Events extends Chunk {
                 Parameter[] items = action.items;
                 for (int i = 0; i < items.length; i++) {
                     Parameter param = items[i];
-                    if (action.method == null) {
-                        // Shit... there is no method here, so we can't get
-                        // param information. Lets throw in a dummy implementation.
-                        actions += (paramCount != 0 ? ", " : "") + param.value.toString();
-                    } else {
-                        actions += (paramCount != 0 ? ", " : "") + param.value.toString()
-                                .replace("%type%", "\"" + action.method.getFirst().getParameterTypes()[i].getName() + "\"");
-                    }
+                    actions += (paramCount != 0 ? ", " : "") + param.value.toString();
                     // + ":" + param.code;//param.loader.name() + " " + param.name.toLowerCase();
                     paramCount++;
                 }

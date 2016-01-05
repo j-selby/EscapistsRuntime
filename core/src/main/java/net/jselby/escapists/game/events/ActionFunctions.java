@@ -381,7 +381,13 @@ public class ActionFunctions extends ConditionFunctions {
 
     @Action(subId = 32, id = 89)
     public void SelectLine(int num) {
+        if (num < 0) {
+            throw new IllegalArgumentException("Number must be positively indexed: " + num);
+        }
         for (ObjectInstance object : scope.getObjects()) {
+            if (num > object.getListElements().size()) {
+                throw new IllegalArgumentException("Selected line exceeds list capacity: " + num);
+            }
             object.setSelectedLine(num);
         }
     }
