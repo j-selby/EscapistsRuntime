@@ -4,6 +4,7 @@ import kotlin.Pair;
 import net.jselby.escapists.EscapistsRuntime;
 import net.jselby.escapists.data.Chunk;
 import net.jselby.escapists.data.ObjectDefinition;
+import net.jselby.escapists.data.events.EventCompiler;
 import net.jselby.escapists.data.events.ParameterNames;
 import net.jselby.escapists.data.events.ParameterValue;
 import net.jselby.escapists.util.ByteReader;
@@ -86,194 +87,7 @@ public class Events extends Chunk {
      * @return A String
      */
     public String toJS() {
-        // Iterate over the events
-        StringBuilder builder = new StringBuilder();
-        int indent = 0;
-
-        Stack<Integer> groupStack = new Stack<Integer>();
-
-        for (EventGroup group : groups) {
-            // Check for groups
-            if (group.conditions.length != 0 && group.conditions[0].name != null && group.conditions[0].name.equalsIgnoreCase("GroupStart")) {
-                int id = ((ParameterValue.Group) group.conditions[0].items[0].value).id;
-                groupStack.push(id);
-                builder.append(StringUtils.repeat(' ', indent)).append("env.GroupStart(")
-                        .append(id)
-                        .append(");\n")
-                        .append(StringUtils.repeat(' ', indent)).append("if (env.GroupActivated(")
-                        .append(id)
-                        .append(")) { // Flags: ")
-                        .append(Integer.toBinaryString(((ParameterValue.Group) group.conditions[0].items[0].value).flags))
-                        .append(", name: ")
-                        .append(((ParameterValue.Group) group.conditions[0].items[0].value).name)
-                        .append("\n");
-                indent += 4;
-                continue;
-            } else if (group.conditions.length != 0 && group.conditions[0].name != null && group.conditions[0].name.equalsIgnoreCase("GroupEnd")) {
-                indent -= 4;
-                builder.append(StringUtils.repeat(' ', indent)).append("}\n")
-                        .append(StringUtils.repeat(' ', indent))
-                        .append("env.GroupEnd(")
-                        .append(groupStack.pop())
-                        .append(");\n");
-                continue;
-            }
-
-            // Check for ORs within the group
-            boolean hasOR = false;
-            if (group.conditions.length > 3) {
-                for (Condition condition : group.conditions) {
-                    if (condition.name != null && condition.name.trim().equalsIgnoreCase("OrFiltered")) {
-                        hasOR = true;
-                        break;
-                    }
-                }
-            }
-
-            String conditions = "";
-            int count = 0;
-
-            if (hasOR) {
-                conditions += "(";
-            }
-
-            // Build conditions for group
-            boolean lastWasOr = false;
-            List<String> conditionCallbacks = new ArrayList<String>();
-            for (Condition condition : group.conditions) {
-
-                ObjectDefinition object = null;
-                if (EscapistsRuntime.getRuntime().getApplication().objectDefs.length > condition.objectInfo) {
-                    object = EscapistsRuntime.getRuntime().getApplication().objectDefs[condition.objectInfo];
-                }
-
-                int id = (object == null ? -1 : object.handle);
-                String objName = (id + " /*" + (object == null ? "null" + condition.objectInfo : object.name)
-                        + "*/").trim();
-                String objDeclaration = "env." + (id == 0 ? "" : ("withObjects(" + objName + ")."));
-                String objMethod = (condition.name == null ? (condition.objectType + ":" + condition.num) : condition.name).trim();
-                net.jselby.escapists.game.events.Condition annotation
-                        = (((net.jselby.escapists.game.events.Condition) condition.method.getSecond()));
-
-                boolean requiresContext = annotation.hasInstanceRef();
-                boolean requiresCondition = annotation.conditionRequired();
-
-                if (objMethod.equalsIgnoreCase("OrFiltered")) {
-                    conditions += (hasOR ? ")" : "") + " || " + (hasOR ? "(" : "");
-                    lastWasOr = true;
-                    continue;
-                } else if (!lastWasOr && count != 0) {
-                    conditions += " && ";
-                } else {
-                    lastWasOr = false;
-                }
-
-                if (condition.inverted()) {
-                    conditions += "!";
-                }
-
-                conditions += objDeclaration + objMethod + "(";
-
-                int paramCount = 0;
-                String args = "";
-                if (requiresContext) {
-                    args += condition.identifier;
-                    paramCount++;
-                }
-                Parameter[] items = condition.items;
-                for (int i = 0; i < items.length; i++) {
-                    Parameter param = items[i];
-                    if (requiresCondition && param.value instanceof ParameterValue.ExpressionParameter) {
-                        args += (paramCount != 0 ? ", " : "") + ((ParameterValue.ExpressionParameter) param.value).comparison;
-                        paramCount++;
-                    }
-                    args += (paramCount != 0 ? ", " : "") + param.value.toString();
-                    // + ":" + param.code;//param.loader.name() + " " + param.name.toLowerCase();
-                    paramCount++;
-                }
-                conditions += args;
-                conditions += ")";
-
-                if (!condition.inverted() && annotation.successCallback().length() != 0) {
-                    // Has a callback, lets actully invoke it
-                    conditionCallbacks.add("env." + annotation.successCallback() + "(" + args + ");");
-                }
-
-                count++;
-            }
-
-            if (hasOR) {
-                conditions += ")";
-            }
-
-            // Build actions for group
-            String actions = "";
-            indent += 4;
-            for (String callback : conditionCallbacks) {
-                actions += StringUtils.repeat(' ', indent) + callback + "\n";
-            }
-
-            for (Action action : group.actions) {
-                if (action.name != null && action.name.equalsIgnoreCase("Skip")) {
-                    continue;
-                }
-
-                actions += StringUtils.repeat(' ', indent);
-
-                if (action.name == null) {
-                    actions += "/* Unknown: ";
-                }
-
-                ObjectDefinition object = null;
-                if (EscapistsRuntime.getRuntime().getApplication().objectDefs.length > action.objectInfo) {
-                    object = EscapistsRuntime.getRuntime().getApplication().objectDefs[action.objectInfo];
-                }
-
-
-                int id = (object == null ? -1 : object.handle);
-                String objName = (id + " /*" + (object == null ? "null" + action.objectInfo : object.name)
-                        + (action.name == null ? "* /" : "*/")).trim();
-                String objDeclaration = "env." + (id == 0 ? "" : ("withObjects(" + objName + ")."));
-                String objMethod = (action.name == null ? (action.objectType + ":" + action.num) : action.name).trim();
-
-                actions += objDeclaration + objMethod + "(";
-
-                int paramCount = 0;
-
-                Parameter[] items = action.items;
-                for (int i = 0; i < items.length; i++) {
-                    Parameter param = items[i];
-                    actions += (paramCount != 0 ? ", " : "") + param.value.toString();
-                    // + ":" + param.code;//param.loader.name() + " " + param.name.toLowerCase();
-                    paramCount++;
-                }
-
-                actions += ");";
-
-                if (action.name == null) {
-                    actions += " */";
-                }
-
-                actions += "\n";
-            }
-
-            indent -= 4;
-
-            if (actions.length() == 0) {
-                continue;
-            }
-
-            builder.append(StringUtils.repeat(' ', indent));
-            if (conditions.length() != 0) {
-                builder.append("if (").append(conditions).append(") ");
-            }
-
-            builder.append("{\n");
-            builder.append(actions);
-            builder.append(StringUtils.repeat(' ', indent)).append("}\n");
-        }
-
-        return builder.toString();
+        return new EventCompiler().compileEvents(this);
     }
 
     /**
@@ -336,10 +150,10 @@ public class Events extends Chunk {
      * A condition is a check checked when evaluating events.
      */
     public class Condition {
-        private final short objectType;
-        private final short num;
+        public final short objectType;
+        public final short num;
 
-        private final int objectInfo;
+        public final int objectInfo;
         private final short objectInfoList;
 
         private final short flags;
@@ -350,7 +164,7 @@ public class Events extends Chunk {
 
         public final String name;
         public final Parameter[] items;
-        private final Pair<Method, Annotation> method;
+        public final Pair<Method, Annotation> method;
 
         public Condition(ByteReader buffer) {
             int currentPosition = buffer.getPosition();
@@ -404,8 +218,8 @@ public class Events extends Chunk {
      * with the game rule.
      */
     public class Action {
-        private final short objectType;
-        private final short num;
+        public final short objectType;
+        public final short num;
 
         public final int objectInfo;
         private final short objectInfoList;

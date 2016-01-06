@@ -327,7 +327,6 @@ public class ConditionFunctions extends CallbackFunctions {
             return false;
         }
 
-        // TODO: Seems to be firing at the wrong times?
         for (ObjectInstance instance : objects) {
             if (comparisonType == 0) { // EQUAL
                 return instance.getY() == y;
