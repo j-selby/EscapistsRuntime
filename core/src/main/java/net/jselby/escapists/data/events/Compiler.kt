@@ -115,7 +115,6 @@ class EventCompiler {
         output += "$args)"
 
         if (!condition.inverted() && annotation.successCallback.length != 0) {
-            println(args);
             scope.successCallbacks.add("env.${annotation.successCallback}($args);");
         }
 
