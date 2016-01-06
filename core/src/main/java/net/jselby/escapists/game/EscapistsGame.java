@@ -54,13 +54,6 @@ public class EscapistsGame extends BasicGame {
         mods = new ArrayList<String>();
         audio = new AudioManager();
 
-        // Add default mod
-        /*addMod("default_mod", ":pre-titles\n" +
-                ">15:env.withObjects(18).SetString(env.CurrentText(18) + \"\\n\\nModding by jselby.\\nhttp://jselby.net\");\n" +
-                "\n" +
-                ":title_screen\n" +
-                "@20:env.withObjects(24).SetString(env.GlobalString(1) + \" (UER)\");");*/
-
         loadingLogo = new Sprite(new Texture(Gdx.files.internal("logo.png")));
 
         // Load the initial font, if possible

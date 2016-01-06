@@ -157,11 +157,10 @@ public class Scene {
                     }
                 }
 
-                StringBuilder javascriptCP = new StringBuilder();
+                javascript = "";
                 for (String line : lines) {
-                    javascriptCP.append(line).append("\n");
+                    javascript += line + "\n";
                 }
-                javascript = javascriptCP.toString();
             } catch (Exception e) {
                 scope.getGame().fatalPrompt("Error while parsing mod: " + e.getLocalizedMessage());
             }

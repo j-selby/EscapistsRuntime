@@ -30,6 +30,7 @@ import java.util.zip.Inflater;
 public class EscapistsRuntime {
     public static final String VERSION = "0.1";
     public static boolean DEBUG = false;
+    private static final boolean UNPACK_FILES = false;
 
     private static final byte[] UNICODE_GAME_HEADER = "PAMU".getBytes();
     private static final byte[] PACK_HEADER = new byte[]{119, 119, 119, 119, 73, -121, 71, 18};
@@ -114,7 +115,6 @@ public class EscapistsRuntime {
         int afterSectionPointer = lastPeSection.getSectionPointer() + lastPeSection.getSectionSize();
         buf.setPosition(afterSectionPointer);
 
-        Inflater inflater = new Inflater();
         // -- PACK READING
         // Verify header
         byte[] packHeaderMagic = buf.getBytes(8);
@@ -143,44 +143,53 @@ public class EscapistsRuntime {
         }
         int packCount = buf.getInt();
 
-        for (int i = 0; i < packCount; i++) {
+        if (UNPACK_FILES) {
+            Inflater inflater = new Inflater();
 
-            int packedFileNameLength = buf.getShort();
-            StringBuilder builder = new StringBuilder();
-            for (int ii = 0; ii < packedFileNameLength; ii++) {
-                builder.append(buf.getChar());
-            }
-            String fileName = builder.toString().trim();
+            for (int i = 0; i < packCount; i++) {
 
-            buf.skipBytes(4); // Magic
-
-            int packedFileCompLength = buf.getInt();
-
-            byte[] data = buf.getBytes(packedFileCompLength);
-
-            boolean uncompressed = false;
-            for (String uncPack : UNCOMPRESSED_PACKED_FILES) {
-                if (uncPack.equals(fileName)) {
-                    uncompressed = true;
-                    break;
+                int packedFileNameLength = buf.getShort();
+                StringBuilder builder = new StringBuilder();
+                for (int ii = 0; ii < packedFileNameLength; ii++) {
+                    builder.append(buf.getChar());
                 }
-            }
+                String fileName = builder.toString().trim();
 
-            if (!uncompressed) {
-                try {
-                    byte[] decompData = new byte[packedFileCompLength * 16];
-                    inflater.reset();
-                    inflater.setInput(data);
-                    int len = inflater.inflate(decompData);
-                    byte[] arrayCopy = new byte[len];
-                    System.arraycopy(decompData, 0, arrayCopy, 0, len);
-                    data = arrayCopy;
-                } catch (DataFormatException e) {
-                    System.out.printf("Failed to inflate packed file %s: %s.\n", fileName, e.getMessage());
+                buf.skipBytes(4); // Magic
+
+                int packedFileCompLength = buf.getInt();
+
+                byte[] data = buf.getBytes(packedFileCompLength);
+
+                boolean uncompressed = false;
+                for (String uncPack : UNCOMPRESSED_PACKED_FILES) {
+                    if (uncPack.equals(fileName)) {
+                        uncompressed = true;
+                        break;
+                    }
                 }
-            }
 
-            //System.out.printf("Discovered packed file %s (compressed: %b).\n", fileName, !uncompressed);
+                if (!uncompressed) {
+                    try {
+                        byte[] decompData = new byte[packedFileCompLength * 16];
+                        inflater.reset();
+                        inflater.setInput(data);
+                        int len = inflater.inflate(decompData);
+                        byte[] arrayCopy = new byte[len];
+                        System.arraycopy(decompData, 0, arrayCopy, 0, len);
+                        data = arrayCopy;
+                    } catch (DataFormatException e) {
+                        System.out.printf("Failed to inflate packed file %s: %s.\n", fileName, e.getMessage());
+                    }
+                }
+
+                //System.out.printf("Discovered packed file %s (compressed: %b).\n", fileName, !uncompressed);
+            }
+        } else {
+            for (int i = 0; i < packCount; i++) {
+                buf.skipBytes(buf.getShort() * 2 + 4);
+                buf.skipBytes(buf.getInt());
+            }
         }
 
         // -- GAME DATA READING

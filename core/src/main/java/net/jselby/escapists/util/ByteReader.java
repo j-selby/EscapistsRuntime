@@ -155,15 +155,15 @@ public class ByteReader {
     }
 
     public String getString() {
-        StringBuilder builder = new StringBuilder();
+        String str = "";
         while (true) {
             char character = buf.getChar();
             if (character == '\0') {
                 break;
             }
-            builder.append(character);
+            str += character;
         }
-        return builder.toString();
+        return str;
     }
 
     public String getString(int length) {

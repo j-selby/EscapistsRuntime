@@ -2,6 +2,8 @@ package net.jselby.escapists.data;
 
 import net.jselby.escapists.util.ByteReader;
 
+import java.util.Arrays;
+
 /**
  * A StringChunk is a Chunk consisting entirely of a String.
  */
@@ -15,11 +17,14 @@ public abstract class StringChunk extends Chunk {
      */
     @Override
     public void init(ByteReader buffer, int length) {
-        StringBuilder builder = new StringBuilder();
+        String str = "";
         for (int i = 0; i < length / 2; i++) {
-            builder.append(buffer.getChar());
+            str += buffer.getChar();
         }
-        content =builder.toString();
+        if (str.endsWith("\00")) {
+            str = str.substring(0, str.length() - 1);
+        }
+        content = str;
     }
 
     /**
