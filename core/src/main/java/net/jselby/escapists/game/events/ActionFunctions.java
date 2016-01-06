@@ -238,19 +238,28 @@ public class ActionFunctions extends ConditionFunctions {
 
     @Action(subId = 63, id = 86)
     public void LoadIniFile(String path) {
-        File file = new File(translateFilePath(path));
-        String contents;
-        if (!file.exists()) {
-            System.err.println("Failed to open configuration file \"" + file + "\", as it doesn't exist.");
-            return;
+        PropertiesFile propertiesFile;
+        if (!EscapistsRuntime.getRuntime().getApplication().properties.containsKey(path.toLowerCase())) {
+            File file = new File(translateFilePath(path));
+            String contents;
+            if (!file.exists()) {
+                System.err.println("Failed to open file \"" + file + "\", as it doesn't exist.");
+                EscapistsRuntime.getRuntime().getApplication().properties.put(path.toLowerCase(), new PropertiesFile());
+                return;
+            }
+            try {
+                contents = IOUtils.toString(file.toURI());
+            } catch (IOException e) {
+                e.printStackTrace();
+                return;
+            }
+
+            System.out.println("Caching file " + path + " in memory.");
+            propertiesFile = new PropertiesFile(contents);
+            EscapistsRuntime.getRuntime().getApplication().properties.put(path.toLowerCase(), propertiesFile);
+        } else {
+            propertiesFile = EscapistsRuntime.getRuntime().getApplication().properties.get(path.toLowerCase());
         }
-        try {
-            contents = IOUtils.toString(file.toURI());
-        } catch (IOException e) {
-            e.printStackTrace();
-            return;
-        }
-        PropertiesFile propertiesFile = new PropertiesFile(contents);
 
         for (ObjectInstance object : scope.getObjects()) {
             for (Map.Entry<String, PropertiesSection> section : propertiesFile.entrySet()) {
@@ -263,28 +272,16 @@ public class ActionFunctions extends ConditionFunctions {
 
     @Action(subId = 47, id = 158)
     public void loadIniFileAndClear(String path, int unknown) {
-        File file = new File(translateFilePath(path));
-        String contents;
-        if (!file.exists()) {
-            System.err.println("Failed to open configuration file \"" + file + "\", as it doesn't exist.");
-            return;
-        }
-        try {
-            contents = IOUtils.toString(file.toURI());
-        } catch (IOException e) {
-            e.printStackTrace();
-            return;
-        }
-        PropertiesFile propertiesFile = new PropertiesFile(contents);
-
-        for (ObjectInstance object : scope.getObjects()) {
-            object.getVariables().clear();
-            for (Map.Entry<String, PropertiesSection> section : propertiesFile.entrySet()) {
-                for (Map.Entry<String, Object> item : section.getValue().entrySet()) {
-                    object.getVariables().put(section.getKey() + ":" + item.getKey(), item.getValue());
+        for (ObjectInstance instance : scope.peekAtObjects()) {
+            for (Object var : instance.getVariables().entrySet().toArray()) {
+                Map.Entry<String, Object> pair = (Map.Entry<String, Object>) var;
+                if (pair.getKey().contains(":")) {
+                    instance.getVariables().remove(pair.getKey());
                 }
             }
         }
+
+        LoadIniFile(path);
     }
 
     /**

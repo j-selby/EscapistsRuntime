@@ -11,8 +11,12 @@ import java.util.Map;
 public class PropertiesFile {
     private final Map<String, PropertiesSection> sections;
 
-    public PropertiesFile(String contents) {
+    public PropertiesFile() {
         sections = new LinkedHashMap<String, PropertiesSection>();
+    }
+
+    public PropertiesFile(String contents) {
+        this();
 
         String[] lines = contents.split("\n");
 

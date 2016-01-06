@@ -34,6 +34,10 @@ public class Scope extends ActionFunctions {
         return this;
     }
 
+    public ObjectInstance[] peekAtObjects() {
+        return objects.toArray(new ObjectInstance[objects.size()]);
+    }
+
     protected ObjectInstance[] getObjects() {
         ObjectInstance[] dump = objects.toArray(new ObjectInstance[objects.size()]);
         objects.clear();
@@ -55,4 +59,5 @@ public class Scope extends ActionFunctions {
     public Stack<Integer> getGroupStack() {
         return groupStack;
     }
+
 }

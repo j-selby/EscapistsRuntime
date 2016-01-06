@@ -5,11 +5,14 @@ import net.jselby.escapists.EscapistsRuntime;
 import net.jselby.escapists.data.Chunk;
 import net.jselby.escapists.data.ObjectDefinition;
 import net.jselby.escapists.data.chunks.*;
+import net.jselby.escapists.data.ini.PropertiesFile;
 import net.jselby.escapists.util.ChunkUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * The application is the primary component of the package. This stores most global metadata,
@@ -40,6 +43,7 @@ public class Application {
     private String copyright;
 
     public List<Scene> frames;
+    public Map<String, PropertiesFile> properties = new HashMap<String, PropertiesFile>();
     public ImageBank.ImageItem[] images;
     public ObjectDefinition[] objectDefs;
 
