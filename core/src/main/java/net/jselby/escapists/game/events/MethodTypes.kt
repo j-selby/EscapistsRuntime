@@ -1,7 +1,5 @@
 package net.jselby.escapists.game.events
 
-import net.jselby.escapists.util.ByteReader
-
 /**
  * Declares various types of methods accessible at runtime.
  */

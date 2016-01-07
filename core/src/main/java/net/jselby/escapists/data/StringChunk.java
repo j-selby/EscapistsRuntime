@@ -2,8 +2,6 @@ package net.jselby.escapists.data;
 
 import net.jselby.escapists.util.ByteReader;
 
-import java.util.Arrays;
-
 /**
  * A StringChunk is a Chunk consisting entirely of a String.
  */

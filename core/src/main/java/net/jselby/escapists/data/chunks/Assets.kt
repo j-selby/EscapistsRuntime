@@ -12,11 +12,8 @@ import net.jselby.escapists.data.Chunk
 import net.jselby.escapists.util.ByteReader
 import net.jselby.escapists.util.CompressionUtils
 import org.mini2Dx.core.graphics.Sprite
-import java.awt.image.BufferedImage
 import java.io.File
 import java.io.FileOutputStream
-import java.io.IOException
-import javax.imageio.ImageIO
 
 /**
  * Assets are chunks storing data such as images, sounds, and fonts.

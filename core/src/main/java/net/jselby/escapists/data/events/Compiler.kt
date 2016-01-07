@@ -4,7 +4,6 @@ package net.jselby.escapists.data.events
 import net.jselby.escapists.EscapistsRuntime
 import net.jselby.escapists.data.ObjectDefinition
 import net.jselby.escapists.data.chunks.Events
-import net.jselby.escapists.game.events.Scope
 import java.util.*
 
 /**

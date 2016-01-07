@@ -2,7 +2,6 @@ package net.jselby.escapists.game.objects;
 
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Align;
 import net.jselby.escapists.EscapistsRuntime;
 import net.jselby.escapists.data.ObjectDefinition;

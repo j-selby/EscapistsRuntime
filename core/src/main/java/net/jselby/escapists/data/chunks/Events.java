@@ -3,19 +3,16 @@ package net.jselby.escapists.data.chunks;
 import kotlin.Pair;
 import net.jselby.escapists.EscapistsRuntime;
 import net.jselby.escapists.data.Chunk;
-import net.jselby.escapists.data.ObjectDefinition;
 import net.jselby.escapists.data.events.EventCompiler;
 import net.jselby.escapists.data.events.ParameterNames;
 import net.jselby.escapists.data.events.ParameterValue;
 import net.jselby.escapists.util.ByteReader;
-import org.apache.commons.lang3.StringUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Stack;
 
 /**
  * Events are chunks used to invoke various things within the game world.

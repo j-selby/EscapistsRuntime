@@ -1,6 +1,5 @@
 package net.jselby.escapists.game.events;
 
-import com.badlogic.gdx.math.CumulativeDistribution;
 import net.jselby.escapists.game.EscapistsGame;
 import net.jselby.escapists.game.ObjectInstance;
 import net.jselby.escapists.game.Scene;

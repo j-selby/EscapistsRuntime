@@ -4,7 +4,6 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.Pixmap
 import net.jselby.escapists.data.Chunk
 import net.jselby.escapists.data.StringChunk
-import net.jselby.escapists.data.chunks.AppHeader.GraphicsMode.values
 import net.jselby.escapists.util.ByteReader
 import java.nio.LongBuffer
 import java.util.*
