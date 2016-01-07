@@ -46,11 +46,6 @@ public class ActionFunctions extends ConditionFunctions {
         scope.getScene().getActiveLoops().put(name, times);
     }
 
-    public void DecreaseLoop(String name) {
-        scope.getScene().getActiveLoops().put(name,
-                scope.getScene().getActiveLoops().get(name) - 1);
-    }
-
     @Action(subId = 48, id = 111)
     public void ShowLayer(int id) {
         scope.getScene().getLayers()[id - 1].setVisible(true);
@@ -398,6 +393,10 @@ public class ActionFunctions extends ConditionFunctions {
     public void SplitString(String content, String delimiter) {
         String[] split = content.split(delimiter);
         ObjectInstance[] objects = scope.getObjects();
+        for (ObjectInstance object : objects) {
+            object.getListElements().clear();
+        }
+
         for (int i = 0; i < split.length; i++) {
             String str = split[i];
             if (i + 1 == split.length && str.length() == 0) {

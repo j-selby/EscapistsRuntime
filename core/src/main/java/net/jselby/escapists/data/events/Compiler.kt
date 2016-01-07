@@ -19,8 +19,8 @@ class EventCompiler {
         var output = "";
         val scope = CompilerScope();
 
-        // Firstly, grab out loop statements, so we can insert them at their target.
         for (group in events.groups) {
+            // Firstly, grab out loop statements, so we can insert them at their target.
             var isOutOfOrder = false;
             var validCondition : Events.Condition? = null;
             for (condition in group.conditions) {
@@ -130,19 +130,18 @@ class EventCompiler {
             output += "$indent${compileAction(action)}\n";
             if (action.name != null && action.name.equals("StartLoop")) {
                 var key = action.items[0].value.toString();
-                println(key);
 
                 if (scope.loopFunctions[key] != null) {
                     output += "${indent}if (env.OnLoop($key)) {\n";
                     scope.increaseIndent();
                     indent = scope.getIndent();
+                    output += indent;
                     for (item in scope.loopFunctions[key]!!) {
-                        output += "$indent${item.replace("\n", "\n$indent")}";
+                        output += item.replace("\n", "\n$indent");
                     }
                     scope.decreaseIndent();
                     indent = scope.getIndent();
                     output += "\n$indent}\n";
-                    output += "${indent}env.DecreaseLoop($key);\n";
                 }
 
             }
