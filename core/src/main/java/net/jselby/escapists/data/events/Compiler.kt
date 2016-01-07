@@ -34,6 +34,7 @@ class EventCompiler {
             if (isOutOfOrder) {
                 var key = validCondition!!.items[0].value.toString();
 
+                var oldIndent = scope.indentValue;
                 scope.resetIndent();
                 var loopcontent = compileEventGroup(scope, group).substring(4);
 
@@ -48,7 +49,7 @@ class EventCompiler {
                     scope.loopFunctions[key] = ArrayList();
                 }
                 scope.loopFunctions[key]!!.add(loopcontent);
-                scope.resetIndent();
+                scope.indentValue = oldIndent;
             }
 
             output += compileEventGroup(scope, group);
@@ -290,7 +291,7 @@ class EventCompiler {
 class CompilerScope {
     private val INDENT_SIZE = 4;
 
-    private var indentValue = 0;
+    var indentValue = 0;
 
     val groupStack : Stack<Int> = Stack();
     val successCallbacks = ArrayList<String>();
