@@ -51,7 +51,7 @@ class EventCompiler {
     }
 
     fun closureJS(input : String) : String {
-        var compiler = com.google.javascript.jscomp.Compiler();
+        /*var compiler = com.google.javascript.jscomp.Compiler();
 
         var options = CompilerOptions();
         CompilationLevel.ADVANCED_OPTIMIZATIONS.setOptionsForCompilationLevel(
@@ -77,7 +77,8 @@ class EventCompiler {
         compiler.compile(JSSourceFile.fromCode("externs.js", refs),
                 JSSourceFile.fromCode("input.js", input), options);
 
-        return compiler.toSource();
+        return compiler.toSource();*/
+        return "";
     }
 
     private fun compileEventGroup(scope : CompilerScope, group: Events.EventGroup) : String {
