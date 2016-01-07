@@ -32,7 +32,7 @@ public class EscapistsRuntime {
     public static boolean DEBUG = false;
     public static final boolean USING_CLOSURE = false;
     public static final boolean UNPACK_FILES = false;
-    public static final boolean LOCAL_SOURCE = false;
+    public static final boolean LOCAL_SOURCE = true;
 
     private static final byte[] UNICODE_GAME_HEADER = "PAMU".getBytes();
     private static final byte[] PACK_HEADER = new byte[]{119, 119, 119, 119, 73, -121, 71, 18};

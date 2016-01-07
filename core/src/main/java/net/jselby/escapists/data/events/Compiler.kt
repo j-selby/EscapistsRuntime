@@ -35,16 +35,22 @@ class EventCompiler {
                 var key = validCondition!!.items[0].value.toString();
 
                 scope.resetIndent();
-                var loopcontent = compileEventGroup(scope, group);
+                var loopcontent = compileEventGroup(scope, group).substring(4);
+
+                var parentLoops = "";
+                for (groupStackElement in scope.groupStack) {
+                    parentLoops += "env.GroupActivated($groupStackElement) && ";
+                }
+
+                loopcontent = "if ($parentLoops$loopcontent";
+
                 if (!scope.loopFunctions.containsKey(key)) {
                     scope.loopFunctions[key] = ArrayList();
                 }
                 scope.loopFunctions[key]!!.add(loopcontent);
                 scope.resetIndent();
             }
-        }
 
-        for (group in events.groups) {
             output += compileEventGroup(scope, group);
         }
         return output;
