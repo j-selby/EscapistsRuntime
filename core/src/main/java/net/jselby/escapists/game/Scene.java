@@ -169,7 +169,7 @@ public class Scene {
 
         try {
             File target;
-            if (EscapistsRuntime.LOCAL_SOURCE) {
+            if (EscapistsRuntime.DEBUG) {
                 target = new File("frame_" + getName() + ".js");
             } else {
                 File parent = new File(scope.getGame().getPlatformUtils().getSaveLocation(),
