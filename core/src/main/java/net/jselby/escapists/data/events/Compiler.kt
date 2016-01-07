@@ -1,6 +1,6 @@
 package net.jselby.escapists.data.events
 
-import com.google.javascript.jscomp.*
+//import com.google.javascript.jscomp.*
 import net.jselby.escapists.EscapistsRuntime
 import net.jselby.escapists.data.ObjectDefinition
 import net.jselby.escapists.data.chunks.Events
