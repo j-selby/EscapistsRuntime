@@ -9,6 +9,7 @@ import net.jselby.escapists.data.chunks.Events;
 import net.jselby.escapists.data.chunks.Frame;
 import net.jselby.escapists.data.chunks.Layers;
 import net.jselby.escapists.data.chunks.ObjectInstances;
+import net.jselby.escapists.data.events.EventCompiler;
 import net.jselby.escapists.data.events.ParameterValue;
 import net.jselby.escapists.game.events.Scope;
 import org.mini2Dx.core.graphics.Graphics;
@@ -17,6 +18,7 @@ import org.mozilla.javascript.EvaluatorException;
 import org.mozilla.javascript.Script;
 import org.mozilla.javascript.ScriptableObject;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -52,7 +54,6 @@ public class Scene {
     private Map<Integer, Boolean> groupActivated = new HashMap<Integer, Boolean>();
     private Map<Integer, Boolean> groupJustActivated = new HashMap<Integer, Boolean>();
     private Map<String, Integer> loops = new HashMap<String, Integer>();
-    private Map<String, Integer> nextLoops = new HashMap<String, Integer>();
     private int frameCount;
     private long startTime;
 
@@ -167,11 +168,29 @@ public class Scene {
         }
 
         try {
-            FileOutputStream out = new FileOutputStream("frame_" + getName() + ".js");
-            out.write(javascript.getBytes());
+            File target;
+            if (EscapistsRuntime.LOCAL_SOURCE) {
+                target = new File("frame_" + getName() + ".js");
+            } else {
+                File parent = new File(scope.getGame().getPlatformUtils().getSaveLocation(),
+                        "The Escapists" + File.separator + "source");
+                if (!parent.exists() && !parent.mkdirs()) {
+                    throw new IOException("Failed to create source directories.");
+                }
+                target = new File(parent, "frame_" + getName() + ".js");
+            }
+
+            FileOutputStream out = new FileOutputStream(
+                    target);
+            out.write(javascript.replace("\r\n", "\n").replace("\n", "\r\n").getBytes());
             out.close();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+
+        // Compress Javascript
+        if (EscapistsRuntime.USING_CLOSURE) {
+            javascript = new EventCompiler().closureJS(javascript);
         }
 
         jsContext = Context.enter();
@@ -189,9 +208,22 @@ public class Scene {
         try {
             jsScript = jsContext.compileString(javascript, "frame_" + getName() + ".js", 1, null);
         } catch (EvaluatorException e) {
-            e.printStackTrace();
-            scope.getGame().fatalPrompt("Compile error: " + e.getLocalizedMessage());
-            return;
+            if (e.getMessage().contains("Program too complex")) {
+                // Try again
+                System.err.println("Rhino threw a program too complex error, attempting to run in interpreted mode.");
+                jsContext.setOptimizationLevel(-1);
+                try {
+                    jsScript = jsContext.compileString(javascript, "frame_" + getName() + ".js", 1, null);
+                } catch (EvaluatorException e1) {
+                    e1.printStackTrace();
+                    scope.getGame().fatalPrompt("Compile error: " + e1.getLocalizedMessage());
+                    return;
+                }
+            } else {
+                e.printStackTrace();
+                scope.getGame().fatalPrompt("Compile error: " + e.getLocalizedMessage());
+                return;
+            }
         }
 
         frameCount = 0;
@@ -215,7 +247,6 @@ public class Scene {
 
         jsScript.exec(jsContext, jsScriptable);
 
-        // TODO: Activate previous OnLoop instances (per condition countdown?)
         for (Object rawvalue : loops.entrySet().toArray()) {
             Map.Entry<String, Integer> value = (Map.Entry<String, Integer>) rawvalue;
             if (value.getValue() <= 1) {
@@ -224,11 +255,6 @@ public class Scene {
                 value.setValue(value.getValue() - 1);
             }
         }
-
-        for (Map.Entry<String, Integer> value : nextLoops.entrySet()) {
-            loops.put(value.getKey(), value.getValue());
-        }
-        nextLoops.clear();
 
         for (Map.Entry<Integer, Boolean> entry : groupJustActivated.entrySet()) {
             entry.setValue(false);
@@ -307,9 +333,5 @@ public class Scene {
 
     public boolean wasGroupJustActivated(int id) {
         return groupJustActivated.get(id);
-    }
-
-    public Map<String, Integer> getNextLoops() {
-        return nextLoops;
     }
 }

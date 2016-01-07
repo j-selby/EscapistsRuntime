@@ -43,7 +43,12 @@ public class ActionFunctions extends ConditionFunctions {
 
     @Action(subId = -1, id = 14)
     public void StartLoop(String name, int times) {
-        scope.getScene().getNextLoops().put(name, times);
+        scope.getScene().getActiveLoops().put(name, times);
+    }
+
+    public void DecreaseLoop(String name) {
+        scope.getScene().getActiveLoops().put(name,
+                scope.getScene().getActiveLoops().get(name) - 1);
     }
 
     @Action(subId = 48, id = 111)

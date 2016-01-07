@@ -52,6 +52,7 @@ project(":core") {
         compile 'org.apache.commons:commons-lang3:3.4'
         compile 'org.mozilla:rhino:1.7.7'
         compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+        compile 'com.google.javascript:closure-compiler:r2388'
     }
 }
 

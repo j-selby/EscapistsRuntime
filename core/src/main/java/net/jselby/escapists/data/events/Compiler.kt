@@ -1,8 +1,10 @@
 package net.jselby.escapists.data.events
 
+import com.google.javascript.jscomp.*
 import net.jselby.escapists.EscapistsRuntime
 import net.jselby.escapists.data.ObjectDefinition
 import net.jselby.escapists.data.chunks.Events
+import net.jselby.escapists.game.events.Scope
 import java.util.*
 
 /**
@@ -16,10 +18,66 @@ class EventCompiler {
     fun compileEvents(events : Events): String {
         var output = "";
         val scope = CompilerScope();
+
+        // Firstly, grab out loop statements, so we can insert them at their target.
+        for (group in events.groups) {
+            var isOutOfOrder = false;
+            var validCondition : Events.Condition? = null;
+            for (condition in group.conditions) {
+                if (condition.name.equals("OnLoop")) {
+                    isOutOfOrder = true;
+                    validCondition = condition;
+                    break;
+                }
+            }
+
+            if (isOutOfOrder) {
+                var key = validCondition!!.items[0].value.toString();
+
+                scope.resetIndent();
+                var loopcontent = compileEventGroup(scope, group);
+                if (!scope.loopFunctions.containsKey(key)) {
+                    scope.loopFunctions[key] = ArrayList();
+                }
+                scope.loopFunctions[key]!!.add(loopcontent);
+                scope.resetIndent();
+            }
+        }
+
         for (group in events.groups) {
             output += compileEventGroup(scope, group);
         }
         return output;
+    }
+
+    fun closureJS(input : String) : String {
+        var compiler = com.google.javascript.jscomp.Compiler();
+
+        var options = CompilerOptions();
+        CompilationLevel.ADVANCED_OPTIMIZATIONS.setOptionsForCompilationLevel(
+                options);
+        options.setWarningLevel(DiagnosticGroups.EXTERNS_VALIDATION, CheckLevel.OFF);
+
+        // Build external refs
+        var refs = "env = {";
+        refs += "withObjects: function(count) {return this}";
+        for (method in Scope::class.java.methods) {
+            val params = method.parameterTypes.size;
+            var paramMsg = "";
+            for (i in 1..params) {
+                if (i != 1) {
+                    paramMsg += ",";
+                }
+                paramMsg += "arg$i";
+            }
+            refs += ",${method.name}: function($paramMsg){}";
+        }
+        refs += "};"
+
+        compiler.compile(JSSourceFile.fromCode("externs.js", refs),
+                JSSourceFile.fromCode("input.js", input), options);
+
+        return compiler.toSource();
     }
 
     private fun compileEventGroup(scope : CompilerScope, group: Events.EventGroup) : String {
@@ -62,6 +120,24 @@ class EventCompiler {
         // Compile actions
         for (action in group.actions) {
             output += "$indent${compileAction(action)}\n";
+            if (action.name != null && action.name.equals("StartLoop")) {
+                var key = action.items[0].value.toString();
+                println(key);
+
+                if (scope.loopFunctions[key] != null) {
+                    output += "${indent}if (env.OnLoop($key)) {\n";
+                    scope.increaseIndent();
+                    indent = scope.getIndent();
+                    for (item in scope.loopFunctions[key]!!) {
+                        output += "$indent${item.replace("\n", "\n$indent")}";
+                    }
+                    scope.decreaseIndent();
+                    indent = scope.getIndent();
+                    output += "\n$indent}\n";
+                    output += "${indent}env.DecreaseLoop($key);\n";
+                }
+
+            }
         }
 
         scope.decreaseIndent();
@@ -211,6 +287,7 @@ class CompilerScope {
 
     val groupStack : Stack<Int> = Stack();
     val successCallbacks = ArrayList<String>();
+    val loopFunctions = HashMap<String, ArrayList<String>>();
 
     fun getIndent() : String {
         return " ".repeat(indentValue);
@@ -225,5 +302,9 @@ class CompilerScope {
             return;
         }
         indentValue -= INDENT_SIZE;
+    }
+
+    fun resetIndent() {
+        indentValue = 0;
     }
 }
