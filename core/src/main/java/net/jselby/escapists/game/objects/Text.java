@@ -3,6 +3,7 @@ package net.jselby.escapists.game.objects;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Array;
 import net.jselby.escapists.EscapistsRuntime;
 import net.jselby.escapists.data.ObjectDefinition;
 import net.jselby.escapists.data.chunks.FontBank;
@@ -53,7 +54,9 @@ public class Text extends ObjectInstance {
     }
 
     private void decompileString(FontBank.LogFont value, String msg, float x, float y) {
-        value.getFontCache().clear();
+        for (GlyphLayout layout : compiledStrings) {
+            value.getFontCache().getLayouts().removeValue(layout, false);
+        }
     }
 
     @Override

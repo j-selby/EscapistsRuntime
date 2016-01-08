@@ -167,7 +167,7 @@ public class EscapistsGame extends BasicGame {
 
             diff -= UPDATE_INTERVAL;
             times++;
-            if (times > 2) {
+            if (times > 4) {
                 System.err.println("Cannot keep up! Having to call tick() too many times per frame.");
                 break;
             }
