@@ -52,6 +52,10 @@ public class Text extends ObjectInstance {
         }
     }
 
+    private void decompileString(FontBank.LogFont value, String msg, float x, float y) {
+        value.getFontCache().clear();
+    }
+
     @Override
     public float getWidth() {
         return rawType.width;
@@ -123,6 +127,7 @@ public class Text extends ObjectInstance {
         if (str.equals(msg)) {
             return;
         }
+        decompileString(font, str, getX(), getY());
         str = msg;
         compileString(font, str, getX(), getY());
     }
