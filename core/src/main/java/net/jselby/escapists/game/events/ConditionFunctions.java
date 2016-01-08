@@ -99,8 +99,8 @@ public class ConditionFunctions extends CallbackFunctions {
     }
 
     @Condition(subId = 2, id = -29)
-    public boolean ObjectVisible() {
-        for (ObjectInstance instance : scope.getScene().getObjects()) {
+    public boolean IsObjectVisible() {
+        for (ObjectInstance instance : scope.getObjects()) {
             return instance.isVisible();
         }
         return false;
