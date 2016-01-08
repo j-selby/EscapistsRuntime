@@ -35,7 +35,7 @@ public class Layer {
     }
 
     public Layer(EscapistsRuntime runtime, Scene scene, int i) {
-        this.name = "FrontLayer";
+        this.name = "<InFront, Injected>";
 
         // Grab our objects
         objects = new ArrayList<ObjectInstance>();

@@ -241,6 +241,20 @@ public class EscapistsGame extends BasicGame {
                 g.drawString("Mouse X: " + mouseX + ", Mouse Y: " + mouseY, 5, 35);
                 g.drawString("scaleX: " + scaleX + ", scaleY: " + scaleY, 5, 50);
                 g.drawString("Scene: " + currentFrame.getName(), 5, 65);
+                g.drawString("Instance count: " + currentFrame.getObjects().size(), 5, 80);
+
+                String layers = "";
+                Layer[] layersInScene = currentFrame.getLayers();
+                for (int i = 0; i < layersInScene.length; i++) {
+                    Layer layer = layersInScene[i];
+                    if (layer.isVisible()) {
+                        if (layers.length() > 0) {
+                            layers += ", ";
+                        }
+                        layers += i + " (" + layer.getName() + ")";
+                    }
+                }
+                g.drawString("Visible layers: [" + layers + "]", 5, 95);
             }
         }
 
