@@ -185,7 +185,8 @@ public class ConditionFunctions extends CallbackFunctions {
             @Condition(subId = -4, id = -4, hasInstanceRef = true)
     })
     public boolean Every(int id, int every) {
-        String key = "_env_every_" + id;
+        // TODO: Proper implementation of this
+        String key = "_env_every_" + every;
         if (!scope.getScene().getVariables().containsKey(key)) {
             scope.getScene().getVariables().put(key, System.currentTimeMillis());
         }
