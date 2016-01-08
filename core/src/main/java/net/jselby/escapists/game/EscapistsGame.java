@@ -20,7 +20,7 @@ import java.util.Map;
 
 public class EscapistsGame extends BasicGame {
 	public static final String GAME_IDENTIFIER = "net.jselby.escapists";
-    private static final long UPDATE_INTERVAL = 1000 / 45;
+    private static final double UPDATE_INTERVAL = 1000d / 45d;
 
     private Sprite loadingLogo;
     private BitmapFont loadingFont;
@@ -40,6 +40,11 @@ public class EscapistsGame extends BasicGame {
 
     private boolean pauseError = false;
     private long lastFrame;
+    private double diff;
+
+    private long tpsSwitch;
+    private int lastTPS;
+    private int tps;
 
     private short[] mouseClicked = new short[3];
 
@@ -130,7 +135,11 @@ public class EscapistsGame extends BasicGame {
     public void loadScene(int id) {
         sceneIndex = id;
         loadFrame(app.frames.get(id));
+
         lastFrame = System.currentTimeMillis();
+        tpsSwitch = lastFrame;
+        tps = 0;
+        diff = 0;
     }
 
     @Override
@@ -146,11 +155,11 @@ public class EscapistsGame extends BasicGame {
         }
 
         // Attempt to target 45fps
-        long diff = System.currentTimeMillis() - lastFrame;
-        int times = 0;
-        while (diff > UPDATE_INTERVAL) {
-            lastFrame = System.currentTimeMillis();
+        long start = System.currentTimeMillis();
+        diff += start - lastFrame;
+        lastFrame = start;
 
+        while(System.currentTimeMillis() - start < 16.67d && diff >= UPDATE_INTERVAL) {
             // Parse input
             for (int i = 0; i <= 2; i++) {
                 if (Gdx.input.isButtonPressed(i)) {
@@ -163,14 +172,22 @@ public class EscapistsGame extends BasicGame {
                     mouseClicked[i] = 0;
                 }
             }
+
             currentFrame.tick(this);
 
+            tps++;
             diff -= UPDATE_INTERVAL;
-            times++;
-            if (times > 4) {
-                System.err.println("Cannot keep up! Having to call tick() too many times per frame.");
-                break;
-            }
+        }
+
+        if (diff >= UPDATE_INTERVAL) {
+            System.err.println("Cannot keep up! Having to call tick() too many times per frame.");
+            diff = 0;
+        }
+
+        if (System.currentTimeMillis() - tpsSwitch >= 1000) {
+            tpsSwitch = System.currentTimeMillis() + System.currentTimeMillis() - tpsSwitch - 1000;
+            lastTPS = tps;
+            tps = 0;
         }
 
         getPlatformUtils().tick();
@@ -231,7 +248,7 @@ public class EscapistsGame extends BasicGame {
             int usedMem = (int) (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024 / 1024;
 
             g.drawString("Escapists Runtime v" + EscapistsRuntime.VERSION, 5, 5);
-            g.drawString("FPS: " + Gdx.graphics.getFramesPerSecond() + ", Mem: "
+            g.drawString("FPS: " + Gdx.graphics.getFramesPerSecond() + ", TPS: " + lastTPS + ", Mem: "
                     + usedMem + " MB", 5, 20);
         }
 
