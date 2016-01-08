@@ -10,12 +10,19 @@ import net.jselby.escapists.game.EscapistsGame;
 import java.io.IOException;
 
 public class DesktopLauncher {
+    public final static boolean TO_SCALE = false;
+
     public static void main(String[] args) {
         DesktopMini2DxConfig config = new DesktopMini2DxConfig(EscapistsGame.GAME_IDENTIFIER);
         config.title = "The Escapists";
         config.vSyncEnabled = true;
-        config.width = 944;
-        config.height = 684;
+        if (TO_SCALE) {
+            config.width = 320 * 3;
+            config.height = 240 * 3;
+        } else {
+            config.width = 944;
+            config.height = 684;
+        }
         config.samples = 1;
         config.addIcon("icon_16.png", Files.FileType.Internal);
         config.addIcon("icon_32.png", Files.FileType.Internal);
