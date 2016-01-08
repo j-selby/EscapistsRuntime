@@ -23,6 +23,9 @@ class EventCompiler {
             var isOutOfOrder = false;
             var validCondition : Events.Condition? = null;
             for (condition in group.conditions) {
+                if (condition.name == null) {
+                    throw IllegalArgumentException("Invalid name for function: " + compileCondition(scope, condition));
+                }
                 if (condition.name.equals("OnLoop")) {
                     isOutOfOrder = true;
                     validCondition = condition;
@@ -163,6 +166,9 @@ class EventCompiler {
         val id = (if (objectDef == null) -1 else objectDef.handle).toInt();
         val objName = ("$id /*"
                 + (if (objectDef == null) "null" + condition.objectInfo else objectDef.name) + "*/").trim();
+        if (objectDef == null || condition.method == null) {
+            throw IllegalStateException("Invalid condition definition: " + condition.objectInfo + ":" + condition.num);
+        }
         val objDeclaration = "env." + (if (id == 0) "" else ("withObjects($objName)."));
         val objMethod = (condition.name ?: "${condition.objectType}:${condition.num}").trim();
         val annotation = condition.method.second as net.jselby.escapists.game.events.Condition;

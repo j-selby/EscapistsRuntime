@@ -165,7 +165,9 @@ public class ActionFunctions extends ConditionFunctions {
 
     @Action(subId = 2, id = 15)
     public void StopAnimation() {
-        // TODO: Better Animation implementation
+        for (ObjectInstance object : scope.getObjects()) {
+            object.setAnimation(0);
+        }
     }
 
     @Action(subId = 3, id = 83)
@@ -414,6 +416,14 @@ public class ActionFunctions extends ConditionFunctions {
         for (ObjectInstance object : scope.getObjects()) {
             object.getListElements().add(content);
             object.setSelectedLine(object.getListElements().size() - 1);
+        }
+    }
+
+    @Action(subId = 2, id = 34)
+    public void SpreadValue(int id, int value, int unknown) {
+        // TODO: Proper value spreading
+        for (ObjectInstance instance : scope.getObjects()) {
+            instance.getVariables().put("" + id, value);
         }
     }
 }

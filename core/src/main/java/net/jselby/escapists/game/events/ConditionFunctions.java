@@ -366,7 +366,7 @@ public class ConditionFunctions extends CallbackFunctions {
 
     @Condition(subId = 2, id = -3)
     public boolean AnimationPlaying(int num) {
-        /*ObjectInstance[] objects = scope.getObjects();
+        ObjectInstance[] objects = scope.getObjects();
         if (objects.length == 0) {
             return false;
         }
@@ -374,8 +374,7 @@ public class ConditionFunctions extends CallbackFunctions {
             if (instance.getAnimation() != num) {
                 return false;
             }
-        }*/
-        // TODO: Implement playing animations
+        }
         return true;
     }
 }
