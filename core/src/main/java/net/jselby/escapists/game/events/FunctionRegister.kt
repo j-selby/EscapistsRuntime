@@ -68,10 +68,6 @@ class FunctionRegister {
             val predefinedFunction = getFunction(subId, id);
             if (predefinedFunction == null) {
                 functions.put(Pair(subId, id), Pair(method, checkAnnotation))
-                if (subId == 2 && id == -27) {
-                    println("$subId, $id = $method");
-                    println("${getFunction(subId, id)}");
-                }
             } else {
                 error("Conflict in registering methods: $predefinedFunction and $method.");
             }
