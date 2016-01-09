@@ -55,6 +55,9 @@ public class ObjectDefinition {
             case QuickBackdrop:
                 newInstance = new QuickBackdrop(this, info);
                 break;
+            case Counter:
+                newInstance = new Counter(this, info);
+                break;
                 /*case Player:
                     break;
                 case Keyboard:
@@ -74,8 +77,6 @@ public class ObjectDefinition {
                 case Score:
                     break;
                 case Lives:
-                    break;
-                case Counter:
                     break;
                 case RTF:
                     break;
