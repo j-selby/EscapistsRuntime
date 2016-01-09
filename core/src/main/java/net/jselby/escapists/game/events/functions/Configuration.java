@@ -21,11 +21,13 @@ import java.util.Map;
 public class Configuration extends FunctionCollection {
     @Action(subId = 63, id = 86)
     public void LoadIniFile(String path) {
+        path = translateFilePath(path);
+
         ObjectInstance[] objects = scope.getObjects();
 
         PropertiesFile propertiesFile;
         if (!EscapistsRuntime.getRuntime().getApplication().properties.containsKey(path)) {
-            File file = new File(translateFilePath(path));
+            File file = new File(path);
             String contents;
             if (!file.exists()) {
                 System.err.println("Failed to open file \"" + file + "\", as it doesn't exist.");
