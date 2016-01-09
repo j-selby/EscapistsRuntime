@@ -42,7 +42,7 @@ class EventCompiler {
 
                 var parentLoops = "";
                 for (groupStackElement in scope.groupStack) {
-                    parentLoops += "env.GroupActivated($groupStackElement) && ";
+                    parentLoops += "Groups.GroupActivated($groupStackElement) && ";
                 }
 
                 loopcontent = "if ($parentLoops$loopcontent";
@@ -99,8 +99,8 @@ class EventCompiler {
             val item = (group.conditions[0].items[0].value as ParameterValue.Group);
             scope.groupStack.push(item.id);
 
-            output += "${indent}env.GroupStart(${item.id});\n";
-            output += "${indent}if (env.GroupActivated(${item.id})) { " +
+            output += "${indent}Groups.GroupStart(${item.id});\n";
+            output += "${indent}if (Groups.GroupActivated(${item.id})) { " +
                     "// Flags: ${Integer.toBinaryString(item.flags)}, " +
                     "Name: ${item.name}\n";
 
@@ -112,7 +112,7 @@ class EventCompiler {
             indent = scope.getIndent();
 
             output += "${indent}}\n";
-            output += "${indent}env.GroupEnd(${scope.groupStack.pop()});\n";
+            output += "${indent}Groups.GroupEnd(${scope.groupStack.pop()});\n";
 
             return output;
         }
@@ -134,7 +134,7 @@ class EventCompiler {
                 var key = action.items[0].value.toString();
 
                 if (scope.loopFunctions[key] != null) {
-                    output += "${indent}if (env.OnLoop($key)) {\n";
+                    output += "${indent}if (Logic.OnLoop($key)) {\n";
                     scope.increaseIndent();
                     indent = scope.getIndent();
                     output += indent;
@@ -173,9 +173,10 @@ class EventCompiler {
         if (condition.method == null) {
             throw IllegalStateException("Invalid condition definition: " + condition.objectType + ":" + condition.num);
         }
-        val objDeclaration = "env." + (if (id == 0) "" else ("withObjects($objName)."));
+        val objDeclaration = condition.method.parent.simpleName +
+                "." + (if (id == 0) "" else ("withObjects($objName)."));
         val objMethod = (condition.name ?: "${condition.objectType}:${condition.num}").trim();
-        val annotation = condition.method.second as net.jselby.escapists.game.events.Condition;
+        val annotation = condition.method.checkAnnotation as net.jselby.escapists.game.events.Condition;
 
         val requiresContext = annotation.hasInstanceRef
         val requiresCondition = annotation.conditionRequired
@@ -211,7 +212,7 @@ class EventCompiler {
         output += "$args)"
 
         if (!condition.inverted() && annotation.successCallback.length != 0) {
-            scope.successCallbacks.add("env.${annotation.successCallback}($args);");
+            scope.successCallbacks.add("${condition.method.parent.simpleName}.${annotation.successCallback}($args);");
         }
 
         return output;
@@ -271,6 +272,7 @@ class EventCompiler {
         val actionSelector = if (actionHandle == 0) "" else ("withObjects($actionHandle /*" +
                 "${(if (objectDef == null) "null" + action.objectInfo else objectDef.name)}" +
                 (if (action.name == null) "* /" else "*/") + ").");
+        val classSelector = if (action.name == null) "env" else action.method.parent.simpleName;
 
         val actionStart : String;
         val actionRef : String;
@@ -283,7 +285,7 @@ class EventCompiler {
             actionClosing = " */";
         } else {
             // Resolve the annotation pair
-            actionRef = "${action.method.first.name}";
+            actionRef = "${action.method.method.name}";
             actionStart = "";
             actionClosing = "";
         }
@@ -296,7 +298,7 @@ class EventCompiler {
             paramCount++;
         }
 
-        return "${actionStart}env.$actionSelector$actionRef($params);$actionClosing";
+        return "$actionStart$classSelector.$actionSelector$actionRef($params);$actionClosing";
     }
 }
 

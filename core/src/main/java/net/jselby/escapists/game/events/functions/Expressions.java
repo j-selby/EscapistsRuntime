@@ -1,7 +1,9 @@
-package net.jselby.escapists.game.events;
+package net.jselby.escapists.game.events.functions;
 
 import net.jselby.escapists.EscapistsRuntime;
 import net.jselby.escapists.game.ObjectInstance;
+import net.jselby.escapists.game.events.Expression;
+import net.jselby.escapists.game.events.FunctionCollection;
 import net.jselby.escapists.game.objects.Text;
 
 import java.io.File;
@@ -9,9 +11,7 @@ import java.io.File;
 /**
  * Implementations of parameter functions that can be utilised by the scripting engine at runtime.
  */
-public class ExpressionFunctions {
-    protected Scope scope;
-
+public class Expressions extends FunctionCollection {
     @Expression(subId = 3, id = 81)
     public String CurrentText(int id) {
         for (ObjectInstance instance : scope.getScene().getObjects()) {

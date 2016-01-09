@@ -1,5 +1,6 @@
 package net.jselby.escapists.game.events
 
+import net.jselby.escapists.game.events.functions.*
 import java.lang.reflect.Method
 import java.util.*
 
@@ -10,36 +11,61 @@ import java.util.*
  * @author j_selby
  */
 class FunctionRegister {
-    private val functions : HashMap<Pair<Int, Int>, Pair<Method, Annotation>> = HashMap();
+    val providers : Array<Class<out FunctionCollection>> = arrayOf(
+            Application::class.java,
+            Audio::class.java,
+            Comparisons::class.java,
+            Configuration::class.java,
+            EncryptionUtils::class.java,
+            net.jselby.escapists.game.events.functions.Expressions::class.java,
+            FileIO::class.java,
+            Frames::class.java,
+            Graphics::class.java,
+            Groups::class.java,
+            Input::class.java,
+            Logic::class.java,
+            Physics::class.java,
+            Steamworks::class.java,
+            StringLists::class.java,
+            Timers::class.java,
+            Unknown::class.java,
+            Variables::class.java,
+            WorldInteraction::class.java
+    );
+
+    private val functions : HashMap<Pair<Int, Int>, FunctionRegistration> = HashMap();
     private val expressions : HashMap<Pair<Int, Int>, Pair<Method, Expression>> = HashMap();
 
     init {
-        for (method in Scope::class.java.methods) {
-            // Check for annotations
+        for (provider in providers) {
+            for (method in provider.methods) {
+                // Check for annotations
 
-            for (checkAnnotation in method.annotations) {
-                if (checkAnnotation is Action
-                    || checkAnnotation is Condition
-                    || checkAnnotation is Expression) {
-                    registerAnnotation(checkAnnotation, method);
-                } else if (checkAnnotation is Actions) {
-                    for (annotation in checkAnnotation.value) {
-                        registerAnnotation(annotation, method);
-                    }
-                } else if (checkAnnotation is Conditions) {
-                    for (annotation in checkAnnotation.value) {
-                        registerAnnotation(annotation, method);
-                    }
-                } else if (checkAnnotation is Expressions) {
-                    for (annotation in checkAnnotation.value) {
-                        registerAnnotation(annotation, method);
+                for (checkAnnotation in method.annotations) {
+                    if (checkAnnotation is Action
+                            || checkAnnotation is Condition
+                            || checkAnnotation is Expression) {
+                        registerAnnotation(checkAnnotation, method, provider);
+                    } else if (checkAnnotation is Actions) {
+                        for (annotation in checkAnnotation.value) {
+                            registerAnnotation(annotation, method, provider);
+                        }
+                    } else if (checkAnnotation is Conditions) {
+                        for (annotation in checkAnnotation.value) {
+                            registerAnnotation(annotation, method, provider);
+                        }
+                    } else if (checkAnnotation is Expressions) {
+                        for (annotation in checkAnnotation.value) {
+                            registerAnnotation(annotation, method, provider);
+                        }
                     }
                 }
             }
         }
     }
 
-    private fun registerAnnotation(checkAnnotation: Annotation, method: Method) {
+    private fun registerAnnotation(checkAnnotation: Annotation, method: Method,
+                                   provider : Class<out FunctionCollection>) {
         // This object is an action
         var subId : Int = 0;
         var id : Int = 0;
@@ -67,7 +93,8 @@ class FunctionRegister {
         } else {
             val predefinedFunction = getFunction(subId, id);
             if (predefinedFunction == null) {
-                functions.put(Pair(subId, id), Pair(method, checkAnnotation))
+                functions.put(Pair(subId, id), FunctionRegistration(method, checkAnnotation,
+                        provider))
             } else {
                 error("Conflict in registering methods: $predefinedFunction and $method.");
             }
@@ -76,7 +103,7 @@ class FunctionRegister {
         //println("Exported function $method.");
     }
 
-    fun getFunction(subId : Int, id : Int) : Pair<Method, Annotation>? {
+    fun getFunction(subId : Int, id : Int) : FunctionRegistration? {
         return functions[Pair(subId, id)];
     }
 
@@ -84,3 +111,7 @@ class FunctionRegister {
         return expressions[Pair(subId, id)];
     }
 }
+
+data class FunctionRegistration(val method: Method,
+                                val checkAnnotation: Annotation,
+                                val parent : Class<out FunctionCollection>);

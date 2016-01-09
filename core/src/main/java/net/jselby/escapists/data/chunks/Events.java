@@ -1,15 +1,13 @@
 package net.jselby.escapists.data.chunks;
 
-import kotlin.Pair;
 import net.jselby.escapists.EscapistsRuntime;
 import net.jselby.escapists.data.Chunk;
 import net.jselby.escapists.data.events.EventCompiler;
 import net.jselby.escapists.data.events.ParameterNames;
 import net.jselby.escapists.data.events.ParameterValue;
+import net.jselby.escapists.game.events.FunctionRegistration;
 import net.jselby.escapists.util.ByteReader;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -161,7 +159,7 @@ public class Events extends Chunk {
 
         public final String name;
         public final Parameter[] items;
-        public final Pair<Method, Annotation> method;
+        public final FunctionRegistration method;
 
         public Condition(ByteReader buffer) {
             int currentPosition = buffer.getPosition();
@@ -181,7 +179,7 @@ public class Events extends Chunk {
 
             method = EscapistsRuntime.getRuntime().getRegister().getFunction(objectType, num);
             if (method != null) {
-                name = method.getFirst().getName().trim();
+                name = method.getMethod().getName().trim();
             } else {
                /*System.out.println("No action declared for " + objectType + ":" + num
                         + (ActionNames.getByID(objectType, num) != null ?
@@ -227,7 +225,7 @@ public class Events extends Chunk {
         private final byte defType;
 
         public final String name;
-        public Pair<Method, Annotation> method;
+        public FunctionRegistration method;
         public final Parameter[] items;
 
         public Action(ByteReader buffer) {
@@ -248,7 +246,7 @@ public class Events extends Chunk {
 
             method = EscapistsRuntime.getRuntime().getRegister().getFunction(objectType, num);
             if (method != null) {
-                name = method.getFirst().getName();
+                name = method.getMethod().getName();
             } else {
                 /*System.out.println("No action declared for " + objectType + ":" + num
                         + (ActionNames.getByID(objectType, num) != null ?

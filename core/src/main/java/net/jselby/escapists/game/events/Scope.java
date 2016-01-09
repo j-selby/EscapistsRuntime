@@ -11,7 +11,7 @@ import java.util.Stack;
 /**
  * Scope is the scope in which a condition/action can reach to.
  */
-public class Scope extends ActionFunctions {
+public class Scope {
     private final EscapistsGame game;
     private final Scene scene;
     private final List<ObjectInstance> objects = new ArrayList<ObjectInstance>();
@@ -19,7 +19,6 @@ public class Scope extends ActionFunctions {
     private final Stack<Integer> groupStack = new Stack<Integer>();
 
     public Scope(EscapistsGame game, Scene scene) {
-        this.scope = this;
         this.game = game;
         this.scene = scene;
     }
@@ -59,7 +58,7 @@ public class Scope extends ActionFunctions {
         return objects.toArray(new ObjectInstance[objects.size()]);
     }
 
-    protected ObjectInstance[] getObjects() {
+    public ObjectInstance[] getObjects() {
         ObjectInstance[] dump = objects.toArray(new ObjectInstance[objects.size()]);
         objects.clear();
         return dump;

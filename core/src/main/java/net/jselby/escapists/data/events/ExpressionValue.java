@@ -12,7 +12,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
 public abstract class ExpressionValue {
     @Override
     public java.lang.String toString() {
-        return "env." + getClass().getSimpleName() + "()";
+        return "Expressions." + getClass().getSimpleName() + "()";
     }
 
     /**
@@ -104,42 +104,42 @@ public abstract class ExpressionValue {
     public static class ExtensionValue extends ExtensionCommon {
         @Override
         public java.lang.String toString() {
-            return "env." + getClass().getSimpleName() + "()";
+            return "Expressions." + getClass().getSimpleName() + "()";
         }
     }
 
     public static class ExtensionFunctionOneParam extends ExtensionCommon {
         @Override
         public java.lang.String toString() {
-            return "env." + getClass().getSimpleName() + "(" + value + ")";
+            return "Expressions." + getClass().getSimpleName() + "(" + value + ")";
         }
     }
 
     public static class ExtensionFunctionIgnoreData extends ExtensionCommon {
         @Override
         public java.lang.String toString() {
-            return "env." + getClass().getSimpleName() + "(" + value + ", ";
+            return "Expressions." + getClass().getSimpleName() + "(" + value + ", ";
         }
     }
 
     public static class ExtensionFunction extends ExtensionCommon {
         @Override
         public java.lang.String toString() {
-            return "env." + getClass().getSimpleName() + "(" + value + ", ";
+            return "Expressions." + getClass().getSimpleName() + "(" + value + ", ";
         }
     }
 
     public static class GlobalString extends GlobalCommon {
         @Override
         public java.lang.String toString() {
-            return "env.GlobalString(" + value + ")";
+            return "Expressions.GlobalString(" + value + ")";
         }
     }
 
     public static class GlobalValue extends GlobalCommon {
         @Override
         public java.lang.String toString() {
-            return "env.GlobalValue(" + value + ")";
+            return "Expressions.GlobalValue(" + value + ")";
         }
     }
 
@@ -154,7 +154,7 @@ public abstract class ExpressionValue {
 
         @Override
         public java.lang.String toString() {
-            return "env.GetY(" + value2 + ", " + value + ")";
+            return "Expressions.GetY(" + value2 + ", " + value + ")";
         }
     }
 

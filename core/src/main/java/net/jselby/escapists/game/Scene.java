@@ -11,6 +11,7 @@ import net.jselby.escapists.data.chunks.Layers;
 import net.jselby.escapists.data.chunks.ObjectInstances;
 import net.jselby.escapists.data.events.EventCompiler;
 import net.jselby.escapists.data.events.ParameterValue;
+import net.jselby.escapists.game.events.FunctionCollection;
 import net.jselby.escapists.game.events.Scope;
 import org.mini2Dx.core.graphics.Graphics;
 import org.mozilla.javascript.Context;
@@ -201,8 +202,26 @@ public class Scene {
         }
         jsScriptable = jsContext.initStandardObjects();
 
+        // Convert our functions
+        for (Class<? extends FunctionCollection> collection
+                : EscapistsRuntime.getRuntime().getRegister().getProviders()) {
+            FunctionCollection instance;
+            try {
+                instance = collection.newInstance();
+            } catch (Exception e) {
+                e.printStackTrace();
+                continue;
+            }
+
+            instance.scope = scope;
+
+            Object wrappedOut = Context.javaToJS(instance, jsScriptable);
+            ScriptableObject.putProperty(jsScriptable, instance.getClass().getSimpleName(), wrappedOut);
+        }
+
         Object wrappedOut = Context.javaToJS(scope, jsScriptable);
         ScriptableObject.putProperty(jsScriptable, "env", wrappedOut);
+
 
         try {
             jsScript = jsContext.compileString(javascript, "frame_" + getName() + ".js", 1, null);
