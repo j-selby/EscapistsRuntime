@@ -31,7 +31,10 @@ public class Application {
             FrameHandles.class,
             ExeOnly.class,
             Protection.class,
-            FontBank.class
+            FontBank.class,
+            ImageOffsets.class,
+            FontOffsets.class,
+            SoundOffsets.class
     };
 
     private final EscapistsRuntime runtime;
