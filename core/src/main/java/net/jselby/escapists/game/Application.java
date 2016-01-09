@@ -32,9 +32,13 @@ public class Application {
             ExeOnly.class,
             Protection.class,
             FontBank.class,
+
             ImageOffsets.class,
             FontOffsets.class,
-            SoundOffsets.class
+            SoundOffsets.class,
+
+            UnknownChunk1.class,
+            UnknownChunk2.class
     };
 
     private final EscapistsRuntime runtime;

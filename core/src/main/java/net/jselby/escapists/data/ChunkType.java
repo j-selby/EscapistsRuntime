@@ -87,6 +87,10 @@ public enum ChunkType {
     MusicBank(26217), // Musics
     // Last chunk (0x7f7f)
     Last(32639),
+    // Unknown, but handled chunks
+    UnknownChunk1(8781),
+    UnknownChunk2(8783),
+
     Unknown(-1); // Last
 
     private int id;
