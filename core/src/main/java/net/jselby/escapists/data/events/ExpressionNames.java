@@ -27,6 +27,7 @@ public class ExpressionNames {
 
         tempMap = new HashMap<Integer, String>();
         tempMap.put(1, "GetY");
+        tempMap.put(7, "Unknown1");
         tempMap.put(80, "GetColorAt");
         tempMap.put(81, "GetXScale");
         tempMap.put(82, "GetYScale");
@@ -230,6 +231,18 @@ public class ExpressionNames {
         map.put(36, tempMap);
 
         tempMap = new HashMap<Integer, String>();
+        tempMap.put(80, "GetValueX");
+        map.put(50, tempMap);
+
+        tempMap = new HashMap<Integer, String>();
+        tempMap.put(80, "Unknown2");
+        map.put(52, tempMap);
+
+        tempMap = new HashMap<Integer, String>();
+        tempMap.put(80, "GetValueY");
+        map.put(58, tempMap);
+
+        tempMap = new HashMap<Integer, String>();
         tempMap.put(81, "SteamAccountUserId");
         tempMap.put(82, "SteamAccountUserName");
         map.put(39, tempMap);
@@ -237,6 +250,7 @@ public class ExpressionNames {
         tempMap = new HashMap<Integer, String>();
         tempMap.put(80, "SelectedLine");
         tempMap.put(81, "Select");
+        tempMap.put(84, "UnknownList");
         tempMap.put(87, "ListLength");
         map.put(32, tempMap);
 
@@ -260,6 +274,11 @@ public class ExpressionNames {
         tempMap = new HashMap<Integer, String>();
         tempMap.put(85, "GroupItemString");
         map.put(63, tempMap);
+
+        tempMap = new HashMap<Integer, String>();
+        tempMap.put(84, "UnknownX");
+        tempMap.put(85, "UnknownY");
+        map.put(38, tempMap);
 
         extensionMap.put(16, "ExtensionValue");
         extensionMap.put(19, "ExtensionString");

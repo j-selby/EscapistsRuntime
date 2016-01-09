@@ -44,7 +44,7 @@ public class Unknown extends FunctionCollection {
     }
 
     @Condition(subId = 50, id = -85)
-    public boolean unknown7(int id, int value) {
+    public boolean unknown7() {
         // TODO: Unknown value
         return true;
     }
@@ -56,7 +56,7 @@ public class Unknown extends FunctionCollection {
     }
 
     @Condition(subId = 52, id = -81)
-    public boolean unknown9(int id, int value) {
+    public boolean unknown9() {
         // TODO: Unknown value
         return true;
     }

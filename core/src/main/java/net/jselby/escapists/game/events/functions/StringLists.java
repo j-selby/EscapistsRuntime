@@ -22,9 +22,9 @@ public class StringLists extends FunctionCollection {
             throw new IllegalArgumentException("Number must be positively indexed: " + num);
         }
         for (ObjectInstance object : scope.getObjects()) {
-            if (num > object.getListElements().size()) {
+            /*if (num > object.getListElements().size()) {
                 throw new IllegalArgumentException("Selected line exceeds list capacity: " + num);
-            }
+            }*/
             object.setSelectedLine(num);
         }
     }

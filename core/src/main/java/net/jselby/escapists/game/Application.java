@@ -135,6 +135,8 @@ public class Application {
             frames.add(new Scene(runtime, frame, game));
         }
 
+        System.out.println(frames);
+
         // Prepare global values
         Number[] values = globalValuesChunk.getValues();
         for (int i = 0; i < values.length; i++) {

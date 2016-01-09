@@ -352,4 +352,9 @@ public class Scene {
     public boolean wasGroupJustActivated(int id) {
         return groupJustActivated.get(id);
     }
+
+    @Override
+    public String toString() {
+        return "Scene={name=" + name + "}";
+    }
 }

@@ -177,6 +177,9 @@ public class Expressions extends FunctionCollection {
     public String Select(int id) {
         for (ObjectInstance instance : scope.getScene().getObjects()) {
             if (instance.getObjectInfo() == id) {
+                if (instance.getListElements().size() < instance.getSelectedLine()) {
+                    return "";
+                }
                 return instance.getListElements().get(instance.getSelectedLine() - 1);
             }
         }
@@ -216,5 +219,46 @@ public class Expressions extends FunctionCollection {
     public String ApplicationDirectory() {
         return EscapistsRuntime.getRuntime().getGamePath()
                 .getAbsolutePath().substring(ApplicationDrive().length()) + File.separator;
+    }
+
+    @Expression(subId = -1, id = 4)
+    public String ToString(int id, String str) {
+        return str; // Automatically done
+    }
+
+
+    @Expression(subId = -1, id = 46)
+    public int LoopIndex(int int1, String str1) {
+        return 0;
+    }
+
+    @Expression(subId = 38, id = 84)
+    public int UnknownX() {
+        return 0;
+    }
+
+    @Expression(subId = 38, id = 85)
+    public int UnknownY() {
+        return 0;
+    }
+
+    @Expression(subId = 50, id = 80)
+    public String GetValueX() {
+        return "";
+    }
+
+    @Expression(subId = 58, id = 80)
+    public int GetValueY() {
+        return 0;
+    }
+
+    @Expression(subId = 2, id = 7)
+    public int Unknown1() {
+        return 0;
+    }
+
+    @Expression(subId = 52, id = 80)
+    public String Unknown2() {
+        return "";
     }
 }

@@ -49,6 +49,15 @@ public class Timers extends FunctionCollection {
         //return (System.currentTimeMillis() - scope.getScene().getSceneStartTime()) == value;
     }
 
+    public boolean TimerEquals(int value) {
+        //int currentTimer = (int) (scope.getScene().getFrameCount() * (1f / 45f) * 1000);
+        // Convert to frame
+        value /= (1f / 45f) * 1000;
+        return value == scope.getScene().getFrameCount();
+        //System.out.println(value + ":" + currentTimer);
+        //return (System.currentTimeMillis() - scope.getScene().getSceneStartTime()) == value;
+    }
+
     @Condition(subId = -4, id = -2)
     public boolean TimerLess(int value, int repeat/*?*/) {
         value /= (1f / 45f) * 1000;

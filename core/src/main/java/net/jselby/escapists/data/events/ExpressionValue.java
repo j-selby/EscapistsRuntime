@@ -144,7 +144,7 @@ public abstract class ExpressionValue {
     }
 
     // Runtime access
-    public static class LoopIndex extends ExpressionValue {
+    public static class LoopIndex extends ExtensionFunction {
     }
 
     public static class Find extends ExpressionValue {
@@ -215,10 +215,10 @@ public abstract class ExpressionValue {
     public static class YBottomFrame extends ExpressionValue {
     }
 
-    public static class LeftString extends ExpressionValue {
+    public static class LeftString extends ExtensionFunction {
     }
 
-    public static class RightString extends ExpressionValue {
+    public static class RightString extends ExtensionFunction {
     }
 
     public static class CounterValue extends ExpressionValue {
@@ -283,6 +283,28 @@ public abstract class ExpressionValue {
     public static class ListLength extends ExtensionFunctionOneParam {
     }
 
+    // Unknowns
+    public static class UnknownX extends ExpressionValue {
+    }
+
+    public static class UnknownY extends ExpressionValue {
+    }
+
+    public static class Unknown1 extends ExpressionValue {
+    }
+
+    public static class Unknown2 extends ExpressionValue {
+    }
+
+    public static class GetValueX extends ExpressionValue {
+    }
+
+    public static class GetValueY extends ExpressionValue {
+    }
+
+    public static class UnknownList extends ExtensionFunction {
+    }
+
     // Steam API
     public static class SteamAccountUserName extends ExpressionValue {
     }
@@ -343,9 +365,17 @@ public abstract class ExpressionValue {
     }
 
     public static class Multiply extends Operation {
+        @Override
+        public java.lang.String toString() {
+            return "*";
+        }
     }
 
     public static class Divide extends Operation {
+        @Override
+        public java.lang.String toString() {
+            return "/";
+        }
     }
 
     public static class Modulus extends Operation {
