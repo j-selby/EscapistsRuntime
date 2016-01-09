@@ -95,7 +95,7 @@ public class EscapistsRuntime {
         FileInputStream fileIn = new FileInputStream(escapistsFile);
         MappedByteBuffer bufIn = (MappedByteBuffer) fileIn.getChannel().map(FileChannel.MapMode.READ_ONLY, 0,
                 escapistsFile.length()).order(ByteOrder.LITTLE_ENDIAN);
-        System.out.println("JVM decided to cache in memory: " + bufIn.isLoaded());
+        if (DEBUG) System.out.println("JVM decided to cache in memory: " + bufIn.isLoaded());
 
         //ByteBuffer bufIn = ByteBuffer.wrap(IOUtils.toByteArray(fileIn)).order(ByteOrder.LITTLE_ENDIAN);
         //fileIn.close();
@@ -132,7 +132,7 @@ public class EscapistsRuntime {
             return false;
         }
 
-        System.out.println("Game header and size validated.");
+        if (DEBUG) System.out.println("Game header and size validated.");
 
         buf.skipBytes(4);
         // Pack metadata
@@ -231,7 +231,7 @@ public class EscapistsRuntime {
             }
         }
 
-        System.out.println("Chunk parse completed successfully.");
+        if (DEBUG) System.out.println("Chunk parse completed successfully.");
 
         return true;
     }

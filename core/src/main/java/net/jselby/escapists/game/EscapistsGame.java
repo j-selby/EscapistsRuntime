@@ -99,7 +99,7 @@ public class EscapistsGame extends BasicGame {
                         public void run() {
                             EscapistsGame.this.app = app;
 
-                            System.out.println("Callback from app, all assets prepared.");
+                            if (EscapistsRuntime.DEBUG) System.out.println("Callback from app, all assets prepared.");
                             try {
                                 app.init(EscapistsGame.this);
                                 loadScene(0); // 2 = title screen, 6 = game
