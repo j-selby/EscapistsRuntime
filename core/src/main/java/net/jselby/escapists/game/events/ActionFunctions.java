@@ -414,8 +414,8 @@ public class ActionFunctions extends ConditionFunctions {
 
         for (int i = 0; i < split.length; i++) {
             String str = split[i];
-            if (/*i + 1 == split.length && */str.length() == 0) {
-                break;
+            if (str.length() == 0) {
+                continue;
             }
             for (ObjectInstance object : objects) {
                 object.getListElements().add(str);
