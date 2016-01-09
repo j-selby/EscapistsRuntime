@@ -1,6 +1,7 @@
 package net.jselby.escapists.game.events;
 
 import com.badlogic.gdx.Gdx;
+import kotlin.Pair;
 import net.jselby.escapists.EscapistsRuntime;
 import net.jselby.escapists.data.ini.PropertiesFile;
 import net.jselby.escapists.data.ini.PropertiesSection;
@@ -10,7 +11,10 @@ import net.jselby.escapists.game.objects.Text;
 import org.apache.commons.io.IOUtils;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -28,7 +32,7 @@ public class ActionFunctions extends ConditionFunctions {
 
     @Action(subId = -3, id = 2)
     public void JumpToFrame(int scene) {
-        scope.getGame().loadScene(scene - 1);
+        scope.getGame().loadScene(scene);
     }
 
     @Action(subId = -1, id = 6)
@@ -240,13 +244,18 @@ public class ActionFunctions extends ConditionFunctions {
 
     @Action(subId = 63, id = 86)
     public void LoadIniFile(String path) {
+        ObjectInstance[] objects = scope.getObjects();
+
         PropertiesFile propertiesFile;
-        if (!EscapistsRuntime.getRuntime().getApplication().properties.containsKey(path.toLowerCase())) {
+        if (!EscapistsRuntime.getRuntime().getApplication().properties.containsKey(path)) {
             File file = new File(translateFilePath(path));
             String contents;
             if (!file.exists()) {
                 System.err.println("Failed to open file \"" + file + "\", as it doesn't exist.");
-                EscapistsRuntime.getRuntime().getApplication().properties.put(path.toLowerCase(), new PropertiesFile());
+                EscapistsRuntime.getRuntime().getApplication().properties.put(path, new PropertiesFile());
+                for (ObjectInstance instance : objects) {
+                    instance.setLoadedFile(path);
+                }
                 return;
             }
             try {
@@ -258,12 +267,16 @@ public class ActionFunctions extends ConditionFunctions {
 
             System.out.println("Caching file " + path + " in memory.");
             propertiesFile = new PropertiesFile(contents);
-            EscapistsRuntime.getRuntime().getApplication().properties.put(path.toLowerCase(), propertiesFile);
+            EscapistsRuntime.getRuntime().getApplication().properties.put(path, propertiesFile);
         } else {
-            propertiesFile = EscapistsRuntime.getRuntime().getApplication().properties.get(path.toLowerCase());
+            propertiesFile = EscapistsRuntime.getRuntime().getApplication().properties.get(path);
         }
 
-        for (ObjectInstance object : scope.getObjects()) {
+        for (ObjectInstance instance : objects) {
+            instance.setLoadedFile(path);
+        }
+
+        for (ObjectInstance object : objects) {
             for (Map.Entry<String, PropertiesSection> section : propertiesFile.entrySet()) {
                 for (Map.Entry<String, Object> item : section.getValue().entrySet()) {
                     object.getVariables().put(section.getKey() + ":" + item.getKey(), item.getValue());
@@ -401,7 +414,7 @@ public class ActionFunctions extends ConditionFunctions {
 
         for (int i = 0; i < split.length; i++) {
             String str = split[i];
-            if (i + 1 == split.length && str.length() == 0) {
+            if (/*i + 1 == split.length && */str.length() == 0) {
                 break;
             }
             for (ObjectInstance object : objects) {
@@ -420,10 +433,66 @@ public class ActionFunctions extends ConditionFunctions {
     }
 
     @Action(subId = 2, id = 34)
-    public void SpreadValue(int id, int value, int unknown) {
-        // TODO: Proper value spreading
+    public void SpreadValue(int id, int value, int start) {
+        int val = id;
         for (ObjectInstance instance : scope.getObjects()) {
-            instance.getVariables().put("" + id, value);
+            instance.getVariables().put("" + id, val);
+            val+=value;
+        }
+    }
+
+    @Action(subId = 63, id = 90)
+    public void SetItemValue(String section, String key, String value) {
+        ObjectInstance[] instances = scope.getObjects();
+        if (instances.length == 0) {
+            return;
+        }
+        for (ObjectInstance instance : instances) {
+            instance.getVariables().put(section + ":" + key, value);
+        }
+
+        ObjectInstance instance = instances[0];
+        System.out.println("SetItemValue: " + section + ":" + key + " = " + value + " @ " + instance.getLoadedFile());
+
+        HashMap<String, HashMap<String, Object>> map = new HashMap<String, HashMap<String, Object>>();
+        for (Map.Entry<String, Object> var : instance.getVariables().entrySet()) {
+            if (var.getKey().contains(":")) {
+                String varSection = var.getKey().split(":")[0];
+                String varKey = var.getKey().split(":")[1];
+                Object varValue = var.getValue();
+
+                HashMap<String, Object> sectionVars;
+
+                if (map.containsKey(varSection)) {
+                    sectionVars = map.get(varSection);
+                } else {
+                    sectionVars = new HashMap<String, Object>();
+                    map.put(varSection, sectionVars);
+                }
+
+                sectionVars.put(varKey, varValue);
+            }
+        }
+
+        // Convert to INI format
+        String contents = "";
+        for (Map.Entry<String, HashMap<String, Object>> sectionPair : map.entrySet()) {
+            contents += "[" + sectionPair.getKey() + "]\r\n";
+            for (Map.Entry<String, Object> content : sectionPair.getValue().entrySet()) {
+                contents += content.getKey() + "=" + content.getValue().toString()
+                        .replace("\r", "\\r").replace("\n", "\\n") + "\r\n";
+            }
+        }
+
+
+        // Finally, write it out
+        try {
+            FileOutputStream out = new FileOutputStream(instance.getLoadedFile());
+            out.write(contents.getBytes());
+            out.flush();
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

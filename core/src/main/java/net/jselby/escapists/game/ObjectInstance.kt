@@ -46,6 +46,7 @@ abstract class ObjectInstance(definition: ObjectDefinition, instance: ObjectInst
     val variables: Map<String, Any> = HashMap()
     val listElements: List<String> = ArrayList()
     var selectedLine = 0
+    var loadedFile = ""
 
     init {
         this.name = definition.name.trim()

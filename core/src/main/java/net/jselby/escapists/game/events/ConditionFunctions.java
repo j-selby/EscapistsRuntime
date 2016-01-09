@@ -109,39 +109,49 @@ public class ConditionFunctions extends CallbackFunctions {
         return false;
     }
 
-    @Condition(subId = 2, id = -28)
+    @Condition(subId = 2, id = -28, requiresScopeCleanup = true)
     public boolean IsObjectInvisible() {
+        boolean isInvisible = false;
         for (ObjectInstance instance : scope.getObjects()) {
-            return !instance.isVisible();
+            if (!instance.isVisible()) {
+                isInvisible = true;
+                scope.addObjectToScope(instance);
+            }
         }
-        return false;
+        return isInvisible;
     }
 
-    @Condition(subId = 2, id = -29)
+    @Condition(subId = 2, id = -29, requiresScopeCleanup = true)
     public boolean IsObjectVisible() {
+        boolean isVisible = false;
         for (ObjectInstance instance : scope.getObjects()) {
-            return instance.isVisible();
+            if (instance.isVisible()) {
+                isVisible = true;
+                scope.addObjectToScope(instance);
+            }
         }
-        return false;
+        return isVisible;
     }
 
-    @Condition(subId = -6, id = -4)
+    @Condition(subId = -6, id = -4, requiresScopeCleanup = true)
     public boolean MouseOnObject(int objectId) {
         // Find all objects which correspond to this
         int mouseX = scope.getGame().getMouseX();
         int mouseY = scope.getGame().getMouseY();
 
+        boolean mouseOnObject = false;
         for (ObjectInstance instance : scope.getScene().getObjects()) {
             if (instance.getObjectInfo() == objectId
                     && instance.getScreenX() <= mouseX
                     && instance.getScreenY() <= mouseY
                     && instance.getScreenX() + instance.getWidth() >= mouseX
                     && instance.getScreenY() + instance.getHeight() >= mouseY)  {
-                return true;
+                mouseOnObject = true;
+                scope.addObjectToScope(instance);
             }
         }
 
-        return false;
+        return mouseOnObject;
     }
 
     @Condition(subId = -6, id = -5)
@@ -172,7 +182,7 @@ public class ConditionFunctions extends CallbackFunctions {
 
     }
 
-    @Condition(subId = -6, id = -7, successCallback = "Vibrate")
+    @Condition(subId = -6, id = -7, successCallback = "Vibrate", requiresScopeCleanup = true)
     public boolean ObjectClicked(int mouseButton, boolean doubleClicked,
             int object) {
         if (Gdx.app.getType() != Application.ApplicationType.Desktop

@@ -20,7 +20,7 @@ annotation class Actions(val value : Array<Action>)
 @Repeatable
 annotation class Condition(val subId : Int, val id : Int,
                            val hasInstanceRef : Boolean = false, val conditionRequired : Boolean = false,
-                           val successCallback : String = "")
+                           val successCallback : String = "", val requiresScopeCleanup : Boolean = false)
 
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)

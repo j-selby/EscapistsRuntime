@@ -151,6 +151,10 @@ class EventCompiler {
 
         scope.decreaseIndent();
         output += "${scope.getIndent()}}\n";
+        if (scope.requiresCleanup) {
+            output += "${scope.getIndent()}env.clearScopeObjects();\n";
+        }
+        scope.requiresCleanup = false;
 
         return output;
     }
@@ -175,6 +179,10 @@ class EventCompiler {
 
         val requiresContext = annotation.hasInstanceRef
         val requiresCondition = annotation.conditionRequired
+
+        if (annotation.requiresScopeCleanup) {
+            scope.requiresCleanup = true;
+        }
 
         if (condition.inverted()) {
             output += "!";
@@ -297,6 +305,7 @@ class CompilerScope {
 
     var indentValue = 0;
 
+    var requiresCleanup = false;
     val groupStack : Stack<Int> = Stack();
     val successCallbacks = ArrayList<String>();
     val loopFunctions = HashMap<String, ArrayList<String>>();
