@@ -28,7 +28,7 @@ public class ActionFunctions extends ConditionFunctions {
 
     @Action(subId = -3, id = 2)
     public void JumpToFrame(int scene) {
-        scope.getGame().loadScene(scene);
+        scope.getGame().loadScene(scene - 1);
     }
 
     @Action(subId = -1, id = 6)

@@ -165,9 +165,9 @@ class EventCompiler {
 
         val id = (if (objectDef == null) -1 else objectDef.handle).toInt();
         val objName = ("$id /*"
-                + (if (objectDef == null) "null" + condition.objectInfo else objectDef.name) + "*/").trim();
-        if (objectDef == null || condition.method == null) {
-            throw IllegalStateException("Invalid condition definition: " + condition.objectInfo + ":" + condition.num);
+                + (if (objectDef == null) "null" + condition.objectType else objectDef.name) + "*/").trim();
+        if (condition.method == null) {
+            throw IllegalStateException("Invalid condition definition: " + condition.objectType + ":" + condition.num);
         }
         val objDeclaration = "env." + (if (id == 0) "" else ("withObjects($objName)."));
         val objMethod = (condition.name ?: "${condition.objectType}:${condition.num}").trim();

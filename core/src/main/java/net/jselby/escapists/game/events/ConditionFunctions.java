@@ -17,6 +17,17 @@ public class ConditionFunctions extends CallbackFunctions {
         return true;
     }
 
+    @Condition(subId = -1, id = -2)
+    public boolean Never() {
+        return false;
+    }
+
+    @Condition(subId = -1, id = -7)
+    public boolean NotAlways() {
+        // TODO: Who the fuck wrote this shit?
+        return false;
+    }
+
     // Special commands, not actually invoked at runtime
     @Condition(subId = -1, id = -24)
     public boolean OrFiltered() {
@@ -98,6 +109,14 @@ public class ConditionFunctions extends CallbackFunctions {
         return false;
     }
 
+    @Condition(subId = 2, id = -28)
+    public boolean IsObjectInvisible() {
+        for (ObjectInstance instance : scope.getObjects()) {
+            return !instance.isVisible();
+        }
+        return false;
+    }
+
     @Condition(subId = 2, id = -29)
     public boolean IsObjectVisible() {
         for (ObjectInstance instance : scope.getObjects()) {
@@ -131,6 +150,18 @@ public class ConditionFunctions extends CallbackFunctions {
         return !(Gdx.app.getType() != Application.ApplicationType.Desktop && mouseButton != 0)
                 && scope.getGame().isButtonClicked(mouseButton);
 
+    }
+
+    @Condition(subId = -6, id = -6)
+    public boolean MouseClickedInZone(int mouseButton, boolean doubleClick) {
+        // TODO: Unknown value
+        return true;
+    }
+
+    @Condition(subId = -6, id = -3)
+    public boolean MouseInZone(int mouseButton, boolean doubleClick) {
+        // TODO: Unknown value
+        return true;
     }
 
     @Condition(subId = -6, id = -8)
@@ -221,6 +252,19 @@ public class ConditionFunctions extends CallbackFunctions {
         return false;
     }
 
+    @Condition(subId = -6, id = -9)
+    public boolean AnyKeyPressed(int key) {
+        // TODO: Key pressed
+        //Gdx.input.
+        /*if (validate) {
+            System.out.println("Key " + key.key + " pressed.");
+        } else {
+            System.out.println("Key " + key.key + "(" + KeyEvent.getKeyText(key.key) + "," + Input.Keys.toString(key.key) + ") not pressed.");
+        }
+        return validate;*/
+        return false;
+    }
+
     @Condition(subId = -6, id = -2)
     public boolean KeyDown(int key) {
         // TODO: Key down
@@ -240,6 +284,12 @@ public class ConditionFunctions extends CallbackFunctions {
     public boolean CompareGlobalString(int id,
             String value) {
         return value.equals(scope.getGame().globalStrings.get(id));
+    }
+
+    @Condition(subId = 2, id = -36)
+    public boolean CompareAlterableString(int val1, int vale2) {
+        // TODO: I am so totally screwed
+        return true;
     }
 
     @Condition(subId = 61, id = -27)
@@ -271,6 +321,16 @@ public class ConditionFunctions extends CallbackFunctions {
         // Convert to frame
         value /= (1f / 45f) * 1000;
         return value == scope.getScene().getFrameCount();
+        //System.out.println(value + ":" + currentTimer);
+        //return (System.currentTimeMillis() - scope.getScene().getSceneStartTime()) == value;
+    }
+
+    @Condition(subId = -4, id = -2)
+    public boolean TimerLess(int value, int repeat/*?*/) {
+        //int currentTimer = (int) (scope.getScene().getFrameCount() * (1f / 45f) * 1000);
+        // Convert to frame
+        value /= (1f / 45f) * 1000;
+        return value < scope.getScene().getFrameCount();
         //System.out.println(value + ":" + currentTimer);
         //return (System.currentTimeMillis() - scope.getScene().getSceneStartTime()) == value;
     }
@@ -319,6 +379,33 @@ public class ConditionFunctions extends CallbackFunctions {
         } else {
             return false;
         }
+    }
+
+    @Condition(subId = 2, id = -17, conditionRequired = true)
+    public boolean CompareX(int comparisonType, int x) {
+        ObjectInstance[] objects = scope.getObjects();
+        if (objects.length == 0) {
+            return false;
+        }
+
+        for (ObjectInstance instance : objects) {
+            if (comparisonType == 0) { // EQUAL
+                return instance.getX() == x;
+            } else if (comparisonType == 1) { // DIFFERENT
+                return instance.getX() != x;
+            } else if (comparisonType == 2) { // LOWER_OR_EQUAL
+                return instance.getX() <= x;
+            } else if (comparisonType == 3) { // LOWER
+                return instance.getX() < x;
+            } else if (comparisonType == 4) { // GREATER_OR_EQUAL
+                return instance.getX() >= x;
+            } else if (comparisonType == 5) { // GREATER
+                return instance.getX() > x;
+            } else {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Condition(subId = 2, id = -16, conditionRequired = true)
@@ -375,6 +462,369 @@ public class ConditionFunctions extends CallbackFunctions {
                 return false;
             }
         }
+        return true;
+    }
+
+    @Condition(subId = 2, id = -1)
+    public boolean AnimationFrame(int num) {
+        // TODO: Proper animation implementation
+        return false;
+    }
+
+    @Condition(subId = 2, id = -2)
+    public boolean AnimationFinished(int num) {
+        // TODO: Proper animation implementation
+        return false;
+    }
+
+    @Condition(subId = -1, id = -29)
+    public boolean CompareGlobalValueIntNotEqual(int id, int value) {
+        if (scope.getGame().globalInts.containsKey(id)) {
+            return value != scope.getGame().globalInts.get(id).intValue();
+        } else {
+            return value != 0;
+        }
+    }
+
+    @Condition(subId = -1, id = -31)
+    public boolean CompareGlobalValueIntLess(int id, int value) {
+        if (scope.getGame().globalInts.containsKey(id)) {
+            return value < scope.getGame().globalInts.get(id).intValue();
+        } else {
+            return value < 0;
+        }
+    }
+
+    @Condition(subId = -1, id = -32)
+    public boolean CompareGlobalValueIntGreaterEqual(int id, int value) {
+        if (scope.getGame().globalInts.containsKey(id)) {
+            return value >= scope.getGame().globalInts.get(id).intValue();
+        } else {
+            return value >= 0;
+        }
+    }
+
+    @Conditions({
+            @Condition(subId = -2, id = -33),
+            @Condition(subId = -1, id = -33)
+    })
+    public boolean CompareGlobalValueIntGreater(int id, int value) {
+        if (scope.getGame().globalInts.containsKey(id)) {
+            return value > scope.getGame().globalInts.get(id).intValue();
+        } else {
+            return value > 0;
+        }
+    }
+
+    @Condition(subId = 43, id = -82)
+    public boolean unknown1(int id, int value) {
+        // TODO: Unknown value
+        return true;
+    }
+
+    @Condition(subId = 39, id = -102)
+    public boolean unknown2(int id, int value) {
+        // TODO: Unknown value
+        return true;
+    }
+
+    @Condition(subId = 3, id = -32)
+    public boolean unknown3(int id, int value) {
+        // TODO: Unknown value
+        return true;
+    }
+
+    @Condition(subId = 58, id = -81)
+    public boolean unknown4(int id, int value) {
+        // TODO: Unknown value
+        return true;
+    }
+
+    @Condition(subId = 58, id = -82)
+    public boolean unknown5(int id, int value) {
+        // TODO: Unknown value
+        return true;
+    }
+
+    @Condition(subId = 33, id = -81)
+    public boolean unknown6(int id, int value) {
+        // TODO: Unknown value
+        return true;
+    }
+
+    @Condition(subId = 50, id = -85)
+    public boolean unknown7(int id, int value) {
+        // TODO: Unknown value
+        return true;
+    }
+
+    @Condition(subId = 3, id = -29)
+    public boolean unknown8(int id, int value) {
+        // TODO: Unknown value
+        return true;
+    }
+
+    @Condition(subId = 52, id = -81)
+    public boolean unknown9(int id, int value) {
+        // TODO: Unknown value
+        return true;
+    }
+
+    @Condition(subId = 59, id = -81)
+    public boolean unknown10(int id, int value) {
+        // TODO: Unknown value
+        return true;
+    }
+
+    @Condition(subId = 3, id = -28)
+    public boolean unknown11(int id, int value) {
+        // TODO: Unknown value
+        return true;
+    }
+
+    @Condition(subId = 66, id = -96)
+    public boolean unknown12(int id, int value) {
+        // TODO: Unknown value
+        return true;
+    }
+
+    @Condition(subId = 66, id = -88)
+    public boolean unknown13(int id, int value) {
+        // TODO: Unknown value
+        return true;
+    }
+
+    @Condition(subId = 66, id = -89)
+    public boolean unknown14(int id, int value) {
+        // TODO: Unknown value
+        return true;
+    }
+
+    @Condition(subId = 61, id = -32)
+    public boolean unknown15(int id, int value) {
+        // TODO: Unknown value
+        return true;
+    }
+
+    @Condition(subId = 39, id = -81)
+    public boolean unknown16(int id, int value) {
+        // TODO: Unknown value
+        return true;
+    }
+
+    @Condition(subId = 36, id = -25)
+    public boolean unknown17(int id, int value) {
+        // TODO: Unknown value
+        return true;
+    }
+
+    @Condition(subId = 39, id = -136)
+    public boolean unknown18(int id, int value) {
+        // TODO: Unknown value
+        return true;
+    }
+
+    @Condition(subId = 36, id = -24)
+    public boolean unknown19(int id, int value) {
+        // TODO: Unknown value
+        return true;
+    }
+
+    @Condition(subId = 39, id = -138)
+    public boolean unknown20(int id, int value) {
+        // TODO: Unknown value
+        return true;
+    }
+
+    @Condition(subId = 40, id = -81)
+    public boolean unknown21(int id, int value) {
+        // TODO: Unknown value
+        return true;
+    }
+
+    @Condition(subId = 40, id = -87)
+    public boolean unknown22(int id, int value) {
+        // TODO: Unknown value
+        return true;
+    }
+
+    @Condition(subId = 40, id = -85)
+    public boolean unknown23(int id, int value) {
+        // TODO: Unknown value
+        return true;
+    }
+
+    @Condition(subId = 45, id = -32)
+    public boolean unknown24(int id, int value) {
+        // TODO: Unknown value
+        return true;
+    }
+
+    @Condition(subId = 61, id = -25)
+    public boolean unknown25(int id, int value) {
+        // TODO: Unknown value
+        return true;
+    }
+
+    @Condition(subId = 32, id = -85)
+    public boolean unknown26(int id, int value) {
+        // TODO: Unknown value
+        return true;
+    }
+
+    @Condition(subId = 48, id = -92)
+    public boolean unknown27(int id, int value) {
+        // TODO: Unknown value
+        return true;
+    }
+
+    @Condition(subId = 35, id = -83)
+    public boolean unknown28(int id, int value) {
+        // TODO: Unknown value
+        return true;
+    }
+
+    @Condition(subId = 7, id = -32)
+    public boolean unknown29(int id, int value) {
+        // TODO: Unknown value
+        return true;
+    }
+
+    @Condition(subId = 61, id = -41)
+    public boolean unknown30(int id, int value) {
+        // TODO: Unknown value
+        return true;
+    }
+
+    @Condition(subId = 61, id = -42)
+    public boolean unknown31(int id, int value) {
+        // TODO: Unknown value
+        return true;
+    }
+
+    @Condition(subId = 61, id = -24)
+    public boolean unknown32(int id, int value) {
+        // TODO: Unknown value
+        return true;
+    }
+
+    @Condition(subId = 41, id = -85)
+    public boolean unknown33(int id, int value) {
+        // TODO: Unknown value
+        return true;
+    }
+
+    @Condition(subId = 45, id = -42)
+    public boolean unknown34(int id, int value) {
+        // TODO: Unknown value
+        return true;
+    }
+
+    @Condition(subId = 7, id = -81)
+    public boolean CompareCounter(int val1, int val2) {
+        // TODO: Compare counters
+        return true;
+    }
+
+    @Condition(subId = 2, id = -14)
+    public boolean OnCollision(int val1, int val2) {
+        // TODO: Um, WTF?
+        return false;
+    }
+
+    @Condition(subId = 2, id = -41)
+    public boolean OnObjectLoop(int val1, int val2) {
+        // TODO: Um, WTF?
+        return true;
+    }
+
+    @Condition(subId = 2, id = -27)
+    public boolean ElseIf(int val1, int vale2) {
+        // TODO: I am so totally screwed
+        return true;
+    }
+
+    @Condition(subId = 2, id = -34)
+    public boolean PickRandom(int val1, int vale2) {
+        // TODO: I am so totally screwed
+        return true;
+    }
+
+    @Condition(subId = 2, id = -4)
+    public boolean IsOverlapping(int val1, int vale2) {
+        // TODO: I am so totally screwed
+        return true;
+    }
+
+    @Condition(subId = 2, id = -23)
+    public boolean IsOverlappingBackground(int val1, int vale2) {
+        // TODO: I am so totally screwed
+        return true;
+    }
+
+    @Condition(subId = 2, id = -30)
+    public boolean ObjectInZone(int val1, int vale2) {
+        // TODO: I am so totally screwed
+        return true;
+    }
+
+    @Condition(subId = 2, id = -32)
+    public boolean NumberOfObjects(int val1, int vale2) {
+        // TODO: I am so totally screwed
+        return true;
+    }
+
+    @Condition(subId = -1, id = -4)
+    public boolean RestrictFor(int val1, int vale2) {
+        // TODO: I am so totally screwed
+        return true;
+    }
+
+    @Condition(subId = 2, id = -7)
+    public boolean MovementStopped(int id, int value) {
+        // TODO: Unknown value
+        return true;
+    }
+
+    @Condition(subId = 2, id = -9)
+    public boolean InsidePlayfield(int id, int value) {
+        // TODO: Unknown value
+        return true;
+    }
+
+    @Condition(subId = 2, id = -10)
+    public boolean OutsidePlayfield(int id, int value) {
+        // TODO: Unknown value
+        return true;
+    }
+
+    @Condition(subId = 2, id = -31)
+    public boolean NoObjectsInZone(int id, int value) {
+        // TODO: Unknown value
+        return true;
+    }
+
+    @Condition(subId = 2, id = -13)
+    public boolean OnBackgroundCollision(int id, int value) {
+        // TODO: Unknown value
+        return true;
+    }
+
+    @Condition(subId = 2, id = -33)
+    public boolean AllDestroyed(int id, int value) {
+        // TODO: Unknown value
+        return true;
+    }
+
+    @Condition(subId = -2, id = -1)
+    public boolean SampleNotPlaying(int id, int value) {
+        // TODO: Unknown value
+        return true;
+    }
+
+    @Condition(subId = -2, id = -8)
+    public boolean ChannelNotPlaying(int id, int value) {
+        // TODO: Unknown value
         return true;
     }
 }

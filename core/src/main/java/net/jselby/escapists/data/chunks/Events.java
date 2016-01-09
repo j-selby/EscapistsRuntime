@@ -183,7 +183,7 @@ public class Events extends Chunk {
             if (method != null) {
                 name = method.getFirst().getName().trim();
             } else {
-                /*System.out.println("No action declared for " + objectType + ":" + num
+               /*System.out.println("No action declared for " + objectType + ":" + num
                         + (ActionNames.getByID(objectType, num) != null ?
                         (" (Possibly " + ActionNames.getByID(objectType, num) + ")") : ""));*/
                 name = null;
