@@ -37,6 +37,7 @@ class AudioManager {
                 if (!musicItem.key.isPlaying) {
                     if (musicItem.value == 1) {
                         channel.value.remove(musicItem.key);
+                        musicItem.key.dispose();
                         continue;
                     } else if (musicItem.value != 0) {
                         channel.value.put(musicItem.key, musicItem.value - 1);
@@ -49,15 +50,22 @@ class AudioManager {
     }
 
     fun setVolume(channelId : Int, volume : Float) {
+        val checkedVolume : Float;
+        if (volume < 0) {
+            checkedVolume = 0f;
+        } else {
+            checkedVolume = volume;
+        }
+
         if (!channels.containsKey(channelId)) {
             channels.put(channelId, HashMap());
-            channelVolume.put(channelId, volume);
+            channelVolume.put(channelId, checkedVolume);
             return;
         }
 
         val channel = channels[channelId]!!;
         for (musicItem in channel) {
-            musicItem.key.volume = volume;
+            musicItem.key.volume = checkedVolume;
         }
     }
 

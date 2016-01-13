@@ -142,4 +142,28 @@ public class WorldInteraction extends FunctionCollection {
             val+=value;
         }
     }
+
+    @Action(subId = 2, id = 60)
+    public void MoveInFrontOfObject(int id) {
+        // Find target layer
+        int layerID = -1;
+        for (ObjectInstance object : scope.getScene().getObjects()) {
+            if (object.getObjectInfo() == id) {
+                layerID = object.getLayerID();
+                break;
+            }
+        }
+
+        if (layerID == -1) {
+            return;
+        }
+
+        for (ObjectInstance object : scope.getObjects()) {
+            for (Layer layer : scope.getScene().getLayers()) {
+                layer.objects.remove(object);
+            }
+            Layer[] layers = scope.getScene().getLayers();
+            layers[layerID].objects.add(object);
+        }
+    }
 }

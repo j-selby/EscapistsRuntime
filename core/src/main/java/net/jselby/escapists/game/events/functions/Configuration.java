@@ -5,6 +5,7 @@ import net.jselby.escapists.data.ini.PropertiesFile;
 import net.jselby.escapists.data.ini.PropertiesSection;
 import net.jselby.escapists.game.ObjectInstance;
 import net.jselby.escapists.game.events.Action;
+import net.jselby.escapists.game.events.Actions;
 import net.jselby.escapists.game.events.Condition;
 import net.jselby.escapists.game.events.FunctionCollection;
 import org.apache.commons.io.IOUtils;
@@ -87,7 +88,10 @@ public class Configuration extends FunctionCollection {
         return path.replace("/", "\\").replace("\\", File.separator);
     }
 
-    @Action(subId = 63, id = 90)
+    @Actions({
+            @Action(subId = 47, id = 95),
+            @Action(subId = 63, id = 90)
+    })
     public void SetItemValue(String section, String key, String value) {
         ObjectInstance[] instances = scope.getObjects();
         if (instances.length == 0) {
@@ -99,6 +103,61 @@ public class Configuration extends FunctionCollection {
 
         ObjectInstance instance = instances[0];
         System.out.println("SetItemValue: " + section + ":" + key + " = " + value + " @ " + instance.getLoadedFile());
+
+        HashMap<String, HashMap<String, Object>> map = new HashMap<String, HashMap<String, Object>>();
+        for (Map.Entry<String, Object> var : instance.getVariables().entrySet()) {
+            if (var.getKey().contains(":")) {
+                String varSection = var.getKey().split(":")[0];
+                String varKey = var.getKey().split(":")[1];
+                Object varValue = var.getValue();
+
+                HashMap<String, Object> sectionVars;
+
+                if (map.containsKey(varSection)) {
+                    sectionVars = map.get(varSection);
+                } else {
+                    sectionVars = new HashMap<String, Object>();
+                    map.put(varSection, sectionVars);
+                }
+
+                sectionVars.put(varKey, varValue);
+            }
+        }
+
+        // Convert to INI format
+        String contents = "";
+        for (Map.Entry<String, HashMap<String, Object>> sectionPair : map.entrySet()) {
+            contents += "[" + sectionPair.getKey() + "]\r\n";
+            for (Map.Entry<String, Object> content : sectionPair.getValue().entrySet()) {
+                contents += content.getKey() + "=" + content.getValue().toString()
+                        .replace("\r", "\\r").replace("\n", "\\n") + "\r\n";
+            }
+        }
+
+
+        // Finally, write it out
+        try {
+            FileOutputStream out = new FileOutputStream(instance.getLoadedFile());
+            out.write(contents.getBytes());
+            out.flush();
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Action(subId = 47, id = 94)
+    public void SetItemValueInt(String section, String key, int unknown, int value) {
+        ObjectInstance[] instances = scope.getObjects();
+        if (instances.length == 0) {
+            return;
+        }
+        for (ObjectInstance instance : instances) {
+            instance.getVariables().put(section + ":" + key, value);
+        }
+
+        ObjectInstance instance = instances[0];
+        System.out.println("SetItemValueInt: " + section + ":" + key + " = " + value + " @ " + instance.getLoadedFile());
 
         HashMap<String, HashMap<String, Object>> map = new HashMap<String, HashMap<String, Object>>();
         for (Map.Entry<String, Object> var : instance.getVariables().entrySet()) {

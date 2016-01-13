@@ -256,7 +256,7 @@ public class Expressions extends FunctionCollection {
     public int GetObjectXLeft(int id) {
         for (ObjectInstance instance : scope.getScene().getObjects()) {
             if (instance.getObjectInfo() == id) {
-                return (int) instance.getX();
+                return (int) instance.getScreenX();
             }
         }
         return 0;

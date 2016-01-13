@@ -34,9 +34,10 @@ public class Audio extends FunctionCollection {
                 + File.separator + "audio" + File.separator + name + ".wav", channel, 1);
     }
 
+    @Action(subId = -2, id = 17)
     public void SetChannelVolume(int channel, int volume) {
         System.out.println("Volume: " + volume);
-        scope.getGame().getAudio().setVolume(channel, volume);
+        scope.getGame().getAudio().setVolume(channel, ((float) volume) / 100);
     }
 
     @Action(subId = -2, id = 15)
