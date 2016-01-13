@@ -228,8 +228,8 @@ public class Expressions extends FunctionCollection {
 
 
     @Expression(subId = -1, id = 46)
-    public int LoopIndex(int int1, String str1) {
-        return 0;
+    public int LoopIndex(int int1, String loopName) {
+        return scope.getScene().getActiveLoops().get(loopName);
     }
 
     @Expression(subId = 38, id = 84)
@@ -253,12 +253,28 @@ public class Expressions extends FunctionCollection {
     }
 
     @Expression(subId = 2, id = 7)
-    public int Unknown1() {
+    public int GetObjectXLeft(int id) {
+        for (ObjectInstance instance : scope.getScene().getObjects()) {
+            if (instance.getObjectInfo() == id) {
+                return (int) instance.getX();
+            }
+        }
         return 0;
     }
 
     @Expression(subId = 52, id = 80)
-    public String Unknown2() {
+    public String HTTPContent(int id) {
+        for (ObjectInstance instance : scope.getScene().getObjects()) {
+            if (instance.getObjectInfo() == id) {
+                return (String) instance.getVariables().get("_env_gethttp");
+            }
+        }
+
         return "";
+    }
+
+    @Expression(subId = -1, id = 22)
+    public int StringLength(int id, String content) {
+        return content.length();
     }
 }

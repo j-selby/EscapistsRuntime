@@ -54,6 +54,7 @@ public class Scene {
     private Map<Integer, Boolean> groupActivated = new HashMap<Integer, Boolean>();
     private Map<Integer, Boolean> groupJustActivated = new HashMap<Integer, Boolean>();
     private Map<String, Integer> loops = new HashMap<String, Integer>();
+    private Map<String, Integer> loopsMax = new HashMap<String, Integer>();
     private int frameCount;
     private long startTime;
 
@@ -267,10 +268,12 @@ public class Scene {
 
         for (Object rawvalue : loops.entrySet().toArray()) {
             Map.Entry<String, Integer> value = (Map.Entry<String, Integer>) rawvalue;
-            if (value.getValue() <= 1) {
+            int newValue = value.getValue() + 1;
+            if (newValue >= loopsMax.get(value.getKey())) {
                 loops.remove(value.getKey());
+                loopsMax.remove(value.getKey());
             } else {
-                value.setValue(value.getValue() - 1);
+                value.setValue(newValue);
             }
         }
 
@@ -342,6 +345,11 @@ public class Scene {
 
     public Map<String, Integer> getActiveLoops() {
         return loops;
+    }
+
+    public void activateLoop(String name, int times) {
+        loops.put(name, 0);
+        loopsMax.put(name, times);
     }
 
     public void activateGroup(int id) {

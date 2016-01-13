@@ -98,7 +98,7 @@ public class Logic extends FunctionCollection {
 
     @Action(subId = -1, id = 14)
     public void StartLoop(String name, int times) {
-        scope.getScene().getActiveLoops().put(name, times);
+        scope.getScene().activateLoop(name, times);
     }
 
 }

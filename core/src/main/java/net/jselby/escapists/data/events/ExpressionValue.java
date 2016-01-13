@@ -290,11 +290,9 @@ public abstract class ExpressionValue {
     public static class UnknownY extends ExpressionValue {
     }
 
-    public static class Unknown1 extends ExpressionValue {
+    public static class GetObjectXLeft extends ExtensionFunctionOneParam {
     }
 
-    public static class Unknown2 extends ExpressionValue {
-    }
 
     public static class GetValueX extends ExpressionValue {
     }
@@ -303,6 +301,10 @@ public abstract class ExpressionValue {
     }
 
     public static class UnknownList extends ExtensionFunction {
+    }
+
+    // HTTP
+    public static class HTTPContent extends ExtensionFunctionOneParam {
     }
 
     // Steam API

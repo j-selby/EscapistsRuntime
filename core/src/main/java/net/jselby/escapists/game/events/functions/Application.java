@@ -18,9 +18,4 @@ public class Application extends FunctionCollection {
     public void HideCursor() {
         scope.getGame().getPlatformUtils().hideMouse();
     }
-
-    @Action(subId = 56, id = 80)
-    public void OpenURL(String url) {
-        Gdx.net.openURI(url);
-    }
 }

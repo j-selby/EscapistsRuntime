@@ -125,7 +125,7 @@ public class Text extends ObjectInstance {
     }
 
     public void setString(String msg) {
-        msg = msg.trim();
+        msg = msg;
         if (str.equals(msg)) {
             return;
         }

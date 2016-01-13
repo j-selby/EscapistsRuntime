@@ -27,7 +27,7 @@ public class ExpressionNames {
 
         tempMap = new HashMap<Integer, String>();
         tempMap.put(1, "GetY");
-        tempMap.put(7, "Unknown1");
+        tempMap.put(7, "GetObjectXLeft");
         tempMap.put(80, "GetColorAt");
         tempMap.put(81, "GetXScale");
         tempMap.put(82, "GetYScale");
@@ -235,7 +235,7 @@ public class ExpressionNames {
         map.put(50, tempMap);
 
         tempMap = new HashMap<Integer, String>();
-        tempMap.put(80, "Unknown2");
+        tempMap.put(80, "HTTPContent");
         map.put(52, tempMap);
 
         tempMap = new HashMap<Integer, String>();

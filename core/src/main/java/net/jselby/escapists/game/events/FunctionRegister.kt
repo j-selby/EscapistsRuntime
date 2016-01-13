@@ -24,6 +24,7 @@ class FunctionRegister {
             Groups::class.java,
             Input::class.java,
             Logic::class.java,
+            NetIO::class.java,
             Physics::class.java,
             Steamworks::class.java,
             StringLists::class.java,

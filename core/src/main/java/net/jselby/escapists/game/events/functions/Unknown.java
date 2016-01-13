@@ -55,12 +55,6 @@ public class Unknown extends FunctionCollection {
         return true;
     }
 
-    @Condition(subId = 52, id = -81)
-    public boolean unknown9() {
-        // TODO: Unknown value
-        return true;
-    }
-
     @Condition(subId = 59, id = -81)
     public boolean unknown10(int id, int value) {
         // TODO: Unknown value
