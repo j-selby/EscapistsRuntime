@@ -77,7 +77,7 @@ public class EscapistsGame extends BasicGame {
         loadingTextWidth = loadingFontCache.addText(loadingText, 0, 0).width;
 
         // Add our default mod
-        mods.add(":Leaderboards\n@176:    WorldInteraction.withObjects(546 /*hover*/).SetY((((Expressions.YMouse()/11) | 0)*11)+2);");
+        mods.add(":Leaderboards\n@170:    WorldInteraction.withObjects(546 /*hover*/).SetY((((Expressions.YMouse()/11) | 0)*11)+2);");
 
         // Start up the loading thread
         Thread loadingThread = new Thread(new Runnable() {

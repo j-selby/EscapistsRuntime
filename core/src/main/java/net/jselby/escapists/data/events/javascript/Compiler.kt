@@ -1,9 +1,10 @@
-package net.jselby.escapists.data.events
+package net.jselby.escapists.data.events.javascript
 
 //import com.google.javascript.jscomp.*
 import net.jselby.escapists.EscapistsRuntime
 import net.jselby.escapists.data.ObjectDefinition
 import net.jselby.escapists.data.chunks.Events
+import net.jselby.escapists.data.events.ParameterValue
 import java.util.*
 
 /**
@@ -118,7 +119,8 @@ class EventCompiler {
         }
 
         // Compile conditions
-        output += compileConditions(scope, group.conditions);
+        val conditions = compileConditions(scope, group.conditions);
+        output += conditions;
 
         indent = scope.getIndent(); // Automatically increased by above function
 
@@ -149,8 +151,11 @@ class EventCompiler {
             }
         }
 
-        scope.decreaseIndent();
-        output += "${scope.getIndent()}}\n";
+        if (conditions.length > 0) {
+            scope.decreaseIndent();
+            output += "${scope.getIndent()}}\n";
+        }
+
         if (scope.requiresCleanup) {
             output += "${scope.getIndent()}env.clearScopeObjects();\n";
         }
@@ -189,7 +194,11 @@ class EventCompiler {
             output += "!";
         }
 
-        output += objDeclaration + objMethod + "(";
+        if (annotation.syntax.length > 0) {
+            output += annotation.syntax;
+        } else {
+            output += "$objDeclaration$objMethod(%args%)";
+        }
 
         var paramCount = 0;
         var args = "";
@@ -209,7 +218,7 @@ class EventCompiler {
             paramCount++;
         }
 
-        output += "$args)"
+        output = output.replace("%args%", args);
 
         if (!condition.inverted() && annotation.successCallback.length != 0) {
             scope.successCallbacks.add("${condition.method.parent.simpleName}.${annotation.successCallback}($args);");
@@ -255,6 +264,10 @@ class EventCompiler {
 
         if (needsBracedOR) {
             conditionsString += ")";
+        }
+
+        if (conditionsString.equals("true")) {
+            return "";
         }
 
         val indent = scope.getIndent();

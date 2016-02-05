@@ -12,17 +12,17 @@ public class Logic extends FunctionCollection {
     public void Skip() {
     }
 
-    @Condition(subId = -1, id = -1)
+    @Condition(subId = -1, id = -1, syntax = "true")
     public boolean Always() {
         return true;
     }
 
-    @Condition(subId = -1, id = -2)
+    @Condition(subId = -1, id = -2, syntax = "false")
     public boolean Never() {
         return false;
     }
 
-    @Condition(subId = -1, id = -7)
+    @Condition(subId = -1, id = -7, syntax = "!true")
     public boolean NotAlways() {
         // TODO: Who the fuck wrote this shit?
         return false;
