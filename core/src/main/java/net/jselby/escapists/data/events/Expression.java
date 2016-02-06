@@ -1,6 +1,12 @@
 package net.jselby.escapists.data.events;
 
+import kotlin.Pair;
+import net.jselby.escapists.EscapistsRuntime;
+import net.jselby.escapists.data.events.expression.ExpressionFunction;
 import net.jselby.escapists.util.ByteReader;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 
 /**
  * A expression is a operation between two or more values.
@@ -24,20 +30,28 @@ public class Expression {
 
         int size = buffer.getUnsignedShort();
 
-        try {
-            if (ExpressionNames.getByID(objectType, num) != null) {
-                value = ExpressionValue.getExpression(ExpressionNames.getByID(objectType, num), buffer);
-            } else if (objectType >= 2 || objectType == -7) {
-                objectInfo = buffer.getUnsignedShort();
-                objectInfoList = buffer.getShort();
-                if (ExpressionNames.getByExtensionID(num) != null) {
-                    value = ExpressionValue.getExpression(ExpressionNames.getByExtensionID(num), buffer);
-                } else {
-                    //System.out.println("Unknown value: " + (size - 8));
-                }
+        Pair<Method, Annotation> type = EscapistsRuntime.getRuntime()
+                .getRegister().getExpressionFunction(objectType, num);
+        if (type != null) {
+            value = new ExpressionFunction(type);
+        } else if (ExpressionNames.getByID(objectType, num) != null) {
+            value = ExpressionValue.getExpression(ExpressionNames.getByID(objectType, num), buffer);
+        } else if (objectType >= 2 || objectType == -7) {
+            objectInfo = buffer.getUnsignedShort();
+            objectInfoList = buffer.getShort();
+            if (ExpressionNames.getByExtensionID(num) != null) {
+                value = ExpressionValue.getExpression(ExpressionNames.getByExtensionID(num), buffer);
+            }// else {
+                //System.out.println("Unknown value: " + (size - 8));
+            //}
+        }
+
+        if (value != null) {
+            try {
+                value.read(buffer);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
 
         buffer.setPosition(currentPosition + size);
@@ -45,6 +59,7 @@ public class Expression {
 
     @Override
     public String toString() {
-        return "HA" + (value == null ? "null1" : value.toString());
+        return "Expression!?";
+        //return "HA" + (value == null ? "null1" : value.toString());
     }
 }

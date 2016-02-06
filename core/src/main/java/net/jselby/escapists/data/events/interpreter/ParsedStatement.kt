@@ -1,144 +1,111 @@
 package net.jselby.escapists.data.events.interpreter
 
+import net.jselby.escapists.data.events.Expression
+import net.jselby.escapists.data.events.ExpressionValue
+import net.jselby.escapists.data.events.expression.ExpressionFunction
 import java.util.*
-import kotlin.text.Regex
 
 /**
  * A parsed statement is a collection of operations and values that can be processed into a value.
  * (i.e, a completed expression)
  */
-class ParsedStatement(val statement : String) {
+class ParsedStatement(val statement : Array<Expression>) {
     init {
-        // Convert to a static
     }
 
-    fun invoke(): Any /* String, Int or Double */ {
+    fun invoke(interpreter: Interpreter): Any /* String, Int or Double */ {
+        //println("Created statement @ ${Thread.currentThread().stackTrace
+        //        .toList().drop(1).toString().replace("),", ")\n\tat").replace("[", "\n\tat ").replace("]", "")}");
         // Parse operations, one by one
         // 5 + 5 * (10 + 6) = 85
 
         // Make a copy of the statement
-        var statement = statement;
-        //println("Entered: $statement");
+        println("Entered: $statement");
 
-        // Space out the statement
-        var i = 0;
-        var newStatement = "";
-        while(i < statement.length) {
-            if (statement[i] == '/'
-                    || statement[i] == '*'
-                    || statement[i] == '+'
-                    || statement[i] == '-') {
-                if (statement[i - 1] != ' ') {
-                    newStatement += ' ';
+        var isString = false;
+
+        // Convert everything into a better representation
+        val newList = ArrayList<Any>(); // Token is a operation or function
+        for (expression in statement) {
+            val value = expression.value;
+            println("Statement value: " + value.javaClass.name);
+
+            // Convert the expression Object to a raw value.
+            if (value is ExpressionValue.Long) {
+                newList.add(value.value);
+            } else if (value is ExpressionValue.Double) {
+                newList.add(value.value);
+            } else if (value is ExpressionValue.String) {
+                isString = true;
+                newList.add(value.value);
+            } else if (value is ExpressionFunction) {
+                val returnValue = interpreter.callMethod(value.method, value.parameters);
+                if (returnValue is String) {
+                    isString = true;
                 }
-                newStatement += statement[i];
-                if (statement[i + 1] != ' ') {
-                    newStatement += ' ';
-                }
-            } else if (statement[i] == '@') {
-                // Function call!
-                if (statement[i - 1] != ' ') {
-                    newStatement += ' ';
-                }
-                newStatement += statement[i];
-                newStatement += statement[i + 1];
-                newStatement += statement[i + 2];
-                if (statement[i + 3] != ' ') {
-                    newStatement += ' ';
-                }
-                i += 2;
+                newList.add(returnValue);
             } else {
-                newStatement += statement[i];
+                newList.add(value);
             }
-            i++;
         }
-        statement = newStatement;
-        //println("Entered filtered: $statement");
 
         // BODMAS
         // Iterate over operators
 
         // Convert brackets into their own statement
-        val list = ArrayList<String>();
+        val list = ArrayList<List<Any>>();
 
-        list.add(statement);
-        var stackElement = 0;
+        list.add(newList.toList());
+
+        // TODO: Support bracketed statements
+        /*var stackElement = 0;
 
         while(stackElement < list.size) {
             var line = list[stackElement];
 
-            if (line.contains("(")) {
-                while (line.contains("(")) {
-                    val beginIndex = line.indexOf("(");
-                    // Finding the closing bracket could be interesting
-                    var endIndex = beginIndex + 1;
+            // Search for bracket statements, and swap them out
+            var i = 0;
+            while(i < line.size) {
+                val initialObj = line[i];
 
-                    // Count opening brackets - we want this complete set
-                    var openCount = 0;
-
-                    while(true) {
-                        if (line[endIndex] == '(') {
-                            openCount++;
-                        } else if (line[endIndex] == ')') {
-                            if (openCount == 0) {
-                                // Found our closing bracket
-                                break;
-                            } else {
-                                openCount--;
-                            }
-                        }
-                        endIndex++;
-                    }
-
-                    // Swap them out
-                    val innerContent = line.substring(beginIndex + 1, endIndex);
-                    val newIndex = list.size;
-                    list.add(innerContent);
-                   // println("$innerContent -> @$newIndex@")
-                    line = line.replaceFirst("($innerContent)", "@$newIndex@");
-                    //println(line);
-                }
-                list[stackElement] = line;
+                i++;
             }
 
-            stackElement++;
-        }
+        }*/
 
-        println("$statement -> $list");
+        println("Conversion: ${statement.toList()} -> $list");
 
-        //println("Calling into recursive function...");
-        statement = solveSimpleStatement(list, list[0]);
+        println("Calling into recursive function...");
+        val statement = solveSimpleStatement(list, list[0]);
 
-        //println("Solved: " + statement);
+        println("Solved: $statement, type: ${statement.javaClass.name}");
 
         // Return our value
-        if (statement.contains("\"")) {
+        /*if (statement.contains("\"")) {
             return statement;
-        } else {
+        } else {*/
             return statement//.toInt();
-        }
+        //}
     }
 
-    fun solveSimpleStatement(expressionFunctions : ArrayList<String>, statement : String) : String {
+    fun solveSimpleStatement(expressionFunctions : ArrayList<List<Any>>, statement : List<Any>) : Any {
         // A simple statement is a statement without brackets
         // boDMAS
-        // Space them out, so we can generate an array
-        var args = statement.trim().replace(Regex(" +"), " ").split(" ").toArrayList();
 
-        //println(args);
-
-        // Brackets
-        for (i in 0..args.size - 1) {
-            val arg = args[i];
-            if (arg.startsWith("@") && arg.endsWith("@")) {
-                //println("Expression function call $args");
-                args[i] = solveSimpleStatement(expressionFunctions, expressionFunctions[arg.replace("@", "").toInt()])
+        // Functions
+        for (i in 0..statement.size - 1) {
+            val arg = statement[i];
+            if (arg is ExpressionValue.ExtensionCommon) {
+                println("Function: ${arg.javaClass.name}");
+            } else if (arg is Expression) {
+                println("Expression: ${arg.value}");
+            } else {
+                println("Unknown Entity: ${arg.javaClass.name}");
             }
         }
-        args.removeIf { arg -> arg.equals("") };
 
         // Division
-        var i = 0;
+        /*var i = 0;
         while(true) {
             if (args[i].equals("/")) {
                 //println("/ call $args");
@@ -227,12 +194,13 @@ class ParsedStatement(val statement : String) {
         }
 
         //println("Solved statement");
-        return statement;
+        return statement;*/
+        return statement.get(0);
     }
 }
 
-fun main(args : Array<String>) {
-    println(ParsedStatement("5 + 5 * (10 + (6 -  5) + (6 - 4)) - (5)").invoke())
-    println(ParsedStatement("5+5*(15/5)*3").invoke())
+//fun main(args : Array<String>) {
+    //println(ParsedStatement("5 + 5 * (10 + (6 -  5) + (6 - 4)) - (5)").invoke())
+    //println(ParsedStatement("5+5*(15/5)*3").invoke())
     //println(ParsedStatement("\"test\" + \" string\"").invoke())
-}
+//}

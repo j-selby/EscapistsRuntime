@@ -245,6 +245,7 @@ public class EscapistsGame extends BasicGame {
                 g.drawString("scaleX: " + scaleX + ", scaleY: " + scaleY, 5, 50);
                 g.drawString("Scene: " + currentFrame.getName(), 5, 65);
                 g.drawString("Instance count: " + currentFrame.getObjects().size(), 5, 80);
+                g.drawString("Event Handler implementation: " + currentFrame.eventTicker.getClass().getName(), 5, 95);
 
                 String layers = "";
                 Layer[] layersInScene = currentFrame.getLayers();
@@ -257,7 +258,7 @@ public class EscapistsGame extends BasicGame {
                         layers += i + " (" + layer.getName() + ")";
                     }
                 }
-                g.drawString("Visible layers: [" + layers + "]", 5, 95);
+                g.drawString("Visible layers: [" + layers + "]", 5, 110);
             }
         }
 

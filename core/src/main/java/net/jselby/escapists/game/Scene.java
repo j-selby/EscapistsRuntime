@@ -7,8 +7,9 @@ import net.jselby.escapists.data.chunks.Events;
 import net.jselby.escapists.data.chunks.Frame;
 import net.jselby.escapists.data.chunks.Layers;
 import net.jselby.escapists.data.chunks.ObjectInstances;
+import net.jselby.escapists.data.events.EventTicker;
 import net.jselby.escapists.data.events.ParameterValue;
-import net.jselby.escapists.data.events.javascript.JavascriptTicker;
+import net.jselby.escapists.data.events.interpreter.Interpreter;
 import net.jselby.escapists.game.events.Scope;
 import org.mini2Dx.core.graphics.Graphics;
 
@@ -49,7 +50,7 @@ public class Scene {
     private long startTime;
 
     private Scope scope;
-    private JavascriptTicker eventTicker;
+    public EventTicker eventTicker;
 
     public Scene(EscapistsRuntime runtime, Frame frame, EscapistsGame game) {
         this.runtime = runtime;
@@ -112,7 +113,8 @@ public class Scene {
         firstFrame = true;
 
         // Prepare interpreter
-        eventTicker = new JavascriptTicker(this, scope, events);
+        //eventTicker = new JavascriptTicker(this, scope, events);
+        eventTicker = new Interpreter(events, scope);
 
         frameCount = 0;
         startTime = System.currentTimeMillis();

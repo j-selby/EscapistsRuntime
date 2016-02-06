@@ -1,6 +1,5 @@
 package net.jselby.escapists.game
 
-import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.audio.Music
 import java.util.*
 
@@ -17,7 +16,7 @@ class AudioManager {
     private val channelVolume : HashMap<Int, Float> = HashMap();
 
     fun playFile(file : String, channel : Int, times : Int = 1) {
-        val song = Gdx.audio.newMusic(Gdx.files.absolute(file));
+        /*val song = Gdx.audio.newMusic(Gdx.files.absolute(file));
 
         if (!channels.containsKey(channel)) {
             channels.put(channel, HashMap());
@@ -28,7 +27,9 @@ class AudioManager {
         song.play()
 
         val channelSet = channels[channel];
-        channelSet!!.put(song, times);
+        channelSet!!.put(song, times);*/
+
+        // TODO: Reactivate audio
     }
 
     fun tick() {

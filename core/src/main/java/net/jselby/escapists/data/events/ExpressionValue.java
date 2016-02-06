@@ -54,7 +54,7 @@ public abstract class ExpressionValue {
     }
 
     public static class Double extends ExpressionValue {
-        private double value;
+        public double value;
         private float floatValue;
 
         @Override
@@ -83,14 +83,22 @@ public abstract class ExpressionValue {
             value3 = buffer.getShort();
             value = buffer.getShort();
         }
+
+        public Object[] getArguments() {
+            return new Object[] {value, value2, value3};
+        }
     }
 
-    public abstract static class ExtensionCommon extends ExpressionValue {
+    public abstract static class ExtensionCommon extends GlobalCommon {
         public short value;
 
         @Override
         public void read(ByteReader buffer) {
             value = buffer.getShort();
+        }
+
+        public Object[] getArguments() {
+            return new Object[] {value};
         }
     }
 
@@ -106,12 +114,20 @@ public abstract class ExpressionValue {
         public java.lang.String toString() {
             return "Expressions." + getClass().getSimpleName() + "()";
         }
+
+        public Object[] getArguments() {
+            return new Object[] {};
+        }
     }
 
     public static class ExtensionFunctionOneParam extends ExtensionCommon {
         @Override
         public java.lang.String toString() {
             return "Expressions." + getClass().getSimpleName() + "(" + value + ")";
+        }
+
+        public Object[] getArguments() {
+            return new Object[] {value};
         }
     }
 
@@ -120,12 +136,20 @@ public abstract class ExpressionValue {
         public java.lang.String toString() {
             return "Expressions." + getClass().getSimpleName() + "(" + value + ", ";
         }
+
+        public Object[] getArguments() {
+            return new Object[] {value}; // TODO: Add additional data
+        }
     }
 
     public static class ExtensionFunction extends ExtensionCommon {
         @Override
         public java.lang.String toString() {
             return "Expressions." + getClass().getSimpleName() + "(" + value + ", ";
+        }
+
+        public Object[] getArguments() {
+            return new Object[] {value}; // TODO: Add additional data
         }
     }
 
@@ -134,6 +158,10 @@ public abstract class ExpressionValue {
         public java.lang.String toString() {
             return "Expressions.GlobalString(" + value + ")";
         }
+
+        public Object[] getArguments() {
+            return new Object[] {value};
+        }
     }
 
     public static class GlobalValue extends GlobalCommon {
@@ -141,13 +169,17 @@ public abstract class ExpressionValue {
         public java.lang.String toString() {
             return "Expressions.GlobalValue(" + value + ")";
         }
+
+        public Object[] getArguments() {
+            return new Object[] {value};
+        }
     }
 
     // Runtime access
     public static class LoopIndex extends ExtensionFunction {
     }
 
-    public static class Find extends ExpressionValue {
+    public static class Find extends ExtensionValue {
     }
 
     public static class GetY extends GlobalCommon {
@@ -156,18 +188,23 @@ public abstract class ExpressionValue {
         public java.lang.String toString() {
             return "Expressions.GetY(" + value2 + ", " + value + ")";
         }
+
+
+        public Object[] getArguments() {
+            return new Object[]{value2, value};
+        }
     }
 
-    public static class XMouse extends ExpressionValue {
+    public static class XMouse extends ExtensionValue {
     }
 
-    public static class YMouse extends ExpressionValue {
+    public static class YMouse extends ExtensionValue {
     }
 
-    public static class FrameWidth extends ExpressionValue {
+    public static class FrameWidth extends ExtensionValue {
     }
 
-    public static class FrameHeight extends ExpressionValue {
+    public static class FrameHeight extends ExtensionValue {
     }
 
     public static class UpperString extends ExtensionFunctionIgnoreData {
@@ -182,22 +219,22 @@ public abstract class ExpressionValue {
     public static class ReplaceSubstring extends ExtensionFunctionIgnoreData {
     }
 
-    public static class Random extends ExpressionValue {
+    public static class Random extends ExtensionValue {
     }
 
-    public static class Min extends ExpressionValue {
+    public static class Min extends ExtensionValue {
     }
 
-    public static class GetRGB extends ExpressionValue {
+    public static class GetRGB extends ExtensionValue {
     }
 
-    public static class Max extends ExpressionValue {
+    public static class Max extends ExtensionValue {
     }
 
-    public static class ApplicationDrive extends ExpressionValue {
+    public static class ApplicationDrive extends ExtensionValue {
     }
 
-    public static class ApplicationDirectory extends ExpressionValue {
+    public static class ApplicationDirectory extends ExtensionValue {
     }
 
     public static class CurrentText extends ExtensionFunctionOneParam {
@@ -251,7 +288,7 @@ public abstract class ExpressionValue {
     public static class DistanceBetween extends ExpressionValue {
     }
 
-    public static class GetDataDirectory extends ExpressionValue {
+    public static class GetDataDirectory extends ExtensionValue {
     }
 
 
@@ -308,10 +345,10 @@ public abstract class ExpressionValue {
     }
 
     // Steam API
-    public static class SteamAccountUserName extends ExpressionValue {
+    public static class SteamAccountUserName extends ExtensionValue {
     }
 
-    public static class SteamAccountUserId extends ExpressionValue {
+    public static class SteamAccountUserId extends ExtensionValue {
     }
 
     // Operators

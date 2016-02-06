@@ -2,9 +2,9 @@ package net.jselby.escapists.data.chunks;
 
 import net.jselby.escapists.EscapistsRuntime;
 import net.jselby.escapists.data.Chunk;
-import net.jselby.escapists.data.events.EventCompiler;
 import net.jselby.escapists.data.events.ParameterNames;
 import net.jselby.escapists.data.events.ParameterValue;
+import net.jselby.escapists.data.events.interpreter.Interpreter;
 import net.jselby.escapists.game.events.FunctionRegistration;
 import net.jselby.escapists.util.ByteReader;
 
@@ -75,14 +75,6 @@ public class Events extends Chunk {
     @Override
     public String toString() {
         return "Events={"  + Arrays.toString(groups) + "}";
-    }
-
-    /**
-     * Converts this event set to a Javascript script, ready to be executed.
-     * @return A String
-     */
-    public String toJS() {
-        return new EventCompiler().compileEvents(this);
     }
 
     /**
@@ -301,6 +293,14 @@ public class Events extends Chunk {
         @Override
         public String toString() {
             return name + ":" + value;
+        }
+
+        /**
+         * Adds this params elements to the list below.
+         * @param list the list to append to.
+         */
+        public void add(Interpreter interpreter, ArrayList<Object> list) {
+            value.add(interpreter, list);
         }
     }
 

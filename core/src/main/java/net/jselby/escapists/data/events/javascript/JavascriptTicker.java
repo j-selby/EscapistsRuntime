@@ -28,7 +28,7 @@ public class JavascriptTicker extends EventTicker {
     public JavascriptTicker(Scene scene, Scope scope, Events events) {
         super(events);
 
-        String javascript = events.toJS();
+        String javascript = new EventCompiler().compileEvents(events);
 
         // Inject mods
         /*for (String mod : scope.getGame().getMods()) {

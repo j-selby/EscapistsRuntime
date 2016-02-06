@@ -1,5 +1,7 @@
 package net.jselby.escapists.data.events;
 
+import net.jselby.escapists.data.events.interpreter.Interpreter;
+import net.jselby.escapists.data.events.interpreter.ParsedStatement;
 import net.jselby.escapists.util.ByteReader;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -16,6 +18,14 @@ public abstract class ParameterValue {
      * @param buffer The buffer to read from.
      */
     public abstract void read(ByteReader buffer);
+
+    /**
+     * Adds this params elements to the list below.
+     * @param list the list to append to.
+     */
+    public void add(Interpreter interpreter, ArrayList<java.lang.Object> list) {
+        System.out.println("Unimplemented param for interpreter: " + getClass().getName());
+    }
 
     public static class Object extends ParameterValue {
         public short objectInfoList;
@@ -42,12 +52,17 @@ public abstract class ParameterValue {
         @Override
         public void read(ByteReader buffer) {
             timer = buffer.getInt();
-            loops = buffer.getInt();
+            loops = buffer.getInt(); // TODO: What does this mean?
         }
 
         @Override
         public java.lang.String toString() {
             return "" + timer;
+        }
+
+        @Override
+        public void add(Interpreter interpreter, ArrayList<java.lang.Object> list) {
+            list.add(timer);
         }
     }
 
@@ -62,6 +77,11 @@ public abstract class ParameterValue {
         @Override
         public java.lang.String toString() {
             return "" + value;
+        }
+
+        @Override
+        public void add(Interpreter interpreter, ArrayList<java.lang.Object> list) {
+            list.add(value);
         }
     }
 
@@ -78,6 +98,11 @@ public abstract class ParameterValue {
         @Override
         public java.lang.String toString() {
             return "" + value;
+        }
+
+        @Override
+        public void add(Interpreter interpreter, ArrayList<java.lang.Object> list) {
+            list.add(value);
         }
     }
 
@@ -148,11 +173,19 @@ public abstract class ParameterValue {
         public java.lang.String toString() {
             return "" + key;
         }
+
+        @Override
+        public void add(Interpreter interpreter, ArrayList<java.lang.Object> list) {
+            list.add(key);
+        }
     }
 
     public static class ExpressionParameter extends ParameterValue {
         public short comparison;
         public Expression[] expressions;
+
+        // Implementation specific
+        public ParsedStatement statement;
 
         @Override
         public void read(ByteReader buffer) {
@@ -168,6 +201,8 @@ public abstract class ParameterValue {
             }
 
             this.expressions = expressions.toArray(new Expression[expressions.size()]);
+
+            statement = new ParsedStatement(this.expressions);
         }
 
         @Override
@@ -183,6 +218,11 @@ public abstract class ParameterValue {
             }
 
             return str;
+        }
+
+        @Override
+        public void add(Interpreter interpreter, ArrayList<java.lang.Object> list) {
+            list.add(statement.invoke(interpreter));
         }
     }
 
@@ -402,6 +442,15 @@ public abstract class ParameterValue {
                 throw new NotImplementedException("Extension type not implemented: " + type + " of size " + size);
             }
         }
+
+        @Override
+        public void add(Interpreter interpreter, ArrayList<java.lang.Object> list) {
+            if (data == null) {
+                list.add(dataShort);
+            } else {
+                throw new NotImplementedException("Extension type not implemented: " + type + " of size " + size);
+            }
+        }
     }
 
     public static class Click extends ParameterValue {
@@ -417,6 +466,12 @@ public abstract class ParameterValue {
         @Override
         public java.lang.String toString() {
             return click + "," + doubleVal;
+        }
+
+        @Override
+        public void add(Interpreter interpreter, ArrayList<java.lang.Object> list) {
+            list.add(click);
+            list.add(doubleVal);
         }
     }
 

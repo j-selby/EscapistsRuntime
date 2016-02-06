@@ -12,7 +12,7 @@ import java.io.File;
  * Implementations of parameter functions that can be utilised by the scripting engine at runtime.
  */
 public class Expressions extends FunctionCollection {
-    @Expression(subId = 3, id = 81)
+    @Expression(subId = 3, id = 81, requiresArg1 = true)
     public String CurrentText(int id) {
         for (ObjectInstance instance : scope.getScene().getObjects()) {
             if (instance.getObjectInfo() == id && instance instanceof Text) {
@@ -52,8 +52,8 @@ public class Expressions extends FunctionCollection {
         return 0;
     }
 
-    @Expression(subId = 2, id = 1)
-    public float GetY(int extra, int id) {
+    @Expression(subId = 2, id = 1, requiresArg1 = true, requiresArg2 = true)
+    public float GetY(int id, int extra) {
         for (ObjectInstance instance : scope.getScene().getObjects()) {
             if (instance.getObjectInfo() == extra) {
                 return instance.getY();
@@ -62,17 +62,17 @@ public class Expressions extends FunctionCollection {
         return 0;
     }
 
-    @Expression(subId = -1, id = 52)
+    @Expression(subId = -1, id = 52, requiresArg1 = true, openEnded = true)
     public String UpperString(int id, String str) {
         return str.toUpperCase();
     }
 
-    @Expression(subId = -1, id = 51)
+    @Expression(subId = -1, id = 51, requiresArg1 = true, openEnded = true)
     public String LowerString(int id, String str) {
         return str.toLowerCase();
     }
 
-    @Expression(subId = -1, id = 5)
+    @Expression(subId = -1, id = 5, requiresArg1 = true, openEnded = true)
     public Number ToNumber(int id, String str) {
         if (str == null || str.length() == 0) {
             return 0;
@@ -80,17 +80,17 @@ public class Expressions extends FunctionCollection {
         return Double.parseDouble(str);
     }
 
-    @Expression(subId = -1, id = 24)
+    @Expression(subId = -1, id = 24, requiresArg1 = true)
     public Number GlobalValue(int key) {
         return scope.getGame().globalInts.get(key);
     }
 
-    @Expression(subId = -1, id = 50)
+    @Expression(subId = -1, id = 50, requiresArg1 = true)
     public String GlobalString(int key) {
         return scope.getGame().globalStrings.get(key);
     }
 
-    @Expression(subId = 36, id = 80)
+    @Expression(subId = 36, id = 80, requiresArg1 = true, openEnded = true)
     public Object GetValue(int objectId, String varName) {
         for (ObjectInstance instance : scope.getScene().getObjects()) {
             if (instance.getObjectInfo() == objectId) {
@@ -104,7 +104,7 @@ public class Expressions extends FunctionCollection {
         return 0;
     }
 
-    @Expression(subId = 36, id = 81)
+    @Expression(subId = 36, id = 81, requiresArg1 = true, openEnded = true)
     public String GetString(int objectId, String varName) {
         for (ObjectInstance instance : scope.getScene().getObjects()) {
             if (instance.getObjectInfo() == objectId) {
@@ -118,7 +118,7 @@ public class Expressions extends FunctionCollection {
         return "";
     }
 
-    @Expression(subId = 47, id = 89)
+    @Expression(subId = 47, id = 89, requiresArg1 = true, openEnded = true)
     public String GetItemString(int id, String section, String key, String defaultVal) {
         String varName = section + ":" + key;
         for (ObjectInstance instance : scope.getScene().getObjects()) {
@@ -134,7 +134,7 @@ public class Expressions extends FunctionCollection {
         return defaultVal;
     }
 
-    @Expression(subId = 63, id = 85)
+    @Expression(subId = 63, id = 85, requiresArg1 = true, openEnded = true)
     public String GroupItemString(int id, String category, String key) {
         for (ObjectInstance instance : scope.getScene().getObjects()) {
             if (instance.getObjectInfo() == id) {
@@ -146,7 +146,7 @@ public class Expressions extends FunctionCollection {
         return "";
     }
 
-    @Expression(subId = 34, id = 81)
+    @Expression(subId = 34, id = 81, requiresArg1 = true, openEnded = true)
     public String Element(int id, int element) {
         if (element < 0) {
             throw new IllegalArgumentException("Array cannot be negatively indexed!");
@@ -163,7 +163,7 @@ public class Expressions extends FunctionCollection {
         return "";
     }
 
-    @Expression(subId = 32, id = 87)
+    @Expression(subId = 32, id = 87, requiresArg1 = true)
     public int ListLength(int id) {
         for (ObjectInstance instance : scope.getScene().getObjects()) {
             if (instance.getObjectInfo() == id) {
@@ -173,7 +173,7 @@ public class Expressions extends FunctionCollection {
         return 0;
     }
 
-    @Expression(subId = 32, id = 81)
+    @Expression(subId = 32, id = 81, requiresArg1 = true)
     public String Select(int id) {
         for (ObjectInstance instance : scope.getScene().getObjects()) {
             if (instance.getObjectInfo() == id) {
@@ -187,7 +187,7 @@ public class Expressions extends FunctionCollection {
         return "";
     }
 
-    @Expression(subId = 32, id = 80)
+    @Expression(subId = 32, id = 80, requiresArg1 = true)
     public int SelectedLine(int id) {
         for (ObjectInstance instance : scope.getScene().getObjects()) {
             if (instance.getObjectInfo() == id) {
@@ -221,13 +221,13 @@ public class Expressions extends FunctionCollection {
                 .getAbsolutePath().substring(ApplicationDrive().length()) + File.separator;
     }
 
-    @Expression(subId = -1, id = 4)
+    @Expression(subId = -1, id = 4, requiresArg1 = true, openEnded = true)
     public String ToString(int id, String str) {
         return str; // Automatically done
     }
 
 
-    @Expression(subId = -1, id = 46)
+    @Expression(subId = -1, id = 46, requiresArg1 = true, openEnded = true)
     public int LoopIndex(int int1, String loopName) {
         return scope.getScene().getActiveLoops().get(loopName);
     }
@@ -252,7 +252,7 @@ public class Expressions extends FunctionCollection {
         return 0;
     }
 
-    @Expression(subId = 2, id = 7)
+    @Expression(subId = 2, id = 7, requiresArg1 = true)
     public int GetObjectXLeft(int id) {
         for (ObjectInstance instance : scope.getScene().getObjects()) {
             if (instance.getObjectInfo() == id) {
@@ -262,7 +262,7 @@ public class Expressions extends FunctionCollection {
         return 0;
     }
 
-    @Expression(subId = 52, id = 80)
+    @Expression(subId = 52, id = 80, requiresArg1 = true)
     public String HTTPContent(int id) {
         for (ObjectInstance instance : scope.getScene().getObjects()) {
             if (instance.getObjectInfo() == id) {
@@ -273,7 +273,7 @@ public class Expressions extends FunctionCollection {
         return "";
     }
 
-    @Expression(subId = -1, id = 22)
+    @Expression(subId = -1, id = 22, requiresArg1 = true, openEnded = true)
     public int StringLength(int id, String content) {
         return content.length();
     }
