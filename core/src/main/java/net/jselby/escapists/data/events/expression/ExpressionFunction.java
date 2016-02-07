@@ -7,6 +7,8 @@ import net.jselby.escapists.util.ByteReader;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * A ExpressionFunction is a function call inside a expression.
@@ -18,6 +20,8 @@ public class ExpressionFunction extends ExpressionValue {
     private int value1;
     private int value2;
     private int value3;
+
+    public List<Object> openParams;
 
     public ExpressionFunction(Pair<Method, Annotation> type) {
         method = type.getFirst();
@@ -36,7 +40,8 @@ public class ExpressionFunction extends ExpressionValue {
         Object[] array = new Object[
                 (annotation.requiresArg1() ? 1 : 0) +
                 (annotation.requiresArg2() ? 1 : 0) +
-                (annotation.requiresArg3() ? 1 : 0)];
+                (annotation.requiresArg3() ? 1 : 0) +
+                        (openParams != null ? openParams.size() : 0)];
         if (annotation.requiresArg1()) {
             array[index++] = value1;
         }
@@ -44,9 +49,25 @@ public class ExpressionFunction extends ExpressionValue {
             array[index++] = value2;
         }
         if (annotation.requiresArg3()) {
-            array[index] = value3;
+            array[index++] = value3;
+        }
+        if (openParams != null) {
+            for (Object openParam : openParams) {
+                array[index++] = openParam;
+            }
         }
 
         return array;
+    }
+
+    @Override
+    public java.lang.String toString() {
+        java.lang.String testArgs = Arrays.toString(getParameters());
+        testArgs = testArgs.substring(1, testArgs.length() - 1);
+
+        return method.getDeclaringClass().getSimpleName() + "." +
+                method.getName() + "("
+                + testArgs
+                + (annotation.openEnded() ? ", " : ")");
     }
 }

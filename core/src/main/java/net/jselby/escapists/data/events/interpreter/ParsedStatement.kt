@@ -3,6 +3,8 @@ package net.jselby.escapists.data.events.interpreter
 import net.jselby.escapists.data.events.Expression
 import net.jselby.escapists.data.events.ExpressionValue
 import net.jselby.escapists.data.events.expression.ExpressionFunction
+import net.jselby.escapists.data.events.interpreter.statement.EmptyToken
+import net.jselby.escapists.data.events.interpreter.statement.TokenFunction
 import java.util.*
 
 /**
@@ -16,35 +18,20 @@ class ParsedStatement(val statement : Array<Expression>) {
     fun invoke(interpreter: Interpreter): Any /* String, Int or Double */ {
         //println("Created statement @ ${Thread.currentThread().stackTrace
         //        .toList().drop(1).toString().replace("),", ")\n\tat").replace("[", "\n\tat ").replace("]", "")}");
-        // Parse operations, one by one
-        // 5 + 5 * (10 + 6) = 85
 
         // Make a copy of the statement
-        println("Entered: $statement");
-
-        var isString = false;
-
         // Convert everything into a better representation
         val newList = ArrayList<Any>(); // Token is a operation or function
         for (expression in statement) {
             val value = expression.value;
-            println("Statement value: " + value.javaClass.name);
-
             // Convert the expression Object to a raw value.
             if (value is ExpressionValue.Long) {
                 newList.add(value.value);
             } else if (value is ExpressionValue.Double) {
                 newList.add(value.value);
             } else if (value is ExpressionValue.String) {
-                isString = true;
                 newList.add(value.value);
-            } else if (value is ExpressionFunction) {
-                val returnValue = interpreter.callMethod(value.method, value.parameters);
-                if (returnValue is String) {
-                    isString = true;
-                }
-                newList.add(returnValue);
-            } else {
+            } else if (value !is ExpressionValue.Virgule) {
                 newList.add(value);
             }
         }
@@ -53,12 +40,10 @@ class ParsedStatement(val statement : Array<Expression>) {
         // Iterate over operators
 
         // Convert brackets into their own statement
-        val list = ArrayList<List<Any>>();
+        val list = ArrayList<ArrayList<Any>>();
 
-        list.add(newList.toList());
-
-        // TODO: Support bracketed statements
-        /*var stackElement = 0;
+        list.add(newList.toArrayList());
+        var stackElement = 0;
 
         while(stackElement < list.size) {
             var line = list[stackElement];
@@ -68,17 +53,69 @@ class ParsedStatement(val statement : Array<Expression>) {
             while(i < line.size) {
                 val initialObj = line[i];
 
+                if (initialObj is ExpressionValue.Parenthesis) {
+                    throw IllegalStateException("Parenthesis not implemented!");
+                } else if (initialObj is ExpressionFunction) {
+                    // Cool. Lets check if this requires any arguments.
+                    if (initialObj.annotation.openEnded) {
+                        // It is. Add the additional arguments to the list array, so they can be processed separately.
+                        var level = 0;
+                        var endIndex = i + 1;
+                        while(true) {
+                            val obj = line[endIndex];
+                            if (obj is ExpressionValue.Parenthesis
+                                    || (obj is ExpressionFunction && obj.annotation.openEnded)) {
+                                level++;
+                            } else if (obj is ExpressionValue.EndParenthesis) {
+                                if (level == 0) {
+                                    break;
+                                } else {
+                                    level--;
+                                }
+                            }
+                            endIndex++;
+                        }
+
+                        val newId = list.size;
+
+                        val values = line.subList(i + 1, endIndex).toArrayList();
+
+                        list.add(values);
+                        println("Preline: $line");
+
+                        line[i] = TokenFunction(newId, initialObj);
+                        for (x in (i + 1)..endIndex) {
+                            line[x] = EmptyToken();
+                        }
+                        removeEmptyTokens(line);
+
+                        println("Postline: $line");
+                        println("Values: $values");
+
+                    } else {
+                        // It isn't, simply call it, and replace it's index with the return value
+                        line[i] = interpreter.callMethod(initialObj.method, initialObj.parameters);
+                    }
+                }
+
                 i++;
             }
 
-        }*/
+            stackElement++;
+        }
 
-        println("Conversion: ${statement.toList()} -> $list");
+        // Short circuit the statement
+        if (list.size == 1 && list[0].size == 1) {
+            println("Short circuiting statement: $list");
+            return list[0][0];
+        }
 
-        println("Calling into recursive function...");
-        val statement = solveSimpleStatement(list, list[0]);
+        // Iterate over the statement now
+        print("Processing: $list... ");
 
-        println("Solved: $statement, type: ${statement.javaClass.name}");
+        val statement = solveSimpleStatement(interpreter, list, list[0]);
+
+        println("Solved: $statement, type: ${statement.javaClass.name}, $list");
 
         // Return our value
         /*if (statement.contains("\"")) {
@@ -88,39 +125,56 @@ class ParsedStatement(val statement : Array<Expression>) {
         //}
     }
 
-    fun solveSimpleStatement(expressionFunctions : ArrayList<List<Any>>, statement : List<Any>) : Any {
-        // A simple statement is a statement without brackets
-        // boDMAS
-
-        // Functions
-        for (i in 0..statement.size - 1) {
-            val arg = statement[i];
-            if (arg is ExpressionValue.ExtensionCommon) {
-                println("Function: ${arg.javaClass.name}");
-            } else if (arg is Expression) {
-                println("Expression: ${arg.value}");
-            } else {
-                println("Unknown Entity: ${arg.javaClass.name}");
+    fun solveSimpleStatement(interpreter: Interpreter, expressionFunctions : ArrayList<ArrayList<Any>>,
+                             statement : ArrayList<Any>, returnArray : Boolean = false) : Any {
+        // Check for subcalls first
+        for(i in 0..statement.size - 1) {
+            val oldValue = statement[i];
+            if (oldValue is TokenFunction) {
+                val args = solveSimpleStatement(interpreter, expressionFunctions,
+                        expressionFunctions[oldValue.id], returnArray = true) as ArrayList<Any>;
+                oldValue.callChild.openParams = args.toList();
+                statement[i] = interpreter.callMethod(oldValue.callChild.method, oldValue.callChild.parameters)
             }
         }
 
+        // A simple statement is a statement without brackets
+        // boDMAS
+
         // Division
-        /*var i = 0;
+        var i = 0;
         while(true) {
-            if (args[i].equals("/")) {
-                //println("/ call $args");
+            if (statement[i] is ExpressionValue.Divide) {
+                //println("/ call $statement");
 
-                val val1 = args[i - 1].toInt();
-                val val2 = args[i + 1].toInt();
+                val val1 = statement[i - 1];
+                val val2 = statement[i + 1];
 
-                args[i - 1] = "";
-                args[i] = (val1 / val2).toString();
-                args[i + 1] = "";
-                args.removeIf { arg -> arg.equals("") };
+                if (val1 is Int && val2 is Int) {
+                    statement[i - 1] = EmptyToken();
+                    statement[i] = val1 / val2;
+                    statement[i + 1] = EmptyToken();
+                } else if (val1 is Float && val2 is Int) {
+                    statement[i - 1] = EmptyToken();
+                    statement[i] = val1 / val2;
+                    statement[i + 1] = EmptyToken();
+                } else if (val1 is Int && val2 is Float) {
+                    statement[i - 1] = EmptyToken();
+                    statement[i] = val1 / val2;
+                    statement[i + 1] = EmptyToken();
+                } else if (val1 is Float && val2 is Float) {
+                    statement[i - 1] = EmptyToken();
+                    statement[i] = val1 / val2;
+                    statement[i + 1] = EmptyToken();
+                } else {
+                    throw IllegalArgumentException("Values aren't a integer in division statement: ${val1.javaClass} : ${val2.javaClass}");
+                }
+
+                removeEmptyTokens(statement);
             } else {
                 i++;
             }
-            if (i == args.size) {
+            if (i == statement.size) {
                 break;
             }
         }
@@ -128,20 +182,37 @@ class ParsedStatement(val statement : Array<Expression>) {
         // Multiplication
         i = 0;
         while(true) {
-            if (args[i].equals("*")) {
-                //println("* call $args");
+            if (statement[i] is ExpressionValue.Multiply) {
+                //println("* call $statement");
 
-                val val1 = args[i - 1].toInt();
-                val val2 = args[i + 1].toInt();
+                val val1 = statement[i - 1];
+                val val2 = statement[i + 1];
 
-                args[i - 1] = "";
-                args[i] = (val1 * val2).toString();
-                args[i + 1] = "";
-                args.removeIf { arg -> arg.equals("") };
+                if (val1 is Int && val2 is Int) {
+                    statement[i - 1] = EmptyToken();
+                    statement[i] = val1 * val2;
+                    statement[i + 1] = EmptyToken();
+                } else if (val1 is Float && val2 is Int) {
+                    statement[i - 1] = EmptyToken();
+                    statement[i] = val1 * val2;
+                    statement[i + 1] = EmptyToken();
+                } else if (val1 is Int && val2 is Float) {
+                    statement[i - 1] = EmptyToken();
+                    statement[i] = val1 * val2;
+                    statement[i + 1] = EmptyToken();
+                } else if (val1 is Float && val2 is Float) {
+                    statement[i - 1] = EmptyToken();
+                    statement[i] = val1 * val2;
+                    statement[i + 1] = EmptyToken();
+                } else {
+                    throw IllegalArgumentException("Values aren't a integer in multiplication statement: ${val1.javaClass} : ${val2.javaClass}");
+                }
+
+                removeEmptyTokens(statement);
             } else {
                 i++;
             }
-            if (i == args.size) {
+            if (i == statement.size) {
                 break;
             }
         }
@@ -149,20 +220,41 @@ class ParsedStatement(val statement : Array<Expression>) {
         // Addition
         i = 0;
         while(true) {
-            if (args[i].equals("+")) {
-                //println("+ call $args");
+            if (statement[i] is ExpressionValue.Plus) {
+                //println("+ call $statement");
 
-                val val1 = args[i - 1].toInt();
-                val val2 = args[i + 1].toInt();
+                val val1 = statement[i - 1];
+                val val2 = statement[i + 1];
 
-                args[i - 1] = "";
-                args[i] = (val1 + val2).toString();
-                args[i + 1] = "";
-                args.removeIf { arg -> arg.equals("") };
+                if (val1 is Int && val2 is Int) {
+                    statement[i - 1] = EmptyToken();
+                    statement[i] = val1 + val2;
+                    statement[i + 1] = EmptyToken();
+                } else if (val1 is String && val2 is String) {
+                    statement[i - 1] = EmptyToken();
+                    statement[i] = val1 + val2;
+                    statement[i + 1] = EmptyToken();
+                } else if (val1 is Float && val2 is Int) {
+                    statement[i - 1] = EmptyToken();
+                    statement[i] = val1 + val2;
+                    statement[i + 1] = EmptyToken();
+                } else if (val1 is Int && val2 is Float) {
+                    statement[i - 1] = EmptyToken();
+                    statement[i] = val1 + val2;
+                    statement[i + 1] = EmptyToken();
+                } else if (val1 is Float && val2 is Float) {
+                    statement[i - 1] = EmptyToken();
+                    statement[i] = val1 + val2;
+                    statement[i + 1] = EmptyToken();
+                }else {
+                    throw IllegalArgumentException("Values aren't a valid type in addition statement: ${val1.javaClass} : ${val2.javaClass}");
+                }
+
+                removeEmptyTokens(statement);
             } else {
                 i++;
             }
-            if (i == args.size) {
+            if (i == statement.size) {
                 break;
             }
         }
@@ -170,32 +262,61 @@ class ParsedStatement(val statement : Array<Expression>) {
         // Subtraction
         i = 0;
         while(true) {
-            if (args[i].equals("-")) {
-               // println("- call $args");
+            if (statement[i] is ExpressionValue.Minus) {
+                //println("- call $statement");
 
-                val val1 = args[i - 1].toInt();
-                val val2 = args[i + 1].toInt();
+                val val1 = statement[i - 1];
+                val val2 = statement[i + 1];
 
-                args[i - 1] = "";
-                args[i] = (val1 - val2).toString();
-                args[i + 1] = "";
-                args.removeIf { arg -> arg.equals("") };
+                // TODO: Maybe find a better solution for these?
+                if (val1 is Int && val2 is Int) {
+                    statement[i - 1] = EmptyToken();
+                    statement[i] = val1 - val2;
+                    statement[i + 1] = EmptyToken();
+                } else if (val1 is Float && val2 is Int) {
+                    statement[i - 1] = EmptyToken();
+                    statement[i] = val1 - val2;
+                    statement[i + 1] = EmptyToken();
+                } else if (val1 is Int && val2 is Float) {
+                    statement[i - 1] = EmptyToken();
+                    statement[i] = val1 - val2;
+                    statement[i + 1] = EmptyToken();
+                } else if (val1 is Float && val2 is Float) {
+                    statement[i - 1] = EmptyToken();
+                    statement[i] = val1 - val2;
+                    statement[i + 1] = EmptyToken();
+                } else {
+                    throw IllegalArgumentException("Values aren't a integer in subtraction statement: ${val1.javaClass} : ${val2.javaClass}");
+                }
+
+                removeEmptyTokens(statement);
             } else {
                 i++;
             }
-            if (i == args.size) {
+            if (i == statement.size) {
                 break;
             }
         }
 
-        var statement = "";
-        for ((index, arg) in args.withIndex()) {
-            statement += (if (index > 0) " " else "") + arg;
+        if (statement.size != 1 && !returnArray) {
+            throw IllegalStateException("Statement execution not completed: $statement");
         }
 
-        //println("Solved statement");
-        return statement;*/
-        return statement.get(0);
+        if (returnArray) {
+            return statement;
+        }
+        return statement[0];
+    }
+
+    private fun removeEmptyTokens(statement: ArrayList<Any>) {
+        var i = 0;
+        while(i < statement.size) {
+            if (statement[i].javaClass.name.equals(EmptyToken::class.java.name)) {
+                statement.removeAt(i);
+            } else {
+                i++
+            }
+        }
     }
 }
 

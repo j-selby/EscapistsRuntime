@@ -5,3 +5,5 @@ package net.jselby.escapists.data.events.interpreter.statement
  */
 abstract class Token {
 }
+
+class EmptyToken : Token() {}

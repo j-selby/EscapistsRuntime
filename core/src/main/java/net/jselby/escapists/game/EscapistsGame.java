@@ -259,6 +259,7 @@ public class EscapistsGame extends BasicGame {
                     }
                 }
                 g.drawString("Visible layers: [" + layers + "]", 5, 110);
+                g.drawString("Active groups: [" + currentFrame.getActiveGroups() + "]", 5, 125);
             }
         }
 

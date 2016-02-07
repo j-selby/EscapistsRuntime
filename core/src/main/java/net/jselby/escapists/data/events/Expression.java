@@ -30,28 +30,27 @@ public class Expression {
 
         int size = buffer.getUnsignedShort();
 
-        Pair<Method, Annotation> type = EscapistsRuntime.getRuntime()
-                .getRegister().getExpressionFunction(objectType, num);
-        if (type != null) {
-            value = new ExpressionFunction(type);
-        } else if (ExpressionNames.getByID(objectType, num) != null) {
-            value = ExpressionValue.getExpression(ExpressionNames.getByID(objectType, num), buffer);
-        } else if (objectType >= 2 || objectType == -7) {
-            objectInfo = buffer.getUnsignedShort();
-            objectInfoList = buffer.getShort();
-            if (ExpressionNames.getByExtensionID(num) != null) {
-                value = ExpressionValue.getExpression(ExpressionNames.getByExtensionID(num), buffer);
-            }// else {
+        try {
+            Pair<Method, Annotation> type = EscapistsRuntime.getRuntime()
+                    .getRegister().getExpressionFunction(objectType, num);
+            if (ExpressionNames.getByID(objectType, num) != null) {
+                if (type != null) {
+                    value = new ExpressionFunction(type);
+                    value.read(buffer);
+                } else {
+                    value = ExpressionValue.getExpression(ExpressionNames.getByID(objectType, num), buffer);
+                }
+            } else if (objectType >= 2 || objectType == -7) {
+                objectInfo = buffer.getUnsignedShort();
+                objectInfoList = buffer.getShort();
+                if (ExpressionNames.getByExtensionID(num) != null) {
+                    value = ExpressionValue.getExpression(ExpressionNames.getByExtensionID(num), buffer);
+                }// else {
                 //System.out.println("Unknown value: " + (size - 8));
-            //}
-        }
-
-        if (value != null) {
-            try {
-                value.read(buffer);
-            } catch (Exception e) {
-                e.printStackTrace();
+                //}
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         buffer.setPosition(currentPosition + size);

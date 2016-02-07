@@ -36,10 +36,7 @@ public class Timers extends FunctionCollection {
         return false;
     }
 
-    @Conditions({
-            @Condition(subId = -4, id = -7),
-            @Condition(subId = -4, id = -3)
-    })
+    @Condition(subId = -4, id = -7)
     public boolean TimerEquals(int value, int repeat/*?*/) {
         //int currentTimer = (int) (scope.getScene().getFrameCount() * (1f / 45f) * 1000);
         // Convert to frame
@@ -49,6 +46,7 @@ public class Timers extends FunctionCollection {
         //return (System.currentTimeMillis() - scope.getScene().getSceneStartTime()) == value;
     }
 
+    @Condition(subId = -4, id = -3)
     public boolean TimerEquals(int value) {
         //int currentTimer = (int) (scope.getScene().getFrameCount() * (1f / 45f) * 1000);
         // Convert to frame

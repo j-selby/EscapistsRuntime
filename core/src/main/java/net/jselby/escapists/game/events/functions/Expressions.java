@@ -55,7 +55,7 @@ public class Expressions extends FunctionCollection {
     @Expression(subId = 2, id = 1, requiresArg1 = true, requiresArg2 = true)
     public float GetY(int id, int extra) {
         for (ObjectInstance instance : scope.getScene().getObjects()) {
-            if (instance.getObjectInfo() == extra) {
+            if (instance.getObjectInfo() == id) {
                 return instance.getY();
             }
         }

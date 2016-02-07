@@ -37,7 +37,7 @@ class Interpreter(events : Events, scope : Scope) : EventTicker(events) {
 
         // Parse events into event groups
         val groupStack = Stack<InterpreterEventGroup>();
-        groupStack.add(InterpreterEventGroup(0));
+        groupStack.add(InterpreterEventGroup(-9999));
 
         for (rawGroup in events.groups) {
             val targetGroup = groupStack.peek();
@@ -71,12 +71,11 @@ class Interpreter(events : Events, scope : Scope) : EventTicker(events) {
 
     fun callMethod(method: FunctionRegistration,
                            items: Array<Events.Parameter>,
-                           identifier: Short) : Any? {
-        println("Invoking: ${method.method.name}")
+                           identifier: Short,
+                           handle : Int = 0) : Any? {
         // Find parent collection
         for (collection in functions) {
             if (method.parent.isInstance(collection)) {
-                println("Found match: $method > $collection");
 
                 // Build params
                 val list = ArrayList<Any>();
@@ -84,7 +83,6 @@ class Interpreter(events : Events, scope : Scope) : EventTicker(events) {
                 // Check annotations
                 if (method.checkAnnotation is Condition) {
                     if (method.checkAnnotation.hasInstanceRef) { // Requires context
-                        println("Context required!");
                         list.add(identifier);
                     }
                 }
@@ -96,15 +94,16 @@ class Interpreter(events : Events, scope : Scope) : EventTicker(events) {
                             list.add((item.value as ParameterValue.ExpressionParameter).comparison);
                         }
                     }
-                    println(item);
                     item.add(this, list);
                 }
 
-                println("Completed list: $list");
+                if (handle != 0) {
+                    println("Calling withObjects: $handle");
+                    collection.withObjects(handle)
+                }
 
-                val arrayOut = list.toTypedArray();
-                println("Final call: ${method}, ${method.method.name}, ${collection}, $arrayOut, ${list.size}")
-                return method.method.invoke(collection, *arrayOut);
+                println("Calling: ${method.method.name}, $list")
+                return method.method.invoke(collection, *(list.toTypedArray()));
             }
         }
 
@@ -116,14 +115,22 @@ class Interpreter(events : Events, scope : Scope) : EventTicker(events) {
         // Find parent collection
         for (collection in functions) {
             if (method.declaringClass.isInstance(collection)) {
-                println("Found string match: $method > $collection");
-
-                println("Completed prebuilt list: ${params.toArrayList()}");
-
+                println("Invoking: ${method.name} with ${params.toList()}")
                 return method.invoke(collection, *params);
             }
         }
 
         throw IllegalStateException("No implementing collection for method $method");
+    }
+
+    fun getCollectionInstance(targetClass: Class<out FunctionCollection>) : FunctionCollection {
+        // Find parent collection
+        for (collection in functions) {
+            if (collection.javaClass == targetClass) {
+                return collection;
+            }
+        }
+
+        throw IllegalStateException("No implementing collection for name ${targetClass.name}");
     }
 }

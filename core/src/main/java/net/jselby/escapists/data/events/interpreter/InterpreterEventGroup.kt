@@ -1,6 +1,7 @@
 package net.jselby.escapists.data.events.interpreter
 
 import net.jselby.escapists.game.events.Scope
+import net.jselby.escapists.game.events.functions.Groups
 import java.util.*
 
 /**
@@ -14,10 +15,15 @@ class InterpreterEventGroup(val id: Int) : InterpreterActionConditionGroup(null)
     }
 
     override fun invokeIfPossible(interpreter: Interpreter, scope : Scope) {
-        println("Invoked: " + id);
+        if (id != -9999 && !(scope.scene.activeGroups[id] as Boolean)) {
+            //println("Exiting group: $id");
+            return;
+        }
+        (interpreter.getCollectionInstance(Groups::class.java) as Groups).GroupStart(id);
         for (child in children) {
             child.invokeIfPossible(interpreter, scope);
         }
+        (interpreter.getCollectionInstance(Groups::class.java) as Groups).GroupEnd(id);
     }
 
     override fun toString(): String {

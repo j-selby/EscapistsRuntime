@@ -22,15 +22,11 @@ public abstract class ExpressionValue {
     public void read(ByteReader buffer) {}
 
     public static class String extends ExpressionValue {
-        private java.lang.String value;
+        public java.lang.String value;
 
         @Override
         public void read(ByteReader buffer) {
             value = buffer.getString();
-        }
-
-        public java.lang.String getValue() {
-            return value;
         }
 
         @Override

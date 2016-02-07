@@ -43,6 +43,11 @@ public abstract class ParameterValue {
         public java.lang.String toString() {
             return "" + objectInfo;
         }
+
+        @Override
+        public void add(Interpreter interpreter, ArrayList<java.lang.Object> list) {
+            list.add(objectInfo);
+        }
     }
 
     public static class Time extends ParameterValue {
@@ -122,6 +127,13 @@ public abstract class ParameterValue {
         public java.lang.String toString() {
             return handle + "," + flags + ",\"" + StringEscapeUtils.escapeEcmaScript(name) + "\"";
         }
+
+        @Override
+        public void add(Interpreter interpreter, ArrayList<java.lang.Object> list) {
+            list.add(handle);
+            list.add(flags);
+            list.add(name);
+        }
     }
 
     public static class Create extends ParameterValue {
@@ -152,12 +164,18 @@ public abstract class ParameterValue {
         @Override
         public void read(ByteReader buffer) {
             delay = buffer.getInt();
-            compteur = buffer.getInt();
+            compteur = buffer.getInt(); // TODO: What does this mean
         }
 
         @Override
         public java.lang.String toString() {
             return delay + "";
+        }
+
+
+        @Override
+        public void add(Interpreter interpreter, ArrayList<java.lang.Object> list) {
+            list.add(delay);
         }
     }
 
@@ -367,6 +385,11 @@ public abstract class ParameterValue {
         @Override
         public java.lang.String toString() {
             return "" + id;
+        }
+
+        @Override
+        public void add(Interpreter interpreter, ArrayList<java.lang.Object> list) {
+            list.add(id);
         }
     }
 
