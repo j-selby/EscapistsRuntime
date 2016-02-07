@@ -11,6 +11,8 @@ import net.jselby.escapists.game.events.Scope
 import java.lang.reflect.Method
 import java.util.*
 
+val VERBOSE = false
+
 /**
  * The interpreter iterates over a event stack and calls functions which can be called.
  */
@@ -98,11 +100,11 @@ class Interpreter(events : Events, scope : Scope) : EventTicker(events) {
                 }
 
                 if (handle != 0) {
-                    println("Calling withObjects: $handle");
+                    if (VERBOSE) println("Calling withObjects: $handle");
                     collection.withObjects(handle)
                 }
 
-                println("Calling: ${method.method.name}, $list")
+                if (VERBOSE) println("Calling: ${method.method.name}, $list")
                 return method.method.invoke(collection, *(list.toTypedArray()));
             }
         }
@@ -115,7 +117,7 @@ class Interpreter(events : Events, scope : Scope) : EventTicker(events) {
         // Find parent collection
         for (collection in functions) {
             if (method.declaringClass.isInstance(collection)) {
-                println("Invoking: ${method.name} with ${params.toList()}")
+                if (VERBOSE) println("Invoking: ${method.name} with ${params.toList()}")
                 return method.invoke(collection, *params);
             }
         }

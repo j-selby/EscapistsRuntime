@@ -81,7 +81,7 @@ class ParsedStatement(val statement : Array<Expression>) {
                         val values = line.subList(i + 1, endIndex).toArrayList();
 
                         list.add(values);
-                        println("Preline: $line");
+                        if (VERBOSE) println("Preline: $line");
 
                         line[i] = TokenFunction(newId, initialObj);
                         for (x in (i + 1)..endIndex) {
@@ -89,8 +89,8 @@ class ParsedStatement(val statement : Array<Expression>) {
                         }
                         removeEmptyTokens(line);
 
-                        println("Postline: $line");
-                        println("Values: $values");
+                        if (VERBOSE) println("Postline: $line");
+                        if (VERBOSE) println("Values: $values");
 
                     } else {
                         // It isn't, simply call it, and replace it's index with the return value
@@ -106,16 +106,16 @@ class ParsedStatement(val statement : Array<Expression>) {
 
         // Short circuit the statement
         if (list.size == 1 && list[0].size == 1) {
-            println("Short circuiting statement: $list");
+            if (VERBOSE) println("Short circuiting statement: $list");
             return list[0][0];
         }
 
         // Iterate over the statement now
-        print("Processing: $list... ");
+        if (VERBOSE) print("Processing: $list... ");
 
         val statement = solveSimpleStatement(interpreter, list, list[0]);
 
-        println("Solved: $statement, type: ${statement.javaClass.name}, $list");
+        if (VERBOSE) println("Solved: $statement, type: ${statement.javaClass.name}, $list");
 
         // Return our value
         /*if (statement.contains("\"")) {

@@ -12,27 +12,58 @@ open class InterpreterActionConditionGroup(val group: Events.EventGroup?) {
         group!!
 
         // Check conditions
-        println("-- Processing condition array: ${group.conditions.toArrayList()}");
+        if (VERBOSE) println("-- Processing condition array: ${group.conditions.toArrayList()}");
+        // Search for OR statement, so we don't instantly short-circuit the result
+        var hasOR = false;
         for (condition in group.conditions) {
-            // TODO: OR statements
-            if (EscapistsRuntime.getRuntime().application.objectDefs.size > condition.objectInfo) {
-                val objectDef = EscapistsRuntime.getRuntime().application.objectDefs[condition.objectInfo];
-                if (objectDef != null) {
-                    if ((interpreter.callMethod(condition.method, condition.items,
-                            condition.identifier, objectDef.handle.toInt()) as Boolean) == condition.inverted()) {
-                        return;
-                    }
-                    continue;
-                }
-            }
-
-            if ((interpreter.callMethod(condition.method, condition.items,
-                    condition.identifier) as Boolean) == condition.inverted()) {
-                return;
+            if (condition.method.method.name.equals("OrFiltered")) {
+                hasOR = true;
+                break;
             }
         }
 
-        println("-- Processing action array: ${group.actions.toArrayList()}");
+        var i = 0;
+        while (i < group.conditions.size) {
+            val condition = group.conditions[i];
+            var response : Boolean;
+            if (EscapistsRuntime.getRuntime().application.objectDefs.size > condition.objectInfo) {
+                val objectDef = EscapistsRuntime.getRuntime().application.objectDefs[condition.objectInfo];
+                if (objectDef != null) {
+                    response = (interpreter.callMethod(condition.method, condition.items,
+                            condition.identifier, objectDef.handle.toInt()) as Boolean);
+                } else {
+                    response = (interpreter.callMethod(condition.method, condition.items,
+                            condition.identifier) as Boolean);
+                }
+            } else {
+                response = (interpreter.callMethod(condition.method, condition.items,
+                        condition.identifier) as Boolean);
+            }
+
+            if (response == condition.inverted()) {
+                if (hasOR) {
+                    // We need to handle this directly
+                    while (i < group.conditions.size) {
+                        if (group.conditions[i].method.method.name.equals("OrFiltered")) {
+                            i++;
+                            break;
+                        }
+                        i++;
+                    }
+
+                    if (i == group.conditions.size) {
+                        // We reached our last OR statement
+                        return;
+                    }
+                } else {
+                    return;
+                }
+            } else {
+                i++;
+            }
+        }
+
+        if (VERBOSE) println("-- Processing action array: ${group.actions.toArrayList()}");
         for (action in group.actions) {
             if (EscapistsRuntime.getRuntime().application.objectDefs.size > action.objectInfo) {
                 val objectDef = EscapistsRuntime.getRuntime().application.objectDefs[action.objectInfo]
