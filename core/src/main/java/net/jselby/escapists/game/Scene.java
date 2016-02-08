@@ -113,7 +113,6 @@ public class Scene {
         firstFrame = true;
 
         // Prepare interpreter
-        //eventTicker = new JavascriptTicker(this, scope, events);
         eventTicker = new Interpreter(events, scope);
 
         frameCount = 0;
