@@ -266,7 +266,8 @@ public class EscapistsGame extends BasicGame {
         if (EscapistsRuntime.DEBUG) {
             int usedMem = (int) (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024 / 1024;
 
-            g.drawString("Escapists Runtime v" + EscapistsRuntime.VERSION, 5, 5);
+            g.drawString("Escapists Runtime v" + EscapistsRuntime.VERSION + " on " +
+                    Gdx.app.getType().name(), 5, 5);
             g.drawString("FPS: " + Gdx.graphics.getFramesPerSecond() + ", TPS: " + lastTPS + ", Mem: "
                     + usedMem + " MB", 5, 20);
         }
