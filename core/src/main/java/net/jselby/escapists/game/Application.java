@@ -105,6 +105,7 @@ public class Application {
         height = appHeader.getWindowHeight();
         objectDefs = frameItemsChunk.getInfo();
         targetFPS = (int) appHeader.getFrameRate();
+        System.out.println(targetFPS);
         fonts = fontBankChunk.fonts;
 
         // Discover highest handle

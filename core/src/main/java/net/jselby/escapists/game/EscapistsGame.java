@@ -96,9 +96,6 @@ public class EscapistsGame extends BasicGame {
                         e.printStackTrace();
                     }
 
-                    // Set our target FPS
-                    UPDATE_INTERVAL = 1000f / (float) app.getTargetFPS();
-
                     Gdx.app.postRunnable(new Runnable() {
                         @Override
                         public void run() {
@@ -107,6 +104,7 @@ public class EscapistsGame extends BasicGame {
                             if (EscapistsRuntime.DEBUG) System.out.println("Callback from app, all assets prepared.");
                             try {
                                 app.init(EscapistsGame.this);
+                                UPDATE_INTERVAL = 1000d / ((double) app.getTargetFPS());
                                 loadScene(0); // 2 = title screen, 6 = game
                             } catch (IOException e) {
                                 e.printStackTrace();
