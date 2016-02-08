@@ -319,6 +319,10 @@ public class EscapistsGame extends BasicGame {
         return utils;
     }
 
+    public void addMod(String name, String contents) {
+        mods.add(contents);
+    }
+
     public AudioManager getAudio() {
         return audio;
     }
