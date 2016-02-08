@@ -62,20 +62,15 @@ public class EscapistsRuntime {
         }
 
         // Locate the game directory, in Steam/storage root.
-        escapistsDirectory = new File(Gdx.files.getExternalStoragePath(), "The Escapists");
-        if (Gdx.app.getType() == com.badlogic.gdx.Application.ApplicationType.Desktop) {
-            escapistsDirectory = game.getPlatformUtils().findGameFolder();
-            if (escapistsDirectory == null) {
-                return false;
-            }
+        escapistsDirectory = game.getPlatformUtils().findGameFolder();
+        if (escapistsDirectory == null) {
+            return false;
         }
 
         System.out.println("Escapists directory: " + escapistsDirectory);
 
         if (!escapistsDirectory.exists()) {
-            game.fatalPrompt("Game does not exist in " +
-                    (Gdx.app.getType() == com.badlogic.gdx.Application.ApplicationType.Android
-                            ? "SD card/internal storage." : "same directory as application."));
+            game.fatalPrompt("Game does not exist in " + game.getPlatformUtils().getStorageName() + ".");
             return false;
         }
 

@@ -1,6 +1,5 @@
 package net.jselby.escapists.game.events.functions;
 
-import com.badlogic.gdx.Gdx;
 import net.jselby.escapists.game.events.Action;
 import net.jselby.escapists.game.events.FunctionCollection;
 

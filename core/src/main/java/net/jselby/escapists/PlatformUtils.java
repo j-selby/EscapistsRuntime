@@ -47,4 +47,10 @@ public abstract class PlatformUtils {
      * @return A save location
      */
     public abstract File getSaveLocation();
+
+    /**
+     * Gets the storage type name that we are saving to
+     * @return A human readable storage type
+     */
+    public abstract String getStorageName();
 }

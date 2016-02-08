@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import com.badlogic.gdx.Gdx;
 import net.jselby.escapists.PlatformUtils;
-import org.apache.commons.lang3.NotImplementedException;
 
 import java.io.File;
 
@@ -50,7 +49,7 @@ public class AndroidPlatformUtils extends PlatformUtils {
      */
     @Override
     public File findGameFolder() {
-        throw new NotImplementedException("Steam cannot be detected on a mobile platform!");
+        return new File(Gdx.files.getExternalStoragePath(), "The Escapists");
     }
 
     /**
@@ -78,6 +77,12 @@ public class AndroidPlatformUtils extends PlatformUtils {
 
     @Override
     public File getSaveLocation() {
-        return new File(Gdx.files.getExternalStoragePath());
+        System.out.println(parent.getContext().getFilesDir());
+        return parent.getContext().getFilesDir();
+    }
+
+    @Override
+    public String getStorageName() {
+        return "SD card/internal storage";
     }
 }

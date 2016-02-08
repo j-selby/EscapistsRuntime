@@ -153,6 +153,11 @@ public class DesktopPlatformUtils extends PlatformUtils {
         return new File(System.getProperty("user.home"));
     }
 
+    @Override
+    public String getStorageName() {
+        return "same directory as application, or a standard Steam install location";
+    }
+
     public boolean isWindows() {
         return System.getProperty("os.name").toLowerCase().contains("win");
     }
