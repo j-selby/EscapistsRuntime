@@ -40,9 +40,9 @@ class ParsedStatement(val statement : Array<Expression>) {
         // Iterate over operators
 
         // Convert brackets into their own statement
-        val list = ArrayList<ArrayList<Any>>();
+        val list = ArrayList<MutableList<Any>>();
 
-        list.add(newList.toArrayList());
+        list.add(newList.toMutableList());
         var stackElement = 0;
 
         while(stackElement < list.size) {
@@ -78,7 +78,7 @@ class ParsedStatement(val statement : Array<Expression>) {
 
                         val newId = list.size;
 
-                        val values = line.subList(i + 1, endIndex).toArrayList();
+                        val values = line.subList(i + 1, endIndex).toMutableList();
 
                         list.add(values);
                         if (VERBOSE) println("Preline: $line");
@@ -125,8 +125,8 @@ class ParsedStatement(val statement : Array<Expression>) {
         //}
     }
 
-    fun solveSimpleStatement(interpreter: Interpreter, expressionFunctions : ArrayList<ArrayList<Any>>,
-                             statement : ArrayList<Any>, returnArray : Boolean = false) : Any {
+    fun solveSimpleStatement(interpreter: Interpreter, expressionFunctions : ArrayList<MutableList<Any>>,
+                             statement : MutableList<Any>, returnArray : Boolean = false) : Any {
         // Check for subcalls first
         for(i in 0..statement.size - 1) {
             val oldValue = statement[i];
@@ -308,7 +308,7 @@ class ParsedStatement(val statement : Array<Expression>) {
         return statement[0];
     }
 
-    private fun removeEmptyTokens(statement: ArrayList<Any>) {
+    private fun removeEmptyTokens(statement: MutableList<Any>) {
         var i = 0;
         while(i < statement.size) {
             if (statement[i].javaClass.name.equals(EmptyToken::class.java.name)) {

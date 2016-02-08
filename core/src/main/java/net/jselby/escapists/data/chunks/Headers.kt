@@ -194,7 +194,7 @@ class AppHeader : Chunk() {
              * @return The GraphicsMode for the ID, or null if not found.
              */
             fun getForID(id: Int): GraphicsMode? {
-                for (mode in values) {
+                for (mode in values()) {
                     if (mode.id == id) {
                         return mode
                     }

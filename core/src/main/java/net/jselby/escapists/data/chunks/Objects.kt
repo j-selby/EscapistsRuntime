@@ -130,7 +130,7 @@ class ObjectProperties : Chunk() {
 }
 
 fun getById(id: Int): ObjectProperties.ObjectTypes? {
-    for (type in ObjectProperties.ObjectTypes.values) {
+    for (type in ObjectProperties.ObjectTypes.values()) {
         if (type.id == id) {
             return type
         }

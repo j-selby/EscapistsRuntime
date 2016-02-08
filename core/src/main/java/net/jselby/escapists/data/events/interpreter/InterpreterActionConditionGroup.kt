@@ -12,7 +12,7 @@ open class InterpreterActionConditionGroup(val group: Events.EventGroup?) {
         group!!
 
         // Check conditions
-        if (VERBOSE) println("-- Processing condition array: ${group.conditions.toArrayList()}");
+        if (VERBOSE) println("-- Processing condition array: ${group.conditions.toMutableList()}");
         // Search for OR statement, so we don't instantly short-circuit the result
         var hasOR = false;
         for (condition in group.conditions) {
@@ -63,8 +63,13 @@ open class InterpreterActionConditionGroup(val group: Events.EventGroup?) {
             }
         }
 
-        if (VERBOSE) println("-- Processing action array: ${group.actions.toArrayList()}");
+        if (VERBOSE) println("-- Processing action array: ${group.actions.toMutableList()}");
         for (action in group.actions) {
+            if (action.method == null) {
+                println("Action $action has no method!");
+                continue;
+            }
+
             if (EscapistsRuntime.getRuntime().application.objectDefs.size > action.objectInfo) {
                 val objectDef = EscapistsRuntime.getRuntime().application.objectDefs[action.objectInfo]
                 if (objectDef != null) {

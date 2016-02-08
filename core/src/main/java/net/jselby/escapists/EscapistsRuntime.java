@@ -29,7 +29,7 @@ import java.util.zip.Inflater;
  */
 public class EscapistsRuntime {
     public static final String VERSION = "0.1";
-    public static boolean DEBUG = false;
+    public static boolean DEBUG = true;
     public static final boolean USING_CLOSURE = false;
     public static final boolean UNPACK_FILES = false;
 
