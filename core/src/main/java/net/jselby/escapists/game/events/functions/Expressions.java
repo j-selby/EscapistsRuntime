@@ -85,7 +85,7 @@ public class Expressions extends FunctionCollection {
         return scope.getGame().globalInts.get(key);
     }
 
-    @Expression(subId = -1, id = 50, requiresArg1 = true)
+    @Expression(subId = -1, id = 50, requiresArg3 = true)
     public String GlobalString(int key) {
         return scope.getGame().globalStrings.get(key);
     }

@@ -4,6 +4,7 @@ import net.jselby.escapists.data.events.Expression
 import net.jselby.escapists.data.events.ExpressionValue
 import net.jselby.escapists.data.events.expression.ExpressionFunction
 import net.jselby.escapists.data.events.interpreter.statement.EmptyToken
+import net.jselby.escapists.data.events.interpreter.statement.TokenChildFunction
 import net.jselby.escapists.data.events.interpreter.statement.TokenFunction
 import java.util.*
 
@@ -54,7 +55,39 @@ class ParsedStatement(val statement : Array<Expression>) {
                 val initialObj = line[i];
 
                 if (initialObj is ExpressionValue.Parenthesis) {
-                    throw IllegalStateException("Parenthesis not implemented!");
+                    // It is. Add the additional arguments to the list array, so they can be processed separately.
+                    var level = 0;
+                    var endIndex = i + 1;
+                    while(true) {
+                        val obj = line[endIndex];
+                        if (obj is ExpressionValue.Parenthesis
+                                || (obj is ExpressionFunction && obj.annotation.openEnded)) {
+                            level++;
+                        } else if (obj is ExpressionValue.EndParenthesis) {
+                            if (level == 0) {
+                                break;
+                            } else {
+                                level--;
+                            }
+                        }
+                        endIndex++;
+                    }
+
+                    val newId = list.size;
+
+                    val values = line.subList(i + 1, endIndex).toMutableList();
+
+                    list.add(values);
+                    if (VERBOSE) println("Preline: $line");
+
+                    line[i] = TokenChildFunction(newId);
+                    for (x in (i + 1)..endIndex) {
+                        line[x] = EmptyToken();
+                    }
+                    removeEmptyTokens(line);
+
+                    if (VERBOSE) println("Postline: $line");
+                    if (VERBOSE) println("Values: $values");
                 } else if (initialObj is ExpressionFunction) {
                     // Cool. Lets check if this requires any arguments.
                     if (initialObj.annotation.openEnded) {
@@ -135,6 +168,9 @@ class ParsedStatement(val statement : Array<Expression>) {
                         expressionFunctions[oldValue.id], returnArray = true) as ArrayList<Any>;
                 oldValue.callChild.openParams = args.toList();
                 statement[i] = interpreter.callMethod(oldValue.callChild.method, oldValue.callChild.parameters)
+            } else if (oldValue is TokenChildFunction) {
+                statement[i] = solveSimpleStatement(interpreter, expressionFunctions,
+                        expressionFunctions[oldValue.id]);
             }
         }
 

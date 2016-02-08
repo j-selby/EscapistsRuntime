@@ -30,7 +30,7 @@ public class ExpressionFunction extends ExpressionValue {
 
     @Override
     public void read(ByteReader buffer) {
-        value1 = buffer.getShort();
+        value1 = buffer.getShort(); // TODO: This used to be first with GlobalCommon, fix implementing functions
         value2 = buffer.getShort();
         value3 = buffer.getShort();
     }

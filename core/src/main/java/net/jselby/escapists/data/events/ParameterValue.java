@@ -328,6 +328,11 @@ public abstract class ParameterValue {
         public java.lang.String toString() {
             return "" + value.toIntBits();
         }
+
+        @Override
+        public void add(Interpreter interpreter, ArrayList<java.lang.Object> list) {
+            list.add(value.toIntBits());
+        }
     }
 
     public static class Program extends ParameterValue {

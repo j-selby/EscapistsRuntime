@@ -60,10 +60,10 @@ public class Graphics extends FunctionCollection {
     }
 
     @Action(subId = 3, id = 88)
-    public void SetString(String value) {
+    public void SetString(Object value) {
         for (ObjectInstance object : scope.getObjects()) {
             if (object instanceof Text) {
-                ((Text) object).setString(value);
+                ((Text) object).setString(value.toString());
             }
         }
     }
