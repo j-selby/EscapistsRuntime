@@ -44,10 +44,10 @@ public class Application {
     private final EscapistsRuntime runtime;
     private List<Chunk> chunks;
 
-    private String name;
-    private String author;
-    private Pixmap icon;
-    private String copyright;
+    public String name;
+    public String author;
+    public Pixmap icon;
+    public String copyright;
 
     public List<Scene> frames;
     public Map<String, PropertiesFile> properties = new HashMap<String, PropertiesFile>();
@@ -71,15 +71,16 @@ public class Application {
         AppIcon appIconChunk = (AppIcon) ChunkUtils.popChunk(chunks, AppIcon.class);
         Copyright copyrightChunk = (Copyright) ChunkUtils.popChunk(chunks, Copyright.class);
         AppHeader appHeader = (AppHeader) ChunkUtils.popChunk(chunks, AppHeader.class);
-        EditorFilename editorFilenameChunk = (EditorFilename) ChunkUtils.popChunk(chunks, EditorFilename.class);
-        TargetFilename targetFilenameChunk = (TargetFilename) ChunkUtils.popChunk(chunks, TargetFilename.class);
-        ExtendedHeader extendedHeaderChunk = (ExtendedHeader) ChunkUtils.popChunk(chunks, ExtendedHeader.class);
-        AboutText aboutTextChunk = (AboutText) ChunkUtils.popChunk(chunks, AboutText.class);
         GlobalValues globalValuesChunk = (GlobalValues) ChunkUtils.popChunk(chunks, GlobalValues.class);
         GlobalStrings globalStringsChunk = (GlobalStrings) ChunkUtils.popChunk(chunks, GlobalStrings.class);
         FrameItems frameItemsChunk = (FrameItems) ChunkUtils.popChunk(chunks, FrameItems.class);
         final FontBank fontBankChunk = (FontBank) ChunkUtils.popChunk(chunks, FontBank.class);
-        final SoundBank soundBankChunk = (SoundBank) ChunkUtils.popChunk(chunks, SoundBank.class);
+
+        ChunkUtils.popChunk(chunks, EditorFilename.class);
+        ChunkUtils.popChunk(chunks, TargetFilename.class);
+        ChunkUtils.popChunk(chunks, ExtendedHeader.class);
+        ChunkUtils.popChunk(chunks, AboutText.class);
+        ChunkUtils.popChunk(chunks, SoundBank.class);
 
         // Get remaining chunks
         final ImageBank imageBankChunk = (ImageBank) ChunkUtils.popChunk(chunks, ImageBank.class);
@@ -176,9 +177,5 @@ public class Application {
 
     public int getTargetFPS() {
         return targetFPS;
-    }
-
-    public Pixmap getAppIcon() {
-        return icon;
     }
 }

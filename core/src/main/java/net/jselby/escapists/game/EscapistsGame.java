@@ -14,13 +14,12 @@ import org.mini2Dx.core.graphics.Sprite;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 public class EscapistsGame extends BasicGame {
 	public static final String GAME_IDENTIFIER = "net.jselby.escapists";
-    private static final double UPDATE_INTERVAL = 1000d / 45d;
+    private static double UPDATE_INTERVAL = 1000d / 45d;
 
     private Sprite loadingLogo;
     private BitmapFont loadingFont;
@@ -36,7 +35,7 @@ public class EscapistsGame extends BasicGame {
     private int sceneIndex;
     public Map<Integer, Number> globalInts;
     public Map<Integer, String> globalStrings;
-    private ArrayList<String> mods;
+    public ArrayList<String> mods;
 
     private boolean pauseError = false;
     private long lastFrame;
@@ -96,6 +95,9 @@ public class EscapistsGame extends BasicGame {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
+
+                    // Set our target FPS
+                    UPDATE_INTERVAL = 1000f / (float) app.getTargetFPS();
 
                     Gdx.app.postRunnable(new Runnable() {
                         @Override
@@ -225,8 +227,8 @@ public class EscapistsGame extends BasicGame {
 
             g.setColor(currentFrame.getBackground());
             g.fillRect(0, 0, g.getCurrentWidth(), g.getCurrentHeight());
-            g.scale(((float) g.getCurrentWidth()) / ((float) app.getWindowWidth()),
-                    ((float) g.getCurrentHeight()) / ((float) app.getWindowHeight()));
+            g.scale(g.getCurrentWidth() / ((float) app.getWindowWidth()),
+                    g.getCurrentHeight() / ((float) app.getWindowHeight()));
             float scaleX = g.getScaleX();
             float scaleY = g.getScaleY();
 
@@ -315,14 +317,6 @@ public class EscapistsGame extends BasicGame {
 
     public PlatformUtils getPlatformUtils() {
         return utils;
-    }
-
-    public Collection<String> getMods() {
-        return mods;
-    }
-
-    public void addMod(String name, String contents) {
-        mods.add(contents);
     }
 
     public AudioManager getAudio() {

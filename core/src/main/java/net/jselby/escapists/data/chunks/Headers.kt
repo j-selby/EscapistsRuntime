@@ -209,7 +209,7 @@ class AppHeader : Chunk() {
      * Reads a Control section from a AppHeader
      * @param buf The buffer to read from.
      */
-    public constructor(buf: ByteReader) {
+    constructor(buf: ByteReader) {
         private val controlType: Short
 
         var up: Short = 0

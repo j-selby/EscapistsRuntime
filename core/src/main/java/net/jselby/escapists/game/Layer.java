@@ -1,6 +1,5 @@
 package net.jselby.escapists.game;
 
-import net.jselby.escapists.EscapistsRuntime;
 import net.jselby.escapists.data.chunks.Layers;
 import org.mini2Dx.core.graphics.Graphics;
 
@@ -19,7 +18,7 @@ public class Layer {
     private long flags;
     private boolean isVisible;
 
-    public Layer(EscapistsRuntime runtime, Scene parent, int index, Layers.Layer layerDefinition) {
+    public Layer(Scene parent, int index, Layers.Layer layerDefinition) {
         this.name = layerDefinition.name;
         this.flags = layerDefinition.flags;
 
@@ -34,7 +33,7 @@ public class Layer {
         isVisible = ((getFlags() >> 17) & 1) == 0;
     }
 
-    public Layer(EscapistsRuntime runtime, Scene scene, int i) {
+    public Layer() {
         this.name = "<InFront, Injected>";
 
         // Grab our objects

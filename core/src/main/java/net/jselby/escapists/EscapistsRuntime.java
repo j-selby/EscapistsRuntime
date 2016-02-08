@@ -30,7 +30,6 @@ import java.util.zip.Inflater;
 public class EscapistsRuntime {
     public static final String VERSION = "0.2";
     public static boolean DEBUG = true;
-    public static final boolean USING_CLOSURE = false;
     public static final boolean UNPACK_FILES = false;
 
     private static final byte[] UNICODE_GAME_HEADER = "PAMU".getBytes();
@@ -131,7 +130,7 @@ public class EscapistsRuntime {
 
         buf.skipBytes(4);
         // Pack metadata
-        int formatVersion = buf.getInt();
+        buf.getInt(); // Format version
         if (buf.getInt() != 0 || buf.getInt() != 0) {
             System.out.println("Bad pack header padding.");
             game.fatalPrompt("Game failed validation check (PACK_HEADER_PADDING). Is the correct Escapists file (TheEscapists_eur.exe)?");
@@ -200,9 +199,9 @@ public class EscapistsRuntime {
         if (runtimeVersion != 0x0302) {
             System.out.printf("Unknown runtime version \"%d\", has the game been updated?\n", runtimeVersion);
         }
-        int runtimeSubversion = buf.getShort();
-        int productVersion = buf.getInt();
-        int productBuild = buf.getInt();
+        buf.getShort(); // runtimeSubversion
+        buf.getInt(); // productVersion
+        buf.getInt(); // productBuild
 
         //System.out.printf("Game version %d, build %d.\n", productVersion, productBuild);
 
@@ -215,14 +214,20 @@ public class EscapistsRuntime {
 
         File saveLocation = new File(game.getPlatformUtils().getSaveLocation(),
                 "The Escapists" + File.separator + "mods");
+
+        // Check that we actually have files in our mod directory here
+        File[] fileList = saveLocation.listFiles();
         if (!saveLocation.exists() && !saveLocation.mkdirs()) {
             game.fatalPrompt("Failed to write to storage.");
             return false;
         }
-        for (File child : saveLocation.listFiles()) {
-            if (child.getName().toLowerCase().endsWith(".mod")) {
-                // Load mod in
-                game.addMod(child.getName(), IOUtils.toString(child.toURI()));
+
+        if (fileList != null) {
+            for (File child : fileList) {
+                if (child.getName().toLowerCase().endsWith(".mod")) {
+                    // Load mod in
+                    game.addMod(child.getName(), IOUtils.toString(child.toURI()));
+                }
             }
         }
 

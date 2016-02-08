@@ -55,6 +55,9 @@ public class Scene {
     public Scene(EscapistsRuntime runtime, Frame frame, EscapistsGame game) {
         this.runtime = runtime;
         assert frame != null;
+        assert frame.getObjects() != null;
+        assert frame.getLayers() != null;
+
         name = frame.getName();
         background = frame.getBackground();
         objectInstanceDefs = frame.getObjects().instances;
@@ -106,9 +109,9 @@ public class Scene {
         // Create layers
         layers = new Layer[layerDefinitions.length + 1]; // Additional layer for mouse etc
         for (int i = 0; i < layerDefinitions.length; i++) {
-            layers[i] = new Layer(runtime, this, i, layerDefinitions[i]);
+            layers[i] = new Layer(this, i, layerDefinitions[i]);
         }
-        layers[layers.length - 1] = new Layer(runtime, this, layers.length - 1);
+        layers[layers.length - 1] = new Layer();
 
         firstFrame = true;
 
