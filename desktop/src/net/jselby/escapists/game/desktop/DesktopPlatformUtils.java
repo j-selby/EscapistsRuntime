@@ -1,20 +1,17 @@
 package net.jselby.escapists.game.desktop;
 
 import com.badlogic.gdx.Gdx;
-import com.codedisaster.steamworks.*;
+import com.codedisaster.steamworks.SteamID;
+import com.codedisaster.steamworks.SteamUser;
 import net.jselby.escapists.PlatformUtils;
-import org.lwjgl.opengl.Display;
-import org.lwjgl.input.Cursor;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
+import org.lwjgl.input.Cursor;
 import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.Display;
 
 import javax.swing.*;
-import java.awt.*;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 
 /**
  * PlatformUtils implementation for Desktop platforms.
@@ -140,9 +137,16 @@ public class DesktopPlatformUtils extends PlatformUtils {
     @Override
     public File getSaveLocation() {
         if (isWindows()) {
-            File file = new File(System.getProperty("user.home") + File.separator + "My Documents");
+            if (System.getProperty("os.name").toLowerCase().contains("xp")) {
+                File file = new File(System.getProperty("user.home") + File.separator + "My Documents");
+                if (file.exists()) {
+                    return file;
+                }
+            }
+
+            File file = new File(System.getProperty("user.home") + File.separator + "Documents");
             if (!file.exists()) {
-                file = new File(System.getProperty("user.home") + File.separator + "Documents");
+                file = new File(System.getProperty("user.home") + File.separator + "My Documents");
             }
             return file;
         }
