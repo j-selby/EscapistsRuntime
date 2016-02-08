@@ -221,9 +221,9 @@ public class Expressions extends FunctionCollection {
                 .getAbsolutePath().substring(ApplicationDrive().length()) + File.separator;
     }
 
-    @Expression(subId = -1, id = 4, requiresArg1 = true, openEnded = true)
-    public String ToString(int id, String str) {
-        return str; // Automatically done
+    @Expression(subId = -1, id = 4, openEnded = true)
+    public String ToString(Object str) {
+        return str.toString(); // Automatically done
     }
 
 
