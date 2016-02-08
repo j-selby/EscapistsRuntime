@@ -25,6 +25,14 @@ open class InterpreterActionConditionGroup(val group: Events.EventGroup?) {
         var i = 0;
         while (i < group.conditions.size) {
             val condition = group.conditions[i];
+            if (condition.method.method.name.equals("OrFiltered")) {
+                if (i == 0) {
+                    throw IllegalStateException("OR token placed at first position?!?!?")
+                }
+                // If we have successfully made it to this point, we are good to go
+                break;
+            }
+
             var response : Boolean;
             if (EscapistsRuntime.getRuntime().application.objectDefs.size > condition.objectInfo) {
                 val objectDef = EscapistsRuntime.getRuntime().application.objectDefs[condition.objectInfo];
