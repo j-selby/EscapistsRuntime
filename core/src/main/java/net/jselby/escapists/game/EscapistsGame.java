@@ -118,6 +118,7 @@ public class EscapistsGame extends BasicGame {
                     });
                 } catch (IOException e) {
                     e.printStackTrace();
+                    getPlatformUtils().showFatalMessageBox("Fatal Error", e.getLocalizedMessage());
                 }
             }
         });

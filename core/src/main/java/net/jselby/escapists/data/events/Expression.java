@@ -17,9 +17,6 @@ public class Expression {
 
     public ExpressionValue value;
 
-    private int objectInfo;
-    private short objectInfoList;
-
     public Expression(ByteReader buffer) {
         int currentPosition = buffer.getPosition();
         objectType = buffer.getShort();
@@ -41,8 +38,8 @@ public class Expression {
                     value = ExpressionValue.getExpression(ExpressionNames.getByID(objectType, num), buffer);
                 }
             } else if (objectType >= 2 || objectType == -7) {
-                objectInfo = buffer.getUnsignedShort();
-                objectInfoList = buffer.getShort();
+                int objectInfo = buffer.getUnsignedShort();
+                short objectInfoList = buffer.getShort();
                 if (ExpressionNames.getByExtensionID(num) != null) {
                     value = ExpressionValue.getExpression(ExpressionNames.getByExtensionID(num), buffer);
                 }// else {
