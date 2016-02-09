@@ -40,6 +40,7 @@ public class EscapistsRuntime {
     private Application application;
     private FunctionRegister register = new FunctionRegister();
     private File escapistsDirectory;
+    private PlatformUtils platformUtils;
 
     public static EscapistsRuntime getRuntime() {
         return runtime;
@@ -61,7 +62,8 @@ public class EscapistsRuntime {
         }
 
         // Locate the game directory, in Steam/storage root.
-        escapistsDirectory = game.getPlatformUtils().findGameFolder();
+        platformUtils = game.getPlatformUtils();
+        escapistsDirectory = platformUtils.findGameFolder();
         if (escapistsDirectory == null) {
             return false;
         }
@@ -246,5 +248,9 @@ public class EscapistsRuntime {
 
     public FunctionRegister getRegister() {
         return register;
+    }
+
+    public PlatformUtils getPlatformUtils() {
+        return platformUtils;
     }
 }

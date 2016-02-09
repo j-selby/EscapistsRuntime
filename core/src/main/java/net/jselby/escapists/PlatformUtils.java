@@ -49,6 +49,12 @@ public abstract class PlatformUtils {
     public abstract File getSaveLocation();
 
     /**
+     * Gets the cache location for this platform
+     * @return A cache location
+     */
+    public abstract File getCacheLocation();
+
+    /**
      * Gets the storage type name that we are saving to
      * @return A human readable storage type
      */

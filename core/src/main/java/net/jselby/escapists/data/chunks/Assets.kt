@@ -321,13 +321,12 @@ class SoundBank : Chunk() {
 
             data.position = 0;
 
-            val directory = EscapistsRuntime.getRuntime().gamePath.absolutePath + File.separator + "audio" + File.separator;
-            val directoryFile = File(directory);
+            val directoryFile = File(EscapistsRuntime.getRuntime().platformUtils.cacheLocation, "audio");
             if (!directoryFile.exists() && !directoryFile.mkdirs()) {
                 throw IllegalStateException("Failed to create audio directory.");
             }
-            if (!File("$directory$name.$extension").exists()) {
-                val out = FileOutputStream("$directory$name.$extension");
+            if (!File(directoryFile, "$name.$extension").exists()) {
+                val out = FileOutputStream(File(directoryFile, "$name.$extension"));
                 out.write(data.getBytes(decompressedLength));
                 out.close();
             }

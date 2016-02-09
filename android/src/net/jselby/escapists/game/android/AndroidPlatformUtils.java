@@ -77,8 +77,12 @@ public class AndroidPlatformUtils extends PlatformUtils {
 
     @Override
     public File getSaveLocation() {
-        System.out.println(parent.getContext().getFilesDir());
         return parent.getContext().getFilesDir();
+    }
+
+    @Override
+    public File getCacheLocation() {
+        return parent.getContext().getCacheDir();
     }
 
     @Override

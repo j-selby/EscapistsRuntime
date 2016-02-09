@@ -154,6 +154,11 @@ public class DesktopPlatformUtils extends PlatformUtils {
     }
 
     @Override
+    public File getCacheLocation() {
+        return getSaveLocation();
+    }
+
+    @Override
     public String getStorageName() {
         return "same directory as application, or a standard Steam install location";
     }
