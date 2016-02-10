@@ -25,6 +25,9 @@ class ParsedStatement(val statement : Array<Expression>) {
         val newList = ArrayList<Any>(); // Token is a operation or function
         for (expression in statement) {
             val value = expression.value;
+            if (VERBOSE) {
+                print(expression.toString() + " ");
+            }
             // Convert the expression Object to a raw value.
             if (value is ExpressionValue.Long) {
                 newList.add(value.value);
@@ -137,14 +140,16 @@ class ParsedStatement(val statement : Array<Expression>) {
             stackElement++;
         }
 
+        // Iterate over the statement now
+        if (VERBOSE) {
+            print("Processing: $list... ");
+        }
+
         // Short circuit the statement
         if (list.size == 1 && list[0].size == 1) {
             if (VERBOSE) println("Short circuiting statement: $list");
             return list[0][0];
         }
-
-        // Iterate over the statement now
-        if (VERBOSE) print("Processing: $list... ");
 
         val statement = solveSimpleStatement(interpreter, list, list[0]);
 

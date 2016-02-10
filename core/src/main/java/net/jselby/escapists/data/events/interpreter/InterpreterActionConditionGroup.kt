@@ -3,6 +3,7 @@ package net.jselby.escapists.data.events.interpreter
 import net.jselby.escapists.EscapistsRuntime
 import net.jselby.escapists.data.chunks.Events
 import net.jselby.escapists.game.events.Scope
+import java.lang.reflect.InvocationTargetException
 
 /**
  * A interpreter event loop object is a EventLoop that is able to hold state.
@@ -26,69 +27,77 @@ open class InterpreterActionConditionGroup(val group: Events.EventGroup?) {
             var i = 0;
             while (i < group.conditions.size) {
                 val condition = group.conditions[i];
-                if (condition.method.method.name.equals("OrFiltered")) {
-                    if (i == 0) {
-                        throw IllegalStateException("OR token placed at first position?!?!?")
+                try {
+                    if (condition.method.method.name.equals("OrFiltered")) {
+                        if (i == 0) {
+                            throw IllegalStateException("OR token placed at first position?!?!?")
+                        }
+                        // If we have successfully made it to this point, we are good to go
+                        break;
                     }
-                    // If we have successfully made it to this point, we are good to go
-                    break;
-                }
 
-                var response: Boolean;
-                if (EscapistsRuntime.getRuntime().application.objectDefs.size > condition.objectInfo) {
-                    val objectDef = EscapistsRuntime.getRuntime().application.objectDefs[condition.objectInfo];
-                    if (objectDef != null) {
-                        response = (interpreter.callMethod(condition.method, condition.items,
-                                condition.identifier, objectDef.handle.toInt()) as Boolean);
+                    var response: Boolean;
+                    if (EscapistsRuntime.getRuntime().application.objectDefs.size > condition.objectInfo) {
+                        val objectDef = EscapistsRuntime.getRuntime().application.objectDefs[condition.objectInfo];
+                        if (objectDef != null) {
+                            response = (interpreter.callMethod(condition.method, condition.items,
+                                    condition.identifier, objectDef.handle.toInt()) as Boolean);
+                        } else {
+                            response = (interpreter.callMethod(condition.method, condition.items,
+                                    condition.identifier) as Boolean);
+                        }
                     } else {
                         response = (interpreter.callMethod(condition.method, condition.items,
                                 condition.identifier) as Boolean);
                     }
-                } else {
-                    response = (interpreter.callMethod(condition.method, condition.items,
-                            condition.identifier) as Boolean);
-                }
 
-                if (response == condition.inverted()) {
-                    if (hasOR) {
-                        // We need to handle this directly
-                        while (i < group.conditions.size) {
-                            if (group.conditions[i].method.method.name.equals("OrFiltered")) {
+                    if (response == condition.inverted()) {
+                        if (hasOR) {
+                            // We need to handle this directly
+                            while (i < group.conditions.size) {
+                                if (group.conditions[i].method.method.name.equals("OrFiltered")) {
+                                    i++;
+                                    break;
+                                }
                                 i++;
-                                break;
                             }
-                            i++;
-                        }
 
-                        if (i == group.conditions.size) {
-                            // We reached our last OR statement
+                            if (i == group.conditions.size) {
+                                // We reached our last OR statement
+                                return;
+                            }
+                        } else {
                             return;
                         }
                     } else {
-                        return;
+                        i++;
                     }
-                } else {
-                    i++;
+                } catch (e : InvocationTargetException) {
+                    throw IllegalStateException("Interpreter error processing condition: $condition", e);
                 }
             }
 
             if (VERBOSE) println("-- Processing action array: ${group.actions.toMutableList()}");
             for (action in group.actions) {
-                if (action.method == null) {
-                    println("Action $action has no method!");
-                    continue;
-                }
-
-                if (EscapistsRuntime.getRuntime().application.objectDefs.size > action.objectInfo) {
-                    val objectDef = EscapistsRuntime.getRuntime().application.objectDefs[action.objectInfo]
-                    if (objectDef != null) {
-                        interpreter.callMethod(action.method, action.items,
-                                action.objectInfo.toShort(), objectDef.handle.toInt())
+                try {
+                    if (action.method == null) {
+                        println("Action $action has no method!");
                         continue;
                     }
-                }
 
-                interpreter.callMethod(action.method, action.items, action.objectInfo.toShort())
+                    if (EscapistsRuntime.getRuntime().application.objectDefs.size > action.objectInfo) {
+                        val objectDef = EscapistsRuntime.getRuntime().application.objectDefs[action.objectInfo]
+                        if (objectDef != null) {
+                            interpreter.callMethod(action.method, action.items,
+                                    action.objectInfo.toShort(), objectDef.handle.toInt())
+                            continue;
+                        }
+                    }
+
+                    interpreter.callMethod(action.method, action.items, action.objectInfo.toShort())
+                } catch (e : InvocationTargetException) {
+                    throw IllegalStateException("Interpreter error processing action: $action", e);
+                }
             }
         } finally {
             interpreter.functions[0].scope.clearScopeObjects();

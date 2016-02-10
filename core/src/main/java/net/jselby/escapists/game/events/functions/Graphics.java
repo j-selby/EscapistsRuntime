@@ -20,7 +20,8 @@ public class Graphics extends FunctionCollection {
     @Action(subId = 2, id = 40)
     public void SetAnimationFrame(int frame) {
         if (frame < 0) {
-            throw new IllegalArgumentException("Bad frame: " + frame);
+            return;
+            //throw new IllegalArgumentException("Bad frame: " + frame);
         }
 
         for (ObjectInstance object : scope.getObjects()) {

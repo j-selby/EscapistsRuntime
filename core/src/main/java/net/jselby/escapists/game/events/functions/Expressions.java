@@ -52,8 +52,38 @@ public class Expressions extends FunctionCollection {
         return 0;
     }
 
+    @Expression(subId = 2, id = 11, requiresArg1 = true, requiresArg2 = true)
+    public float GetX(int id, int extra) {
+        for (ObjectInstance instance : scope.getScene().getObjects()) {
+            if (instance.getObjectInfo() == id) {
+                return instance.getX();
+            }
+        }
+        return 0;
+    }
+
+    @Expression(subId = 3, id = 11, requiresArg1 = true, requiresArg2 = true)
+    public float GetX3(int id, int extra) {
+        for (ObjectInstance instance : scope.getScene().getObjects()) {
+            if (instance.getObjectInfo() == id) {
+                return instance.getX();
+            }
+        }
+        return 0;
+    }
+
     @Expression(subId = 2, id = 1, requiresArg1 = true, requiresArg2 = true)
     public float GetY(int id, int extra) {
+        for (ObjectInstance instance : scope.getScene().getObjects()) {
+            if (instance.getObjectInfo() == id) {
+                return instance.getY();
+            }
+        }
+        return 0;
+    }
+
+    @Expression(subId = 3, id = 1, requiresArg1 = true, requiresArg2 = true)
+    public float GetY3(int id, int extra) {
         for (ObjectInstance instance : scope.getScene().getObjects()) {
             if (instance.getObjectInfo() == id) {
                 return instance.getY();
