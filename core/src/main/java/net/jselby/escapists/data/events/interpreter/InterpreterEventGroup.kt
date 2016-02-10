@@ -30,4 +30,15 @@ class InterpreterEventGroup(val id: Int) : InterpreterActionConditionGroup(null)
         return "InterpreterEventGroup={children=${children.toString()}";
     }
 
+    override fun getAsDebuggingString() : String {
+        var events = "";
+        events += "enter-group=$id\n\t";
+
+        for (child in children) {
+            events += child.getAsDebuggingString().replace("\n", "\n\t");
+        }
+
+        events += "leave-group=$id\n";
+        return events;
+    }
 }

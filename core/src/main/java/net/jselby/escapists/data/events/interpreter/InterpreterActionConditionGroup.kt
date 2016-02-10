@@ -102,4 +102,23 @@ open class InterpreterActionConditionGroup(val group: Events.EventGroup?) {
 
         throw UnsupportedOperationException("implementer hasn't implemented toString()")
     }
+
+    open fun getAsDebuggingString(): String {
+        var events = "";
+        events += "new statement\n";
+        events += "\tconditions\n";
+        for (condition in group!!.conditions) {
+            events += "\t\t" + condition.toString() + "\n";
+        }
+
+
+        events += "\tactions\n";
+        for (action in group.actions) {
+            events += "\t\t" + action.toString() + "\n";
+        }
+
+        events += "end statement\n\n"
+
+        return events;
+    }
 }

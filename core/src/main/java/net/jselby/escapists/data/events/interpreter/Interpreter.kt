@@ -135,4 +135,15 @@ class Interpreter(events : Events, scope : Scope) : EventTicker(events) {
 
         throw IllegalStateException("No implementing collection for name ${targetClass.name}");
     }
+
+    override fun getAsDebuggingString(): String {
+        // Iterate over our groups
+        var events = "";
+
+        for (group in groups) {
+            events += group.getAsDebuggingString() + "\n";
+        }
+
+        return events;
+    }
 }

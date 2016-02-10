@@ -13,6 +13,9 @@ import net.jselby.escapists.data.events.interpreter.Interpreter;
 import net.jselby.escapists.game.events.Scope;
 import org.mini2Dx.core.graphics.Graphics;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -117,6 +120,15 @@ public class Scene {
 
         // Prepare interpreter
         eventTicker = new Interpreter(events, scope);
+
+        String contents = eventTicker.getAsDebuggingString();
+        try {
+            FileOutputStream out = new FileOutputStream(name + ".scene");
+            out.write(contents.getBytes());
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         frameCount = 0;
         startTime = System.currentTimeMillis();

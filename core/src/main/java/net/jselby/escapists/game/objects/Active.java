@@ -10,6 +10,8 @@ import net.jselby.escapists.game.EscapistsGame;
 import net.jselby.escapists.game.ObjectInstance;
 import org.mini2Dx.core.graphics.Graphics;
 
+import java.util.Arrays;
+
 /**
  * A Active object is a object that is actively changing within the world.
  *
@@ -31,7 +33,21 @@ public class Active extends ObjectInstance {
         ObjectCommon common = ((ObjectCommon) definition.properties.getProperties());
         animations = common.animations;
 
+        // Find the first useful animation
+        int i = 0;
+        for (AnimationHeader.Animation animation : animations.loadedAnimations) {
+            if (animation != null) {
+                setAnimation(i);
+                break;
+            }
+            i++;
+        }
+
         tick(null);
+
+        if (getObjectInfo() == 540) {
+            System.out.println(Arrays.toString(common.animations.loadedAnimations));
+        }
     }
 
     @Override

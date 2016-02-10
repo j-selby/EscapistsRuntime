@@ -14,4 +14,6 @@ public abstract class EventTicker {
     }
 
     public abstract void tick(Scope scope);
+
+    public abstract String getAsDebuggingString();
 }
