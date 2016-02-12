@@ -38,10 +38,10 @@ public class Frames extends FunctionCollection {
     @Action(subId = 2, id = 57)
     public void BringToFront() {
         for (ObjectInstance object : scope.getObjects()) {
-            for (Layer layer : scope.getScene().getLayers()) {
+            Layer[] layers = scope.getScene().getLayers();
+            for (Layer layer : layers) {
                 layer.objects.remove(object);
             }
-            Layer[] layers = scope.getScene().getLayers();
             layers[layers.length - 1].objects.add(object);
         }
     }

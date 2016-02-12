@@ -13,7 +13,6 @@ import net.jselby.escapists.data.events.interpreter.Interpreter;
 import net.jselby.escapists.game.events.Scope;
 import org.mini2Dx.core.graphics.Graphics;
 
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;

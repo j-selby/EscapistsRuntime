@@ -307,4 +307,9 @@ public class Expressions extends FunctionCollection {
     public int StringLength(int id, String content) {
         return content.length();
     }
+
+    @Expression(subId = -1, id = 41, openEnded = true)
+    public int Max(int x1, int x2) {
+        return x1 > x2 ? x1 : x2;
+    }
 }

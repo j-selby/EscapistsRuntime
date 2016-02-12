@@ -3,7 +3,6 @@ package net.jselby.escapists.data.events.interpreter
 import net.jselby.escapists.EscapistsRuntime
 import net.jselby.escapists.data.chunks.Events
 import net.jselby.escapists.game.events.Scope
-import java.lang.reflect.InvocationTargetException
 
 /**
  * A interpreter event loop object is a EventLoop that is able to hold state.
@@ -72,7 +71,7 @@ open class InterpreterActionConditionGroup(val group: Events.EventGroup?) {
                     } else {
                         i++;
                     }
-                } catch (e : InvocationTargetException) {
+                } catch (e : Exception) {
                     throw IllegalStateException("Interpreter error processing condition: $condition", e);
                 }
             }
@@ -95,7 +94,7 @@ open class InterpreterActionConditionGroup(val group: Events.EventGroup?) {
                     }
 
                     interpreter.callMethod(action.method, action.items, action.objectInfo.toShort())
-                } catch (e : InvocationTargetException) {
+                } catch (e : Exception) {
                     throw IllegalStateException("Interpreter error processing action: $action", e);
                 }
             }
