@@ -51,8 +51,8 @@ public class NetIO extends FunctionCollection {
                             @Override
                             public void run() {
                                 for (ObjectInstance instance : instances) {
-                                    instance.getVariables().put("_env_gethttp", content);
-                                    instance.getVariables().put("_env_gethttp_completed", true);
+                                    instance.setHttpContent(content);
+                                    instance.setHttpContentLoaded(true);
                                 }
                             }
                         });
@@ -80,12 +80,7 @@ public class NetIO extends FunctionCollection {
         boolean hasCompleted = false;
 
         for (ObjectInstance instance : scope.getObjects()) {
-            if (instance.getVariables().containsKey("_env_gethttp_completed")) {
-                if ((Boolean) instance.getVariables().get("_env_gethttp_completed")) {
-                    hasCompleted = true;
-                }
-                instance.getVariables().remove("_env_gethttp_completed");
-            }
+            hasCompleted = instance.getHttpContentLoaded();
         }
 
         return hasCompleted;

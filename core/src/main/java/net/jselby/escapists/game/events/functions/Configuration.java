@@ -59,7 +59,7 @@ public class Configuration extends FunctionCollection {
         for (ObjectInstance object : objects) {
             for (Map.Entry<String, PropertiesSection> section : propertiesFile.entrySet()) {
                 for (Map.Entry<String, Object> item : section.getValue().entrySet()) {
-                    object.getVariables().put(section.getKey() + ":" + item.getKey(), item.getValue());
+                    object.getConfigVariables().put(section.getKey() + ":" + item.getKey(), item.getValue());
                 }
             }
         }
@@ -68,10 +68,10 @@ public class Configuration extends FunctionCollection {
     @Action(subId = 47, id = 158)
     public void loadIniFileAndClear(String path, int unknown) {
         for (ObjectInstance instance : scope.peekAtObjects()) {
-            for (Object var : instance.getVariables().entrySet().toArray()) {
+            for (Object var : instance.getConfigVariables().entrySet().toArray()) {
                 Map.Entry<String, Object> pair = (Map.Entry<String, Object>) var;
                 if (pair.getKey().contains(":")) {
-                    instance.getVariables().remove(pair.getKey());
+                    instance.getConfigVariables().remove(pair.getKey());
                 }
             }
         }
@@ -98,14 +98,14 @@ public class Configuration extends FunctionCollection {
             return;
         }
         for (ObjectInstance instance : instances) {
-            instance.getVariables().put(section + ":" + key, value);
+            instance.getConfigVariables().put(section + ":" + key, value);
         }
 
         ObjectInstance instance = instances[0];
         System.out.println("SetItemValue: " + section + ":" + key + " = " + value + " @ " + instance.getLoadedFile());
 
         HashMap<String, HashMap<String, Object>> map = new HashMap<String, HashMap<String, Object>>();
-        for (Map.Entry<String, Object> var : instance.getVariables().entrySet()) {
+        for (Map.Entry<String, Object> var : instance.getConfigVariables().entrySet()) {
             if (var.getKey().contains(":")) {
                 String varSection = var.getKey().split(":")[0];
                 String varKey = var.getKey().split(":")[1];
@@ -153,14 +153,14 @@ public class Configuration extends FunctionCollection {
             return;
         }
         for (ObjectInstance instance : instances) {
-            instance.getVariables().put(section + ":" + key, value);
+            instance.getConfigVariables().put(section + ":" + key, value);
         }
 
         ObjectInstance instance = instances[0];
         System.out.println("SetItemValueInt: " + section + ":" + key + " = " + value + " @ " + instance.getLoadedFile());
 
         HashMap<String, HashMap<String, Object>> map = new HashMap<String, HashMap<String, Object>>();
-        for (Map.Entry<String, Object> var : instance.getVariables().entrySet()) {
+        for (Map.Entry<String, Object> var : instance.getConfigVariables().entrySet()) {
             if (var.getKey().contains(":")) {
                 String varSection = var.getKey().split(":")[0];
                 String varKey = var.getKey().split(":")[1];
@@ -204,7 +204,7 @@ public class Configuration extends FunctionCollection {
     @Condition(subId = 47, id = -85)
     public boolean HasItemValue(String key, String value) {
         for (ObjectInstance instance : scope.getScene().getObjects()) {
-            return instance.getVariables().containsKey(key + ":" + value);
+            return instance.getConfigVariables().containsKey(key + ":" + value);
         }
 
         return false;

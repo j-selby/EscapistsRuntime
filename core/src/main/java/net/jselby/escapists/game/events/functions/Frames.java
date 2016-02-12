@@ -17,7 +17,7 @@ public class Frames extends FunctionCollection {
 
     @Action(subId = -3, id = 2)
     public void JumpToFrame(int scene) {
-        scope.getGame().loadScene(scene + 2);
+        scope.getGame().loadScene(scene);
     }
 
     @Action(subId = 48, id = 111)

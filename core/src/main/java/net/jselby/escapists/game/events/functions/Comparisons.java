@@ -104,11 +104,9 @@ public class Comparisons extends FunctionCollection {
     }
 
     @Condition(subId = 61, id = -27)
-    public boolean CompareAlterableValue(int key, Object value) {
+    public boolean CompareAlterableValue(int key, float value) {
         for (ObjectInstance item : scope.getObjects()) {
-            if (item.getVariables().containsKey("" + key)) {
-                return value.equals(item.getVariables().get("" + key));
-            }
+            return value == item.getAlterableValues()[key];
         }
         return false;
     }
@@ -116,9 +114,7 @@ public class Comparisons extends FunctionCollection {
     @Condition(subId = 2, id = -42)
     public boolean CompareAlterableValueInt(int id, int value) {
         for (ObjectInstance item : scope.getObjects()) {
-            if (item.getVariables().containsKey("" + id)) {
-                return value == (Integer) item.getVariables().get("" + id);
-            }
+            return value == item.getAlterableValues()[id];
         }
         return false;
     }

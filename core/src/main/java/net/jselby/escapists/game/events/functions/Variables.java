@@ -11,35 +11,35 @@ public class Variables extends FunctionCollection {
     @Action(subId = 36, id = 91)
     public void ClearObjectVarArray() {
         for (ObjectInstance object : scope.getObjects()) {
-            object.getVariables().clear();
+            object.getNamedVariables().clear();
         }
     }
 
     @Action(subId = 36, id = 80)
     public void SetIntegerVar(String name, int val) {
         for (ObjectInstance object : scope.getObjects()) {
-            object.getVariables().put(name, val);
+            object.getNamedVariables().put(name, val);
         }
     }
 
     @Action(subId = 36, id = 81)
     public void AddIntegerVar(String name, int by) {
         for (ObjectInstance object : scope.getObjects()) {
-            object.getVariables().put(name, (Integer) object.getVariables().get(name) + by);
+            object.getNamedVariables().put(name, (Integer) object.getNamedVariables().get(name) + by);
         }
     }
 
     @Action(subId = 36, id = 82)
     public void SubtractIntegerVar(String name, int by) {
         for (ObjectInstance object : scope.getObjects()) {
-            object.getVariables().put(name, (Integer) object.getVariables().get(name) - by);
+            object.getNamedVariables().put(name, (Integer) object.getNamedVariables().get(name) - by);
         }
     }
 
     @Action(subId = 36, id = 88)
     public void SetStringVar(String name, String val) {
         for (ObjectInstance object : scope.getObjects()) {
-            object.getVariables().put(name, val);
+            object.getNamedVariables().put(name, val);
         }
     }
 

@@ -6,7 +6,7 @@ import net.jselby.escapists.util.ByteReader;
  * A set of values associated with an object.
  */
 public class AlterableValues {
-    private final int[] values;
+    public final int[] values;
 
     public AlterableValues(ByteReader buffer) {
         int count = buffer.getUnsignedShort();

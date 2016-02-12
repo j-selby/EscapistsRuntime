@@ -124,8 +124,8 @@ public class Expressions extends FunctionCollection {
     public Object GetValue(int objectId, String varName) {
         for (ObjectInstance instance : scope.getScene().getObjects()) {
             if (instance.getObjectInfo() == objectId) {
-                if (instance.getVariables().containsKey(varName)) {
-                    return instance.getVariables().get(varName);
+                if (instance.getConfigVariables().containsKey(varName)) {
+                    return instance.getConfigVariables().get(varName);
                 } else {
                     return 0;
                 }
@@ -138,8 +138,8 @@ public class Expressions extends FunctionCollection {
     public String GetString(int objectId, String varName) {
         for (ObjectInstance instance : scope.getScene().getObjects()) {
             if (instance.getObjectInfo() == objectId) {
-                if (instance.getVariables().containsKey(varName)) {
-                    return (String) instance.getVariables().get(varName);
+                if (instance.getConfigVariables().containsKey(varName)) {
+                    return (String) instance.getConfigVariables().get(varName);
                 } else {
                     return "";
                 }
@@ -153,8 +153,8 @@ public class Expressions extends FunctionCollection {
         String varName = section + ":" + key;
         for (ObjectInstance instance : scope.getScene().getObjects()) {
             if (instance.getObjectInfo() == id) {
-                if (instance.getVariables().containsKey(varName)) {
-                    return (String) instance.getVariables().get(varName);
+                if (instance.getConfigVariables().containsKey(varName)) {
+                    return (String) instance.getConfigVariables().get(varName);
                 } else {
                     return defaultVal;
                 }
@@ -168,8 +168,8 @@ public class Expressions extends FunctionCollection {
     public String GroupItemString(int id, String category, String key) {
         for (ObjectInstance instance : scope.getScene().getObjects()) {
             if (instance.getObjectInfo() == id) {
-                if (instance.getVariables().containsKey(category + ":" + key)) {
-                    return (String) instance.getVariables().get(category + ":" + key);
+                if (instance.getConfigVariables().containsKey(category + ":" + key)) {
+                    return (String) instance.getConfigVariables().get(category + ":" + key);
                 }
             }
         }
@@ -296,7 +296,7 @@ public class Expressions extends FunctionCollection {
     public String HTTPContent(int id) {
         for (ObjectInstance instance : scope.getScene().getObjects()) {
             if (instance.getObjectInfo() == id) {
-                return (String) instance.getVariables().get("_env_gethttp");
+                return instance.getHttpContent();
             }
         }
 

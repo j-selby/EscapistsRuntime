@@ -37,20 +37,21 @@ public class Scope {
             }
         }
 
-        for (ObjectInstance instance : scene.getObjects()) {
-            if (instance.getObjectInfo() == id) {
-                if (checkObjects) {
-                    for (ObjectInstance checkInstance : scopeObjects) {
-                        if (instance == checkInstance) {
-                            objects.add(instance);
-                            break;
-                        }
-                    }
-                } else {
+        if (checkObjects) {
+            for (ObjectInstance instance : scopeObjects) {
+                if (instance.getObjectInfo() == id) {
+                    objects.add(instance);
+                }
+            }
+        } else {
+            for (ObjectInstance instance : scene.getObjects()) {
+                if (instance.getObjectInfo() == id) {
                     objects.add(instance);
                 }
             }
         }
+
+
         return this;
     }
 

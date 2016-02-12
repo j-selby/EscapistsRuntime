@@ -43,7 +43,18 @@ abstract class ObjectInstance(definition: ObjectDefinition, instance: ObjectInst
     var bold = false
 
     var isVisible = true
-    val variables: Map<String, Any> = HashMap()
+
+    val namedVariables: Map<String, Any> = HashMap()
+
+    val configVariables: Map<String, Any> = HashMap()
+
+    val alterableValues: IntArray = IntArray(26);
+    val alterableStrings: Array<String> = Array(26, {i -> ""});
+
+    var httpContentLoaded = false
+    var httpContent = ""
+
+
     val listElements: List<String> = ArrayList()
     var selectedLine = 0
     var loadedFile = ""
@@ -57,7 +68,22 @@ abstract class ObjectInstance(definition: ObjectDefinition, instance: ObjectInst
         this.y = instance.y.toFloat()
 
         if (definition.properties.isCommon) {
-            isVisible = (definition.properties.properties as ObjectCommon?)!!.isVisibleAtStart
+            val objectCommon = (definition.properties.properties as ObjectCommon?)!!;
+            isVisible = objectCommon.isVisibleAtStart;
+
+            if (objectCommon.values != null) {
+                var i = 0;
+                for (value in objectCommon.values.values) {
+                    alterableValues[i++] = value;
+                }
+            }
+
+            if (objectCommon.strings != null) {
+                var i = 0;
+                for (value in objectCommon.strings.strings) {
+                    alterableStrings[i++] = value;
+                }
+            }
         }
     }
 
