@@ -262,16 +262,6 @@ public class Expressions extends FunctionCollection {
         return scope.getScene().getActiveLoops().get(loopName);
     }
 
-    @Expression(subId = 38, id = 84)
-    public int UnknownX() {
-        return 0;
-    }
-
-    @Expression(subId = 38, id = 85)
-    public int UnknownY() {
-        return 0;
-    }
-
     @Expression(subId = 50, id = 80)
     public String GetValueX() {
         return "";

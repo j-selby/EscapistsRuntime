@@ -31,7 +31,8 @@ class FunctionRegister {
             Timers::class.java,
             Unknown::class.java,
             Variables::class.java,
-            WorldInteraction::class.java
+            WorldInteraction::class.java,
+            Windows::class.java
     );
 
     private val functions : HashMap<Pair<Int, Int>, FunctionRegistration> = HashMap();
