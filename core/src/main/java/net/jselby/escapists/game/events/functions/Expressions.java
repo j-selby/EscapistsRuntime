@@ -124,8 +124,8 @@ public class Expressions extends FunctionCollection {
     public Object GetValue(int objectId, String varName) {
         for (ObjectInstance instance : scope.getScene().getObjects()) {
             if (instance.getObjectInfo() == objectId) {
-                if (instance.getConfigVariables().containsKey(varName)) {
-                    return instance.getConfigVariables().get(varName);
+                if (instance.getNamedVariables().containsKey(varName)) {
+                    return instance.getNamedVariables().get(varName);
                 } else {
                     return 0;
                 }
