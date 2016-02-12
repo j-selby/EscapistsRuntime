@@ -15,6 +15,6 @@ public class Steamworks extends FunctionCollection {
     @Condition(subId = 39, id = -88)
     public boolean SteamHasOtherGameLicense(int id) {
         // TODO
-        return true;
+        return false;
     }
 }

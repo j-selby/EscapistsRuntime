@@ -12,16 +12,16 @@ import net.jselby.escapists.game.events.FunctionCollection;
  */
 public class WorldInteraction extends FunctionCollection {
     @Action(subId = 2, id = 2)
-    public void SetX(float newX) {
+    public void SetX(double newX) {
         for (ObjectInstance object : scope.getObjects()) {
-            object.setX(newX);
+            object.setX((float) newX);
         }
     }
 
     @Action(subId = 2, id = 3)
-    public void SetY(float newY) {
+    public void SetY(double newY) {
         for (ObjectInstance object : scope.getObjects()) {
-            object.setY(newY);
+            object.setY((float) newY);
         }
     }
 

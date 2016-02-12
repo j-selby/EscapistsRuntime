@@ -195,15 +195,15 @@ class ParsedStatement(val statement : Array<Expression>) {
                     statement[i - 1] = EmptyToken();
                     statement[i] = val1 / val2;
                     statement[i + 1] = EmptyToken();
-                } else if (val1 is Float && val2 is Int) {
+                } else if (val1 is Double && val2 is Int) {
                     statement[i - 1] = EmptyToken();
                     statement[i] = val1 / val2;
                     statement[i + 1] = EmptyToken();
-                } else if (val1 is Int && val2 is Float) {
+                } else if (val1 is Int && val2 is Double) {
                     statement[i - 1] = EmptyToken();
                     statement[i] = val1 / val2;
                     statement[i + 1] = EmptyToken();
-                } else if (val1 is Float && val2 is Float) {
+                } else if (val1 is Double && val2 is Double) {
                     statement[i - 1] = EmptyToken();
                     statement[i] = val1 / val2;
                     statement[i + 1] = EmptyToken();
@@ -233,15 +233,15 @@ class ParsedStatement(val statement : Array<Expression>) {
                     statement[i - 1] = EmptyToken();
                     statement[i] = val1 * val2;
                     statement[i + 1] = EmptyToken();
-                } else if (val1 is Float && val2 is Int) {
+                } else if (val1 is Double && val2 is Int) {
                     statement[i - 1] = EmptyToken();
                     statement[i] = val1 * val2;
                     statement[i + 1] = EmptyToken();
-                } else if (val1 is Int && val2 is Float) {
+                } else if (val1 is Int && val2 is Double) {
                     statement[i - 1] = EmptyToken();
                     statement[i] = val1 * val2;
                     statement[i + 1] = EmptyToken();
-                } else if (val1 is Float && val2 is Float) {
+                } else if (val1 is Double && val2 is Double) {
                     statement[i - 1] = EmptyToken();
                     statement[i] = val1 * val2;
                     statement[i + 1] = EmptyToken();
@@ -275,15 +275,15 @@ class ParsedStatement(val statement : Array<Expression>) {
                     statement[i - 1] = EmptyToken();
                     statement[i] = val1 + val2;
                     statement[i + 1] = EmptyToken();
-                } else if (val1 is Float && val2 is Int) {
+                } else if (val1 is Double && val2 is Int) {
                     statement[i - 1] = EmptyToken();
                     statement[i] = val1 + val2;
                     statement[i + 1] = EmptyToken();
-                } else if (val1 is Int && val2 is Float) {
+                } else if (val1 is Int && val2 is Double) {
                     statement[i - 1] = EmptyToken();
                     statement[i] = val1 + val2;
                     statement[i + 1] = EmptyToken();
-                } else if (val1 is Float && val2 is Float) {
+                } else if (val1 is Double && val2 is Double) {
                     statement[i - 1] = EmptyToken();
                     statement[i] = val1 + val2;
                     statement[i + 1] = EmptyToken();
@@ -314,15 +314,15 @@ class ParsedStatement(val statement : Array<Expression>) {
                     statement[i - 1] = EmptyToken();
                     statement[i] = val1 - val2;
                     statement[i + 1] = EmptyToken();
-                } else if (val1 is Float && val2 is Int) {
+                } else if (val1 is Double && val2 is Int) {
                     statement[i - 1] = EmptyToken();
                     statement[i] = val1 - val2;
                     statement[i + 1] = EmptyToken();
-                } else if (val1 is Int && val2 is Float) {
+                } else if (val1 is Int && val2 is Double) {
                     statement[i - 1] = EmptyToken();
                     statement[i] = val1 - val2;
                     statement[i + 1] = EmptyToken();
-                } else if (val1 is Float && val2 is Float) {
+                } else if (val1 is Double && val2 is Double) {
                     statement[i - 1] = EmptyToken();
                     statement[i] = val1 - val2;
                     statement[i + 1] = EmptyToken();

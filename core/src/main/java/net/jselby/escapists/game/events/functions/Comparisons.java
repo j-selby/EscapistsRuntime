@@ -104,7 +104,7 @@ public class Comparisons extends FunctionCollection {
     }
 
     @Condition(subId = 61, id = -27)
-    public boolean CompareAlterableValue(int key, float value) {
+    public boolean CompareAlterableValue(int key, double value) {
         for (ObjectInstance item : scope.getObjects()) {
             return value == item.getAlterableValues()[key];
         }

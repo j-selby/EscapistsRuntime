@@ -53,7 +53,7 @@ public class Expressions extends FunctionCollection {
     }
 
     @Expression(subId = 2, id = 11, requiresArg1 = true, requiresArg2 = true)
-    public float GetX(int id, int extra) {
+    public double GetX(int id, int extra) {
         for (ObjectInstance instance : scope.getScene().getObjects()) {
             if (instance.getObjectInfo() == id) {
                 return instance.getX();
@@ -63,7 +63,7 @@ public class Expressions extends FunctionCollection {
     }
 
     @Expression(subId = 3, id = 11, requiresArg1 = true, requiresArg2 = true)
-    public float GetX3(int id, int extra) {
+    public double GetX3(int id, int extra) {
         for (ObjectInstance instance : scope.getScene().getObjects()) {
             if (instance.getObjectInfo() == id) {
                 return instance.getX();
@@ -73,7 +73,7 @@ public class Expressions extends FunctionCollection {
     }
 
     @Expression(subId = 2, id = 1, requiresArg1 = true, requiresArg2 = true)
-    public float GetY(int id, int extra) {
+    public double GetY(int id, int extra) {
         for (ObjectInstance instance : scope.getScene().getObjects()) {
             if (instance.getObjectInfo() == id) {
                 return instance.getY();
@@ -83,7 +83,7 @@ public class Expressions extends FunctionCollection {
     }
 
     @Expression(subId = 3, id = 1, requiresArg1 = true, requiresArg2 = true)
-    public float GetY3(int id, int extra) {
+    public double GetY3(int id, int extra) {
         for (ObjectInstance instance : scope.getScene().getObjects()) {
             if (instance.getObjectInfo() == id) {
                 return instance.getY();
@@ -103,11 +103,11 @@ public class Expressions extends FunctionCollection {
     }
 
     @Expression(subId = -1, id = 5, requiresArg1 = true, openEnded = true)
-    public Number ToNumber(int id, String str) {
-        if (str == null || str.length() == 0) {
+    public Number ToNumber(int id, Object str) {
+        if (str == null) {
             return 0;
         }
-        return Double.parseDouble(str);
+        return Double.parseDouble(str.toString());
     }
 
     @Expression(subId = -1, id = 24, requiresArg1 = true)

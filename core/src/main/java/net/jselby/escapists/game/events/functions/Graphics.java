@@ -18,7 +18,8 @@ public class Graphics extends FunctionCollection {
     }
 
     @Action(subId = 2, id = 40)
-    public void SetAnimationFrame(int frame) {
+    public void SetAnimationFrame(Number frameObj) {
+        int frame = frameObj.intValue();
         if (frame < 0) {
             return;
             //throw new IllegalArgumentException("Bad frame: " + frame);
