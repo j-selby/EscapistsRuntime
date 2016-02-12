@@ -11,7 +11,7 @@ import net.jselby.escapists.game.events.Scope
 import java.lang.reflect.Method
 import java.util.*
 
-val VERBOSE = true
+val VERBOSE = false
 
 /**
  * The interpreter iterates over a event stack and calls functions which can be called.

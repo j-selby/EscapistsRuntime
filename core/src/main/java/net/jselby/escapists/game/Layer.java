@@ -54,14 +54,14 @@ public class Layer {
     public void draw(EscapistsGame game, Graphics g) {
         for (ObjectInstance instance : objects) {
             instance.draw(game, g);
-            if (EscapistsRuntime.DEBUG) {
+            /*if (EscapistsRuntime.DEBUG) {
                 g.setColor(Color.BLUE);
                 g.drawRect(instance.getScreenX(), instance.getScreenY(),
                         instance.getWidth(), instance.getHeight());
                 g.setColor(Color.WHITE);
                 g.drawString(instance.getObjectInfo() + "",
                         instance.getScreenX(), instance.getScreenY());
-            }
+            }*/
         }
     }
 
