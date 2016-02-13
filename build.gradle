@@ -23,7 +23,7 @@ allprojects {
 
     ext {
         appName = 'Escapists Runtime'
-        mini2DxVersion = '1.2.1'
+        mini2DxVersion = '1.3.0-beta1'
         gdxVersion = '1.6.5'
         roboVMVersion = '1.6.0'
         box2DLightsVersion = '1.3'
