@@ -132,21 +132,12 @@ public class Scene {
         startTime = System.currentTimeMillis();
     }
 
-    public void init(EscapistsGame game) {
+    public void init() {
         create();
-        tick(game);
+        tick();
     }
 
-    public void tick(EscapistsGame game) {
-        for (Layer layer : getLayers()) {
-            if (!layer.isVisible()) { // "IsShow" flag
-                continue;
-            }
-
-            layer.tick(game);
-
-        }
-
+    public void tick() {
         eventTicker.tick(scope);
 
         for (Map.Entry<Integer, Boolean> entry : groupJustActivated.entrySet()) {

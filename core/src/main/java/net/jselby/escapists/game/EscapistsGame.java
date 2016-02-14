@@ -129,7 +129,7 @@ public class EscapistsGame extends BasicGame {
     private void loadFrame(Scene scene) {
         currentFrame = scene;
         System.out.println("Launching frame: " + currentFrame.getName().trim());
-        scene.init(this);
+        scene.init();
     }
 
     public int getSceneIndex() {
@@ -150,11 +150,19 @@ public class EscapistsGame extends BasicGame {
     public void update(float delta) {
         audio.tick();
 
-        if (pauseError) {
+        if (currentFrame == null) {
             return;
         }
 
-        if (currentFrame == null) {
+        if (pauseError) {
+            for (Layer layer : currentFrame.getLayers()) {
+                if (!layer.isVisible()) { // "IsShow" flag
+                    continue;
+                }
+
+                layer.tick(this);
+            }
+
             return;
         }
 
@@ -177,7 +185,7 @@ public class EscapistsGame extends BasicGame {
                 }
             }
 
-            currentFrame.tick(this);
+            currentFrame.tick();
 
             tps++;
             diff -= UPDATE_INTERVAL;
@@ -192,6 +200,15 @@ public class EscapistsGame extends BasicGame {
             tpsSwitch = System.currentTimeMillis() + System.currentTimeMillis() - tpsSwitch - 1000;
             lastTPS = tps;
             tps = 0;
+        }
+
+        // Update objects independently (animations, etc)
+        for (Layer layer : currentFrame.getLayers()) {
+            if (!layer.isVisible()) { // "IsShow" flag
+                continue;
+            }
+
+            layer.tick(this);
         }
 
         getPlatformUtils().tick();
