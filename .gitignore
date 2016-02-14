@@ -1,6 +1,7 @@
 
 ## Escapists
 desktop/working/
+core/assets/*.scene
 
 ## Java
 *.class
