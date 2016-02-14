@@ -135,9 +135,11 @@ public class WorldInteraction extends FunctionCollection {
     }
 
     @Action(subId = 2, id = 34)
-    public void SpreadValue(int id, int value, int start) {
-        for (ObjectInstance instance : scope.getObjects()) {
-            instance.getAlterableValues()[id] = value++;
+    public void SpreadValue(int id, int start, int alt) {
+        ObjectInstance[] objects = scope.getObjects();
+        for (int i = objects.length - 1; i >= 0; i--) {
+            ObjectInstance instance = objects[i];
+            instance.getAlterableValues()[id] = start++;
         }
     }
 
