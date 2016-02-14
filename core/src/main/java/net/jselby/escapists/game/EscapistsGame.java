@@ -171,7 +171,7 @@ public class EscapistsGame extends BasicGame {
         diff += start - lastFrame;
         lastFrame = start;
 
-        while(System.currentTimeMillis() - start < 16.67d && diff >= UPDATE_INTERVAL) {
+        while(System.currentTimeMillis() - start < 10.00d && diff >= UPDATE_INTERVAL) {
             // Parse input
             for (int i = 0; i <= 2; i++) {
                 if (Gdx.input.isButtonPressed(i)) {
