@@ -30,19 +30,19 @@ public class Expression {
         try {
             Pair<Method, Annotation> type = EscapistsRuntime.getRuntime()
                     .getRegister().getExpressionFunction(objectType, num);
-            if (ExpressionNames.getByID(objectType, num) != null) {
-                if (type != null) {
-                    value = new ExpressionFunction(type);
-                    value.read(buffer);
-                } else {
-                    value = ExpressionValue.getExpression(ExpressionNames.getByID(objectType, num), buffer);
-                }
+            if (type != null) {
+                value = new ExpressionFunction(type);
+                value.read(buffer);
+            } else if (ExpressionNames.getByID(objectType, num) != null) {
+                value = ExpressionValue.getExpression(ExpressionNames.getByID(objectType, num), buffer);
             } else if (objectType >= 2 || objectType == -7) {
                 int objectInfo = buffer.getUnsignedShort();
                 short objectInfoList = buffer.getShort();
-                if (ExpressionNames.getByExtensionID(num) != null) {
-                    value = ExpressionValue.getExpression(ExpressionNames.getByExtensionID(num), buffer);
-                }// else {
+                //System.out.println("Unimplemented extension: " + objectType + ":" + num);
+                
+                //if (ExpressionNames.getByExtensionID(num) != null) {
+                //    value = ExpressionValue.getExpression(ExpressionNames.getByExtensionID(num), buffer);
+                //}// else {
                 //System.out.println("Unknown value: " + (size - 8));
                 //}
             }

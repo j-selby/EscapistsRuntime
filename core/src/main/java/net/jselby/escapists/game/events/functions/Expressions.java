@@ -164,6 +164,22 @@ public class Expressions extends FunctionCollection {
         return defaultVal;
     }
 
+    @Expression(subId = 47, id = 88, requiresArg1 = true, openEnded = true)
+    public int GetItemValue(int id, String section, String key, int defaultVal) {
+        String varName = section + ":" + key;
+        for (ObjectInstance instance : scope.getScene().getObjects()) {
+            if (instance.getObjectInfo() == id) {
+                if (instance.getConfigVariables().containsKey(varName)) {
+                    return Integer.parseInt((String) instance.getConfigVariables().get(varName));
+                } else {
+                    return defaultVal;
+                }
+            }
+        }
+
+        return defaultVal;
+    }
+
     @Expression(subId = 63, id = 85, requiresArg1 = true, openEnded = true)
     public String GroupItemString(int id, String category, String key) {
         for (ObjectInstance instance : scope.getScene().getObjects()) {
