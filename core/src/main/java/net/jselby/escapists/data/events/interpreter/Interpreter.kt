@@ -71,6 +71,12 @@ class Interpreter(events : Events, scope : Scope) : EventTicker(events) {
         }
     }
 
+    fun runFastLoop(scope: Scope, name : String) {
+        for (group in groups) {
+            group.runFastLoop(this, scope, name);
+        }
+    }
+
     fun callMethod(method: FunctionRegistration,
                            items: Array<Events.Parameter>,
                            identifier: Short,

@@ -41,4 +41,16 @@ class InterpreterEventGroup(val id: Int) : InterpreterActionConditionGroup(null)
         events += "leave-group=$id\n";
         return events;
     }
+
+    override fun runFastLoop(interpreter: Interpreter, scope: Scope, name: String) {
+        if (id != -9999 && !(scope.scene.activeGroups[id] as Boolean)) {
+            //println("Exiting group: $id");
+            return;
+        }
+        (interpreter.getCollectionInstance(Groups::class.java) as Groups).GroupStart(id);
+        for (child in children) {
+            child.runFastLoop(interpreter, scope, name);
+        }
+        (interpreter.getCollectionInstance(Groups::class.java) as Groups).GroupEnd(id);
+    }
 }

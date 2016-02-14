@@ -46,8 +46,7 @@ public class Scene {
     private Map<String, Object> variables = new HashMap<String, Object>();
     private Map<Integer, Boolean> groupActivated = new HashMap<Integer, Boolean>();
     private Map<Integer, Boolean> groupJustActivated = new HashMap<Integer, Boolean>();
-    private Map<String, Integer> loops = new HashMap<String, Integer>();
-    private Map<String, Integer> loopsMax = new HashMap<String, Integer>();
+    private Map<String, Integer> currentLoops = new HashMap<String, Integer>();
     private int frameCount;
     private long startTime;
 
@@ -80,7 +79,7 @@ public class Scene {
         variables.clear();
         groupActivated.clear();
         groupJustActivated.clear();
-        loops.clear();
+        currentLoops.clear();
 
         // Check for event groups
         for (Events.EventGroup group : events.groups) {
@@ -150,17 +149,6 @@ public class Scene {
 
         eventTicker.tick(scope);
 
-        for (Object rawvalue : loops.entrySet().toArray()) {
-            Map.Entry<String, Integer> value = (Map.Entry<String, Integer>) rawvalue;
-            int newValue = value.getValue() + 1;
-            if (newValue >= loopsMax.get(value.getKey())) {
-                loops.remove(value.getKey());
-                loopsMax.remove(value.getKey());
-            } else {
-                value.setValue(newValue);
-            }
-        }
-
         for (Map.Entry<Integer, Boolean> entry : groupJustActivated.entrySet()) {
             entry.setValue(false);
         }
@@ -228,12 +216,20 @@ public class Scene {
     }
 
     public Map<String, Integer> getActiveLoops() {
-        return loops;
+        return currentLoops;
     }
 
     public void activateLoop(String name, int times) {
-        loops.put(name, 0);
-        loopsMax.put(name, times);
+        if (currentLoops.containsKey(name)) {
+            System.out.println("Aready accessing loop?!?!");
+        }
+        if (eventTicker instanceof Interpreter) {
+            for (int i = 0; i < times; i++) {
+                currentLoops.put(name, i);
+                ((Interpreter) eventTicker).runFastLoop(scope, name);
+            }
+        }
+        currentLoops.remove(name);
     }
 
     public void activateGroup(int id) {

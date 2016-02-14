@@ -39,7 +39,7 @@ public class Expression {
                 int objectInfo = buffer.getUnsignedShort();
                 short objectInfoList = buffer.getShort();
                 //System.out.println("Unimplemented extension: " + objectType + ":" + num);
-                
+
                 //if (ExpressionNames.getByExtensionID(num) != null) {
                 //    value = ExpressionValue.getExpression(ExpressionNames.getByExtensionID(num), buffer);
                 //}// else {

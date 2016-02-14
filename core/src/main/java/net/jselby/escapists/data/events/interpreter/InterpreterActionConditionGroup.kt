@@ -3,6 +3,7 @@ package net.jselby.escapists.data.events.interpreter
 import net.jselby.escapists.EscapistsRuntime
 import net.jselby.escapists.data.chunks.Events
 import net.jselby.escapists.game.events.Scope
+import java.util.*
 
 /**
  * A interpreter event loop object is a EventLoop that is able to hold state.
@@ -100,6 +101,26 @@ open class InterpreterActionConditionGroup(val group: Events.EventGroup?) {
             }
         } finally {
             interpreter.functions[0].scope.clearScopeObjects();
+        }
+    }
+
+    open fun runFastLoop(interpreter: Interpreter, scope: Scope, name: String) {
+        // Check if we have this fastloop element, else skip
+        var list : ArrayList<Any>? = null;
+        for (condition in group!!.conditions) {
+            if (condition.name.equals("OnLoop")) {
+                if (list == null) {
+                    list = ArrayList<Any>();
+                }
+                condition.items[0].add(interpreter, list);
+                val conditionName : String = list[0] as String;
+                if (name.equals(conditionName)) {
+                    // We do!
+                    invokeIfPossible(interpreter, scope);
+                    return;
+                }
+                list.clear();
+            }
         }
     }
 
