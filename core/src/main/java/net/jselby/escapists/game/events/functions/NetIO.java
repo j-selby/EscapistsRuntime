@@ -81,6 +81,7 @@ public class NetIO extends FunctionCollection {
 
         for (ObjectInstance instance : scope.getObjects()) {
             hasCompleted = instance.getHttpContentLoaded();
+            instance.setHttpContentLoaded(false);
         }
 
         return hasCompleted;

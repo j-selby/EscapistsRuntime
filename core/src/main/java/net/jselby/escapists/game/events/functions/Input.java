@@ -35,7 +35,8 @@ public class Input extends FunctionCollection {
     @Condition(subId = -6, id = -5)
     public boolean MouseClicked(int mouseButton, boolean doubleClick) {
         // We only get left clicks on mobile platforms
-        return !(Gdx.app.getType() != Application.ApplicationType.Desktop && mouseButton != 0)
+        return !scope.getScene().firstFrame &&
+                !(Gdx.app.getType() != Application.ApplicationType.Desktop && mouseButton != 0)
                 && scope.getGame().isButtonClicked(mouseButton);
 
     }
@@ -43,7 +44,7 @@ public class Input extends FunctionCollection {
     @Condition(subId = -6, id = -6)
     public boolean MouseClickedInZone(int mouseButton, boolean doubleClick) {
         // TODO: Unknown value
-        return true;
+        return false;
     }
 
     @Condition(subId = -6, id = -3)
@@ -63,6 +64,11 @@ public class Input extends FunctionCollection {
     @Condition(subId = -6, id = -7, successCallback = "Vibrate", requiresScopeCleanup = true)
     public boolean ObjectClicked(int mouseButton, boolean doubleClicked,
                                  int object) {
+        if (scope.getScene().firstFrame) {
+            // To prevent click events being fired from previous scenes
+            return false;
+        }
+
         if (Gdx.app.getType() != Application.ApplicationType.Desktop
                 && mouseButton != 0) {
             // We only get left clicks on mobile platforms
