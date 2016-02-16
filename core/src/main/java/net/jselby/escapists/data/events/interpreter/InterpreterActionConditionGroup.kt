@@ -88,7 +88,7 @@ open class InterpreterActionConditionGroup(val group: Events.EventGroup?) {
                 }
             }
 
-            callCallbacks(interpreter, scope);
+            callCallbacks(interpreter);
 
             if (VERBOSE) println("-- Processing action array: ${group.actions.toMutableList()}");
             for (action in group.actions) {
@@ -123,13 +123,13 @@ open class InterpreterActionConditionGroup(val group: Events.EventGroup?) {
                 }
             }
 
-            callCallbacks(interpreter, scope);
+            callCallbacks(interpreter);
         } finally {
             interpreter.functions[0].scope.clearScopeObjects();
         }
     }
 
-    private fun callCallbacks(interpreter: Interpreter, scope: Scope) {
+    private fun callCallbacks(interpreter: Interpreter) {
         // A callback is in the format class:method name
         for (callback in eventCallbacks) {
             val args = callback.first.split(":");
