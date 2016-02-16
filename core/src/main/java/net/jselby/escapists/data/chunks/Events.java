@@ -81,9 +81,9 @@ public class Events extends Chunk {
      * A Qualifier is a object qualifier.
      */
     public class Qualifier {
-        private final int objectInfo;
-        private final short type;
-        private final int qualifier;
+        public final int objectInfo;
+        public final short type;
+        public final int qualifier;
 
         public Qualifier(ByteReader buffer) {
             objectInfo = buffer.getUnsignedShort();
@@ -93,10 +93,10 @@ public class Events extends Chunk {
     }
 
     public class EventGroup {
-        private final int flags;
+        public final int flags;
 
-        private final int is_restricted;
-        private final int restrictCpt;
+        public final int is_restricted;
+        public final int restrictCpt;
 
         public final Condition[] conditions;
         public final Action[] actions;
@@ -141,12 +141,12 @@ public class Events extends Chunk {
         public final short num;
 
         public final int objectInfo;
-        private final short objectInfoList;
+        public final short objectInfoList;
 
-        private final short flags;
-        private final short flags2;
+        public final short flags;
+        public final short flags2;
 
-        private final byte defType;
+        public final byte defType;
         public final short identifier;
 
         public final String name;
@@ -210,12 +210,12 @@ public class Events extends Chunk {
         public final short num;
 
         public final int objectInfo;
-        private final short objectInfoList;
+        public final short objectInfoList;
 
-        private final short flags;
-        private final short flags2;
+        public final short flags;
+        public final short flags2;
 
-        private final byte defType;
+        public final byte defType;
 
         public final String name;
         public FunctionRegistration method;
