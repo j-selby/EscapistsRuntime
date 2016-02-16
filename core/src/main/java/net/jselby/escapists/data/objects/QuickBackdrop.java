@@ -7,13 +7,13 @@ import net.jselby.escapists.util.ByteReader;
  * A quick backdrop is a backdrop done quick... lol
  */
 public class QuickBackdrop extends ObjectDefinitionProperties {
-    private long size;
+    public long size;
 
-    private short obstacleType;
-    private short collisionMode;
+    public short obstacleType;
+    public short collisionMode;
 
-    private int width;
-    private int height;
+    public int width;
+    public int height;
 
     public Shape shape;
 
