@@ -1,5 +1,6 @@
 package net.jselby.escapists.game.events.functions;
 
+import com.badlogic.gdx.*;
 import net.jselby.escapists.game.events.Action;
 import net.jselby.escapists.game.events.Expression;
 import net.jselby.escapists.game.events.FunctionCollection;
@@ -10,7 +11,11 @@ import net.jselby.escapists.game.events.FunctionCollection;
 public class Windows extends FunctionCollection {
     @Action(subId = 53, id = 81)
     public void SetWindowed() {
-        System.out.println("STUB: SetWindowed()");
+        if (Gdx.graphics.supportsDisplayModeChange()) {
+            Gdx.graphics.setDisplayMode(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
+        } else {
+            System.out.println("Platform rejected SetWindowed()");
+        }
     }
 
     @Action(subId = 38, id = 93)
@@ -20,12 +25,20 @@ public class Windows extends FunctionCollection {
 
     @Action(subId = 38, id = 83)
     public void SetWindowWidth(int width) {
-        System.out.println("STUB: SetWindowWidth()");
+        if (Gdx.graphics.supportsDisplayModeChange()) {
+            Gdx.graphics.setDisplayMode(width, Gdx.graphics.getHeight(), Gdx.graphics.isFullscreen());
+        } else {
+            System.out.println("Platform rejected SetWindowWidth()");
+        }
     }
 
     @Action(subId = 38, id = 84)
     public void SetWindowHeight(int height) {
-        System.out.println("STUB: SetWindowHeight()");
+        if (Gdx.graphics.supportsDisplayModeChange()) {
+            Gdx.graphics.setDisplayMode(Gdx.graphics.getWidth(), height, Gdx.graphics.isFullscreen());
+        } else {
+            System.out.println("Platform rejected SetWindowHeight()");
+        }
     }
 
     @Action(subId = 38, id = 97)
@@ -34,14 +47,12 @@ public class Windows extends FunctionCollection {
     }
 
     @Expression(subId = 38, id = 84)
-    public double GetScreenWidth() {
-        System.out.println("STUB: GetScreenWidth()");
-        return 0;
+    public int GetScreenWidth() {
+        return Gdx.graphics.getWidth();
     }
 
     @Expression(subId = 38, id = 85)
-    public double GetScreenHeight() {
-        System.out.println("STUB: GetScreenHeight()");
-        return 0;
+    public int GetScreenHeight() {
+        return Gdx.graphics.getHeight();
     }
 }
