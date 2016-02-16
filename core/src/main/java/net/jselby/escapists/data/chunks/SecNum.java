@@ -7,8 +7,8 @@ import net.jselby.escapists.util.ByteReader;
  * A SecNum is a secure set of tick integers.
  */
 public class SecNum extends Chunk {
-    private int tickCount;
-    private int serialSlice;
+    public int tickCount;
+    public int serialSlice;
 
     @Override
     public void init(ByteReader buffer, int length) {
