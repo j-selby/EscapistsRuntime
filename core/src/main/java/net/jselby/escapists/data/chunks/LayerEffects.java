@@ -19,8 +19,8 @@ public class LayerEffects extends Chunk {
      * A LayerEffect is a special effect applied upon a particular layer.
      */
     private class LayerEffect {
-        private final long inkEffect;
-        private final long inkEffectValue;
+        public final long inkEffect;
+        public final long inkEffectValue;
 
         public LayerEffect(ByteReader buffer) {
             long pInkEffect = buffer.getUnsignedInt();
