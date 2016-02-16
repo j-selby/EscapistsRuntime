@@ -7,10 +7,10 @@ import net.jselby.escapists.util.ByteReader;
  * A VirtualSize is a Rectangle within a frame.
  */
 public class VirtualSize extends Chunk {
-    private int left;
-    private int top;
-    private int right;
-    private int bottom;
+    public int left;
+    public int top;
+    public int right;
+    public int bottom;
 
     @Override
     public void init(ByteReader buffer, int length) {
