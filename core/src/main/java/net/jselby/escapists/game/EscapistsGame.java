@@ -33,6 +33,7 @@ public class EscapistsGame extends BasicGame {
 
     private PlatformUtils utils;
     private int sceneIndex;
+    private int nextScene = -1;
     public Map<Integer, Number> globalInts;
     public Map<Integer, String> globalStrings;
     public ArrayList<String> mods;
@@ -137,18 +138,25 @@ public class EscapistsGame extends BasicGame {
     }
 
     public void loadScene(int id) {
-        sceneIndex = id;
-        loadFrame(app.frames.get(id));
-
-        lastFrame = System.currentTimeMillis();
-        tpsSwitch = lastFrame;
-        tps = 0;
-        diff = 0;
+        nextScene = id;
     }
 
     @Override
     public void update(float delta) {
         audio.tick();
+
+        if (!pauseError && nextScene != -1) {
+            // Load the next scene
+            sceneIndex = nextScene;
+            loadFrame(app.frames.get(nextScene));
+
+            lastFrame = System.currentTimeMillis();
+            tpsSwitch = lastFrame;
+            tps = 0;
+            diff = 0;
+
+            nextScene = -1;
+        }
 
         if (currentFrame == null) {
             return;
