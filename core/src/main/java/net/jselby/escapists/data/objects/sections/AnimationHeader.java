@@ -11,7 +11,7 @@ public class AnimationHeader {
     public AnimationHeader(ByteReader buffer) {
         int position = buffer.getPosition();
 
-        short size = buffer.getShort();
+        buffer.getShort(); // Size
         short count = buffer.getShort();
 
         short[] offsets = new short[count];
@@ -37,7 +37,7 @@ public class AnimationHeader {
     public class Animation {
         public final AnimationDirection[] localDirections;
 
-        private int index;
+        public int index;
 
         public Animation(ByteReader buffer, int index) {
             this.index = index;
