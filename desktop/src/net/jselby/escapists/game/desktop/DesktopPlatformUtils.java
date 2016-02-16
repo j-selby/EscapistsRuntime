@@ -93,8 +93,7 @@ public class DesktopPlatformUtils extends PlatformUtils {
      */
     @Override
     public void exit() {
-        Display.destroy();
-        System.exit(1);
+        Gdx.app.exit();
     }
 
     /**
