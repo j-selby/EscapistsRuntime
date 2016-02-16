@@ -37,8 +37,7 @@ public class StringLists extends FunctionCollection {
             object.getListElements().clear();
         }
 
-        for (int i = 0; i < split.length; i++) {
-            String str = split[i];
+        for (String str : split) {
             if (str.length() == 0) {
                 continue;
             }
