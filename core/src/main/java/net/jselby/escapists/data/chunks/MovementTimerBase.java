@@ -7,7 +7,7 @@ import net.jselby.escapists.util.ByteReader;
  * The MovementTimerBase chunk is a integer value (timer?)
  */
 public class MovementTimerBase extends Chunk {
-    private int value;
+    public int value;
 
     @Override
     public void init(ByteReader buffer, int length) {
