@@ -13,7 +13,7 @@ public class Text {
 
     public Text(ByteReader buffer) {
         int currentPosition = buffer.getPosition();
-        int size = buffer.getInt();
+        buffer.getInt(); // Size
 
         width = buffer.getInt();
         height = buffer.getInt();
