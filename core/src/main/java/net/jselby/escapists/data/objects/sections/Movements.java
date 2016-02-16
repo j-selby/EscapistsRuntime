@@ -6,7 +6,7 @@ import net.jselby.escapists.util.ByteReader;
  * A set of movements for an object.
  */
 public class Movements {
-    private final Movement[] items;
+    public final Movement[] items;
 
     public Movements(ByteReader buffer) {
         int rootPosition = buffer.getPosition();
@@ -24,19 +24,19 @@ public class Movements {
     }
 
     private class Movement {
-        private final short player;
+        public final short player;
 
-        private final short type;
-        private final MovementTypes typeEnum;
+        public final short type;
+        public final MovementTypes typeEnum;
 
-        private final byte movingAtStart;
-        private final int directionAtStart;
+        public final byte movingAtStart;
+        public final int directionAtStart;
 
         public Movement(ByteReader buffer, int rootPosition) {
-            int nameOffset = buffer.getInt();
-            int movementId = buffer.getInt();
+            buffer.getInt(); // nameOffset
+            buffer.getInt(); // movementId
             int newOffset = buffer.getInt();
-            int dataSize = buffer.getInt();
+            buffer.getInt(); // dataSize
 
             buffer.setPosition(rootPosition + newOffset);
 
@@ -51,7 +51,7 @@ public class Movements {
 
             if (typeEnum == MovementTypes.Extension) {
                 buffer.skipBytes(14);
-                dataSize -= 14;
+                //dataSize -= 14;
             }
 
             // TODO: Implement movement types
