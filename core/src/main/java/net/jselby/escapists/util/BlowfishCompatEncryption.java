@@ -1,14 +1,8 @@
 package net.jselby.escapists.util;
 
-
-import org.apache.commons.io.IOUtils;
-
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * Decrypts Escapists map and resource files, using their default key.
@@ -23,38 +17,6 @@ import java.io.InputStream;
  **/
 public final class BlowfishCompatEncryption {
     private BlowfishCompatEncryption() {}
-
-    /**
-     * The default encryption key used by the Escapists.
-     *
-     * This is a magic value!
-     */
-    private static final String ENCRYPTION_KEY = "mothking";
-
-    /**
-     * Decrypts a Blowfish encrypted file using the built-in key.
-     *
-     * @param t The file to read and decrypt
-     * @return The byte contents of this file decrypted
-     **/
-    public static byte[] decrypt(File t) throws IOException {
-        // get the data
-        InputStream in = new FileInputStream(t);
-        byte[] data = IOUtils.toByteArray(in);
-        in.close();
-
-        return decryptBytes(data, ENCRYPTION_KEY.getBytes());
-    }
-
-    /**
-     * Decrypts a Blowfish encrypted array using the built-in key.
-     *
-     * @param t The file to read and decrypt
-     * @return The byte contents of this file decrypted
-     **/
-    public static byte[] decrypt(byte[] t) throws IOException {
-        return decryptBytes(t, ENCRYPTION_KEY.getBytes());
-    }
 
     /**
      * Decrypts the specified byte array encrypted via Blowfish using
@@ -100,32 +62,6 @@ public final class BlowfishCompatEncryption {
             throw new IOException(e);
         }
     }
-
-    /**
-     * Encrypts a Blowfish encrypted file using the built-in key.
-     *
-     * @param t The file to read and encrypt
-     * @return The byte contents of this file encrypted
-     **/
-    public static byte[] encrypt(File t) throws IOException {
-        // get the data
-        InputStream in = new FileInputStream(t);
-        byte[] data = IOUtils.toByteArray(in);
-        in.close();
-
-        return encryptBytes(data, ENCRYPTION_KEY.getBytes());
-    }
-
-    /**
-     * Encrypts a Blowfish encrypted array using the built-in key.
-     *
-     * @param t The file to read and encrypt
-     * @return The byte contents of this file encrypted
-     **/
-    public static byte[] encrypt(byte[] t) throws IOException {
-        return encryptBytes(t, ENCRYPTION_KEY.getBytes());
-    }
-
 
     /**
      * Encrypted the specified byte array via Blowfish using
