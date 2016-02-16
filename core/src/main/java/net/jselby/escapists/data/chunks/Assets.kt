@@ -24,8 +24,6 @@ class FontBank : Chunk() {
     override fun init(buffer: ByteReader, length: Int) {
         val num = buffer.int
 
-        val offset = -1
-
         fonts = arrayOfNulls<FontItem>(num)
         var highestHandle = 0
         for (i in 0..num - 1) {
@@ -50,20 +48,16 @@ class FontBank : Chunk() {
         val value: LogFont
 
         init {
-            var buffer = buffer
-
             handle = buffer.unsignedInt
 
-            buffer = CompressionUtils.decompress(buffer)
+            val decompressedBuffer = CompressionUtils.decompress(buffer)
 
-            val position = buffer.position
+            checksum = decompressedBuffer.int
+            references = decompressedBuffer.int
 
-            checksum = buffer.int
-            references = buffer.int
+            decompressedBuffer.int // size
 
-            val size = buffer.int
-
-            value = LogFont(buffer)
+            value = LogFont(decompressedBuffer)
         }
     }
 
@@ -159,7 +153,7 @@ class ImageBank : Chunk() {
     /**
      * A ImageItem is a Image from a ImageBank.
      */
-    inner class ImageItem(buffer: ByteReader) {
+    inner class ImageItem(rawBuffer: ByteReader) {
         private val checksum: Int
         private val references: Int
 
@@ -183,17 +177,14 @@ class ImageBank : Chunk() {
         var handle: Int = 0
 
         init {
-            var buffer = buffer
-            handle = buffer.int
+            handle = rawBuffer.int
 
             // Decompress
-            buffer = CompressionUtils.decompress(buffer)
-
-            val start = buffer.position
+            val buffer = CompressionUtils.decompress(rawBuffer)
 
             checksum = buffer.int
             references = buffer.int
-            val size = buffer.unsignedInt.toInt()
+            buffer.unsignedInt // Size (int)
 
             width = buffer.short
             height = buffer.short
@@ -283,13 +274,12 @@ class SoundBank : Chunk() {
 
     inner class SoundItem(buffer: ByteReader) {
         init {
-            var start = buffer.position;
-            var handle = buffer.unsignedInt;
-            var checksum = buffer.int;
-            var references = buffer.int;
+            buffer.unsignedInt; // Handle
+            buffer.int; // Checksum
+            buffer.int; // References
             var decompressedLength = buffer.int;
             var flags = buffer.unsignedInt;
-            var reserved = buffer.int;
+            buffer.int; // Reserved
             var nameLength = buffer.int;
 
             var data : ByteReader;
