@@ -71,7 +71,7 @@ class ExtensionList : Chunk() {
 
     override fun init(buffer: ByteReader, length: Int) {
         val num = buffer.unsignedShort
-        val preloadExtensions = buffer.unsignedShort
+        buffer.unsignedShort // Preload Extensions
 
         extensions = arrayOfNulls<Extension?>(num)
         for (i in 0..num - 1) {
@@ -151,7 +151,7 @@ class AppHeader : Chunk() {
      * @param length Length of the buffer
      */
     override fun init(buffer: ByteReader, length: Int) {
-        val size = buffer.int
+        buffer.int // Size
 
         flags1 = buffer.unsignedShort
         flags2 = buffer.unsignedShort
@@ -294,7 +294,7 @@ class AppIcon : Chunk() {
 
 class AppMenu : Chunk() {
     override fun init(buffer: ByteReader, length: Int) {
-        val currentPosition = buffer.position
+        //val currentPosition = buffer.position
         // TODO: Implement
         /*int headerSize (int) ((long) bb.getInt() & 0xffffffffL);
         currentPosition = reader.tell()
