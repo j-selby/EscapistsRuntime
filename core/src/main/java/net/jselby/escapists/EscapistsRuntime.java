@@ -228,7 +228,7 @@ public class EscapistsRuntime {
             for (File child : fileList) {
                 if (child.getName().toLowerCase().endsWith(".mod")) {
                     // Load mod in
-                    game.addMod(child.getName(), IOUtils.toString(child.toURI()));
+                    game.addMod(IOUtils.toString(child.toURI()));
                 }
             }
         }

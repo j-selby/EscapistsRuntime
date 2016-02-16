@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.BitmapFontCache;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.utils.IntMap;
 import net.jselby.escapists.EscapistsRuntime;
 import net.jselby.escapists.PlatformUtils;
 import org.mini2Dx.core.game.BasicGame;
@@ -14,8 +15,7 @@ import org.mini2Dx.core.graphics.Sprite;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Arrays;
 
 public class EscapistsGame extends BasicGame {
 	public static final String GAME_IDENTIFIER = "net.jselby.escapists";
@@ -34,8 +34,8 @@ public class EscapistsGame extends BasicGame {
     private PlatformUtils utils;
     private int sceneIndex;
     private int nextScene = -1;
-    public Map<Integer, Number> globalInts;
-    public Map<Integer, String> globalStrings;
+    public IntMap<Number> globalInts;
+    public IntMap<String> globalStrings;
     public ArrayList<String> mods;
 
     private boolean pauseError = false;
@@ -54,8 +54,8 @@ public class EscapistsGame extends BasicGame {
 
     @Override
     public void initialise() {
-        globalInts = new HashMap<Integer, Number>();
-        globalStrings = new HashMap<Integer, String>();
+        globalInts = new IntMap<Number>();
+        globalStrings = new IntMap<String>();
         mods = new ArrayList<String>();
         audio = new AudioManager();
 
@@ -285,7 +285,7 @@ public class EscapistsGame extends BasicGame {
                     }
                 }
                 g.drawString("Visible layers: [" + layers + "]", 5, 110);
-                g.drawString("Active groups: [" + currentFrame.getActiveGroups() + "]", 5, 125);
+                g.drawString("Active groups: [" + Arrays.toString(currentFrame.getActiveGroups()) + "]", 5, 125);
             }
         }
 
@@ -343,7 +343,7 @@ public class EscapistsGame extends BasicGame {
         return utils;
     }
 
-    public void addMod(String name, String contents) {
+    public void addMod(String contents) {
         mods.add(contents);
     }
 
