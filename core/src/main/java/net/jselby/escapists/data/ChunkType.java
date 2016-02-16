@@ -2,9 +2,9 @@ package net.jselby.escapists.data;
 
 /**
  * The types of chunks that can be seen.
- *
+ * See https://github.com/matpow2/anaconda for more ino
+ * 
  * @author matpow2
- * @url https://github.com/matpow2/anaconda
  */
 public enum ChunkType {
     // Vitalize chunks (0x11)
