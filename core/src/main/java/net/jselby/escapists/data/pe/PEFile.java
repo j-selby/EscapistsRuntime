@@ -12,7 +12,6 @@ import java.util.Arrays;
 public class PEFile {
     private static byte[] EXE_HEADER = new byte[]{'M', 'Z'};
 
-    private byte[] peSignature = new byte[4];
     private int machineType;
     private int peCharacteristics;
     private int bitCount;
@@ -34,6 +33,7 @@ public class PEFile {
 
         // Grab data from the PE header
         buf.setPosition(peHeaderOffset);
+        byte[] peSignature = new byte[4];
         buf.getBytes(peSignature);
         machineType = buf.getShort();
         int sectionCount = buf.getShort();
