@@ -1,5 +1,6 @@
 package net.jselby.escapists.game.events.functions;
 
+import com.badlogic.gdx.Gdx;
 import net.jselby.escapists.game.Layer;
 import net.jselby.escapists.game.ObjectInstance;
 import net.jselby.escapists.game.events.Action;
@@ -12,12 +13,17 @@ import net.jselby.escapists.game.events.FunctionCollection;
 public class Frames extends FunctionCollection {
     @Action(subId = -3, id = 0)
     public void NextFrame() {
-        scope.getGame().loadScene(scope.getGame().getSceneIndex() + 1);
+        JumpToFrame(scope.getGame().getSceneIndex() + 1);
     }
 
     @Action(subId = -3, id = 2)
-    public void JumpToFrame(int scene) {
-        scope.getGame().loadScene(scene);
+    public void JumpToFrame(final int scene) {
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                scope.getGame().loadScene(scene);
+            }
+        });
     }
 
     @Action(subId = 48, id = 111)
