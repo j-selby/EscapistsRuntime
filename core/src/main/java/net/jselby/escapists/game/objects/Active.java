@@ -31,6 +31,7 @@ public class Active extends ObjectInstance {
         super(definition, instance);
 
         ObjectCommon common = ((ObjectCommon) definition.properties.getProperties());
+        assert common != null;
         animations = common.animations;
 
         // Find the first useful animation
@@ -90,6 +91,10 @@ public class Active extends ObjectInstance {
             if (image == null) {
                 return;
             }
+
+            // image.getImage() cannot be null without a previous fatal exception being thrown.
+            assert image.getImage() != null;
+
             width = image.getImage().getWidth();
             height = image.getImage().getHeight();
             xHotspot = image.getXHotspot();
@@ -118,6 +123,10 @@ public class Active extends ObjectInstance {
         if (image == null) {
             return;
         }
+
+        // image.getImage() cannot be null without a previous fatal exception being thrown.
+        assert image.getImage() != null;
+
         image.getImage().setAlpha(((float) getImageAlpha()) / 256f);
         g.drawSprite(image.getImage(), getScreenX(), getScreenY());
         image.getImage().setAlpha(1f);

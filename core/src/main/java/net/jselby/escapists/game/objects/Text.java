@@ -1,6 +1,7 @@
 package net.jselby.escapists.game.objects;
 
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.BitmapFontCache;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.utils.Align;
 import net.jselby.escapists.EscapistsRuntime;
@@ -10,6 +11,7 @@ import net.jselby.escapists.data.chunks.ObjectInstances;
 import net.jselby.escapists.data.objects.ObjectCommon;
 import net.jselby.escapists.game.EscapistsGame;
 import net.jselby.escapists.game.ObjectInstance;
+import org.jetbrains.annotations.NotNull;
 import org.mini2Dx.core.graphics.Graphics;
 
 /**
@@ -25,6 +27,10 @@ public class Text extends ObjectInstance {
 
     public Text(ObjectDefinition def, ObjectInstances.ObjectInstance instanceDef) {
         super(def, instanceDef);
+
+        assert def.properties != null;
+        assert def.properties.getProperties() != null;
+
         rawType = ((ObjectCommon) def.properties.getProperties()).partText;
 
         net.jselby.escapists.data.objects.sections.Text.Paragraph paragraph = rawType.paragraphs[0];
@@ -48,13 +54,17 @@ public class Text extends ObjectInstance {
         }
 
         for (int i = 0; i < msgs.length; i++) {
-            compiledStrings[i] = value.getFontCache().addText(msgs[i], x, y, getWidth(), alignment, true);
+            BitmapFontCache fontCache = value.getFontCache();
+            assert fontCache != null;
+            compiledStrings[i] = fontCache.addText(msgs[i], x, y, getWidth(), alignment, true);
         }
     }
 
-    private void decompileString(FontBank.LogFont value, String msg, float x, float y) {
+    private void decompileString(FontBank.LogFont value) {
         for (GlyphLayout layout : compiledStrings) {
-            value.getFontCache().getLayouts().removeValue(layout, false);
+            BitmapFontCache fontCache = value.getFontCache();
+            assert fontCache != null;
+            fontCache.getLayouts().removeValue(layout, false);
         }
     }
 
@@ -69,12 +79,12 @@ public class Text extends ObjectInstance {
     }
 
     @Override
-    public void tick(EscapistsGame container) {
+    public void tick(@NotNull EscapistsGame container) {
 
     }
 
     @Override
-    public void draw(EscapistsGame container, Graphics g) {
+    public void draw(@NotNull EscapistsGame container, @NotNull Graphics g) {
         if (!isVisible()) {
             return;
         }
@@ -84,6 +94,7 @@ public class Text extends ObjectInstance {
         BitmapFont originalFont = g.getFont();
         BitmapFont font = EscapistsRuntime.getRuntime()
                 .getApplication().fonts[paragraph.font + 1].getValue().getFont();
+        assert font != null;
         g.setFont(font);
 
         float oldAlpha = paragraph.color.a;
@@ -125,11 +136,10 @@ public class Text extends ObjectInstance {
     }
 
     public void setString(String msg) {
-        msg = msg;
         if (str.equals(msg)) {
             return;
         }
-        decompileString(font, str, getX(), getY());
+        decompileString(font);
         str = msg;
         compileString(font, str, getX(), getY());
     }

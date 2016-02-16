@@ -107,7 +107,7 @@ public class EscapistsGame extends BasicGame {
                                 app.init(EscapistsGame.this);
                                 UPDATE_INTERVAL = 1000d / ((double) app.getTargetFPS());
                                 loadScene(0); // 2 = title screen, 6 = game
-                            } catch (IOException e) {
+                            } catch (Exception e) {
                                 e.printStackTrace();
                             }
 
