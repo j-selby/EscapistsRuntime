@@ -1,7 +1,5 @@
 package net.jselby.escapists.game;
 
-import com.badlogic.gdx.graphics.Color;
-import net.jselby.escapists.EscapistsRuntime;
 import net.jselby.escapists.data.chunks.Layers;
 import org.mini2Dx.core.graphics.Graphics;
 
