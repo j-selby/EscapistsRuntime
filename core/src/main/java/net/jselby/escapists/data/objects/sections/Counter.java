@@ -6,12 +6,12 @@ import net.jselby.escapists.util.ByteReader;
  * A counter is a set of numbers used to display some sort of value to the player.
  */
 public class Counter {
-    private final int initial;
-    private final int minimum;
-    private final int maximum;
+    public final int initial;
+    public final int minimum;
+    public final int maximum;
 
     public Counter(ByteReader buffer) {
-        int size = buffer.getShort();
+        buffer.getShort(); // Size
 
         initial = buffer.getInt();
         minimum = buffer.getInt();
