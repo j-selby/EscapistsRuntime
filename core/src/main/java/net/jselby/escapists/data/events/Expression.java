@@ -36,8 +36,8 @@ public class Expression {
             } else if (ExpressionNames.getByID(objectType, num) != null) {
                 value = ExpressionValue.getExpression(ExpressionNames.getByID(objectType, num), buffer);
             } else if (objectType >= 2 || objectType == -7) {
-                int objectInfo = buffer.getUnsignedShort();
-                short objectInfoList = buffer.getShort();
+                buffer.getUnsignedShort(); // ObjectInfo (int)
+                buffer.getShort(); // ObjectInfoList
                 //System.out.println("Unimplemented extension: " + objectType + ":" + num);
 
                 //if (ExpressionNames.getByExtensionID(num) != null) {
