@@ -1,7 +1,6 @@
 package net.jselby.escapists.data;
 
 import net.jselby.escapists.data.chunks.ReflectionsHandle;
-import net.jselby.escapists.game.EscapistsGame;
 import net.jselby.escapists.util.ByteReader;
 
 import java.nio.ByteBuffer;
@@ -24,10 +23,9 @@ public class ChunkDecoder {
     /**
      * Decodes a series of Chunks.
      * @param buf The buffer to read from
-     * @param game
      * @return A parsed list of Chunks
      */
-    public static List<Chunk> decodeChunk(ByteReader buf, EscapistsGame game) {
+    public static List<Chunk> decodeChunk(ByteReader buf) {
         ExecutorService threadManager = Executors.newCachedThreadPool();
 
         Inflater inflater = new Inflater();

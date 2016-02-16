@@ -3,7 +3,7 @@ package net.jselby.escapists.data;
 /**
  * The types of chunks that can be seen.
  * See https://github.com/matpow2/anaconda for more ino
- * 
+ *
  * @author matpow2
  */
 public enum ChunkType {

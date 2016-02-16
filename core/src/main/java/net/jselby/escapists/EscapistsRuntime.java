@@ -209,7 +209,7 @@ public class EscapistsRuntime {
 
         // Chunk reading
         game.setLoadingMessage("Parsing chunks...");
-        List<Chunk> chunks = ChunkDecoder.decodeChunk(buf, game);
+        List<Chunk> chunks = ChunkDecoder.decodeChunk(buf);
 
         game.setLoadingMessage("Preparing assets...");
         application = new Application(this, chunks);

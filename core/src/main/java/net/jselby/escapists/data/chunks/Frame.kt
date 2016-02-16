@@ -32,7 +32,7 @@ class Frame : Chunk() {
 
 
     override fun init(buffer: ByteReader, length: Int) {
-        chunks = ChunkDecoder.decodeChunk(buffer, null)
+        chunks = ChunkDecoder.decodeChunk(buffer)
 
         val nameChunk = ChunkUtils.popChunk(chunks, FrameName::class.java) as FrameName?
         if (nameChunk != null) {
@@ -159,7 +159,7 @@ class FrameItems : Chunk() {
 
         init {
             // Read info chunks
-            val chunks = ChunkDecoder.decodeChunk(buffer, null)
+            val chunks = ChunkDecoder.decodeChunk(buffer)
 
             for (chunk in chunks) {
                 if (chunk is ObjectHeader) {
