@@ -51,12 +51,11 @@ public abstract class ExpressionValue {
 
     public static class Double extends ExpressionValue {
         public double value;
-        private float floatValue;
 
         @Override
         public void read(ByteReader buffer) {
             value = buffer.getDouble();
-            floatValue = buffer.getFloat();
+            buffer.getFloat(); // Float value
         }
 
         @Override
