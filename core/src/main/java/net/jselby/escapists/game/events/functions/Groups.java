@@ -15,7 +15,7 @@ public class Groups extends FunctionCollection {
 
     @Condition(subId = -1, id = -12)
     public boolean GroupActivated(int id) {
-        return scope.getScene().getActiveGroups().get(id);
+        return scope.getScene().getActiveGroups()[id];
     }
 
     @Condition(subId = -1, id = -10)
@@ -41,6 +41,6 @@ public class Groups extends FunctionCollection {
 
     @Action(subId = -1, id = 7)
     public void DeactivateGroup(int id) {
-        scope.getScene().getActiveGroups().put(id, false);
+        scope.getScene().disableGroup(id);
     }
 }

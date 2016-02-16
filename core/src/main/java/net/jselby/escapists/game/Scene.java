@@ -44,11 +44,10 @@ public class Scene {
     // Scripting
     public boolean firstFrame = true;
     private Map<String, Object> variables = new HashMap<String, Object>();
-    private Map<Integer, Boolean> groupActivated = new HashMap<Integer, Boolean>();
-    private Map<Integer, Boolean> groupJustActivated = new HashMap<Integer, Boolean>();
+    private Boolean[] groupActivated;
+    private Boolean[] groupJustActivated;
     private Map<String, Integer> currentLoops = new HashMap<String, Integer>();
     private int frameCount;
-    private long startTime;
 
     private Scope scope;
     public EventTicker eventTicker;
@@ -77,9 +76,19 @@ public class Scene {
     private void create() {
         instances = new ArrayList<ObjectInstance>();
         variables.clear();
-        groupActivated.clear();
-        groupJustActivated.clear();
         currentLoops.clear();
+
+        // Count groups for array allocation
+        int groupCount = 0;
+        for (Events.EventGroup group : events.groups) {
+            if (group.conditions.length != 0 && group.conditions[0].name != null
+                    && group.conditions[0].name.equalsIgnoreCase("GroupStart")) {
+                groupCount++;
+            }
+        }
+
+        groupActivated = new Boolean[groupCount];
+        groupJustActivated = new Boolean[groupCount];
 
         // Check for event groups
         for (Events.EventGroup group : events.groups) {
@@ -87,8 +96,7 @@ public class Scene {
             if (group.conditions.length != 0 && group.conditions[0].name != null
                     && group.conditions[0].name.equalsIgnoreCase("GroupStart")) {
                 ParameterValue.Group selectedGroup = ((ParameterValue.Group) group.conditions[0].items[0].value);
-                groupActivated.put(selectedGroup.id, ((selectedGroup.flags & 1) == 0));
-                groupJustActivated.put(selectedGroup.id, ((selectedGroup.flags & 1) == 0));
+                groupActivated[selectedGroup.id] = groupJustActivated[selectedGroup.id] = ((selectedGroup.flags & 1) == 0);
             }
         }
 
@@ -129,7 +137,6 @@ public class Scene {
         }
 
         frameCount = 0;
-        startTime = System.currentTimeMillis();
     }
 
     public void init() {
@@ -140,8 +147,8 @@ public class Scene {
     public void tick() {
         eventTicker.tick(scope);
 
-        for (Map.Entry<Integer, Boolean> entry : groupJustActivated.entrySet()) {
-            entry.setValue(false);
+        for (int i = 0; i < groupJustActivated.length; i++) {
+            groupJustActivated[i] = false;
         }
 
         firstFrame = false;
@@ -198,11 +205,7 @@ public class Scene {
         return frameCount;
     }
 
-    public long getSceneStartTime() {
-        return startTime;
-    }
-
-    public Map<Integer, Boolean> getActiveGroups() {
+    public Boolean[] getActiveGroups() {
         return groupActivated;
     }
 
@@ -224,16 +227,20 @@ public class Scene {
     }
 
     public void activateGroup(int id) {
-        groupActivated.put(id, true);
-        groupJustActivated.put(id, true);
+        groupActivated[id] = groupJustActivated[id] = true;
+    }
+
+    public void disableGroup(int id) {
+        groupActivated[id] = groupJustActivated[id] = false;
     }
 
     public boolean wasGroupJustActivated(int id) {
-        return groupJustActivated.get(id);
+        return groupJustActivated[id];
     }
 
     @Override
     public String toString() {
         return "Scene={name=" + name + "}";
     }
+
 }
