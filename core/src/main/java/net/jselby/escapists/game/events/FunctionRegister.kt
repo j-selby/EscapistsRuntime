@@ -69,8 +69,8 @@ class FunctionRegister {
     private fun registerAnnotation(checkAnnotation: Annotation, method: Method,
                                    provider : Class<out FunctionCollection>) {
         // This object is an action
-        var subId : Int = 0;
-        var id : Int = 0;
+        var subId : Int;
+        var id : Int;
 
         if (checkAnnotation is Action) {
             subId = checkAnnotation.subId;
