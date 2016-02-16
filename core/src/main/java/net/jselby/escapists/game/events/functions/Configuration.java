@@ -68,12 +68,7 @@ public class Configuration extends FunctionCollection {
     @Action(subId = 47, id = 158)
     public void loadIniFileAndClear(String path, int unknown) {
         for (ObjectInstance instance : scope.peekAtObjects()) {
-            for (Object var : instance.getConfigVariables().entrySet().toArray()) {
-                Map.Entry<String, Object> pair = (Map.Entry<String, Object>) var;
-                if (pair.getKey().contains(":")) {
-                    instance.getConfigVariables().remove(pair.getKey());
-                }
-            }
+            instance.getConfigVariables().clear();
         }
 
         LoadIniFile(path);
