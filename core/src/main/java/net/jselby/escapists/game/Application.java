@@ -8,7 +8,6 @@ import net.jselby.escapists.data.chunks.*;
 import net.jselby.escapists.data.ini.PropertiesFile;
 import net.jselby.escapists.util.ChunkUtils;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -64,7 +63,7 @@ public class Application {
         this.chunks = chunks;
     }
 
-    public void init(EscapistsGame game) throws IOException {
+    public void init(EscapistsGame game) {
         // Get instances of all important chunks
         AppName nameChunk = (AppName) ChunkUtils.popChunk(chunks, AppName.class);
         AppAuthor authorChunk = (AppAuthor) ChunkUtils.popChunk(chunks, AppAuthor.class);
