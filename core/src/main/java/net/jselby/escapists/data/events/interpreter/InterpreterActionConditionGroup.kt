@@ -2,6 +2,8 @@ package net.jselby.escapists.data.events.interpreter
 
 import net.jselby.escapists.EscapistsRuntime
 import net.jselby.escapists.data.chunks.Events
+import net.jselby.escapists.game.events.Action
+import net.jselby.escapists.game.events.Condition
 import net.jselby.escapists.game.events.Scope
 import java.util.*
 
@@ -9,8 +11,11 @@ import java.util.*
  * A interpreter event loop object is a EventLoop that is able to hold state.
  */
 open class InterpreterActionConditionGroup(val group: Events.EventGroup?) {
+    private val eventCallbacks = ArrayList<Pair<String, Array<Any>>>();
+
     open fun invokeIfPossible(interpreter: Interpreter, scope: Scope) {
         group!!
+        eventCallbacks.clear();
 
         try {
             // Check conditions
@@ -36,22 +41,24 @@ open class InterpreterActionConditionGroup(val group: Events.EventGroup?) {
                         break;
                     }
 
-                    var response: Boolean;
+                    var response: Pair<Any?, Array<Any>>;
+                    val callback = (condition.method.checkAnnotation as Condition).successCallback;
                     if (EscapistsRuntime.getRuntime().application.objectDefs.size > condition.objectInfo) {
                         val objectDef = EscapistsRuntime.getRuntime().application.objectDefs[condition.objectInfo];
                         if (objectDef != null) {
-                            response = (interpreter.callMethod(condition.method, condition.items,
-                                    condition.identifier, objectDef.handle.toInt()) as Boolean);
+                            response = interpreter.callMethod(condition.method, condition.items,
+                                    condition.identifier, objectDef.handle.toInt());
                         } else {
-                            response = (interpreter.callMethod(condition.method, condition.items,
-                                    condition.identifier) as Boolean);
+                            response = interpreter.callMethod(condition.method, condition.items,
+                                    condition.identifier);
                         }
                     } else {
-                        response = (interpreter.callMethod(condition.method, condition.items,
-                                condition.identifier) as Boolean);
+                        response = interpreter.callMethod(condition.method, condition.items,
+                                condition.identifier);
                     }
 
-                    if (response == condition.inverted()) {
+                    if ((response.first as Boolean) == condition.inverted()) {
+                        // Comparison failed
                         if (hasOR) {
                             // We need to handle this directly
                             while (i < group.conditions.size) {
@@ -70,12 +77,18 @@ open class InterpreterActionConditionGroup(val group: Events.EventGroup?) {
                             return;
                         }
                     } else {
+                        if (callback.length > 0) {
+                            eventCallbacks.add(Pair(callback, response.second));
+                        }
+
                         i++;
                     }
                 } catch (e : Exception) {
                     throw IllegalStateException("Interpreter error processing condition: $condition", e);
                 }
             }
+
+            callCallbacks(interpreter, scope);
 
             if (VERBOSE) println("-- Processing action array: ${group.actions.toMutableList()}");
             for (action in group.actions) {
@@ -85,23 +98,80 @@ open class InterpreterActionConditionGroup(val group: Events.EventGroup?) {
                         continue;
                     }
 
+                    val callback = (action.method.checkAnnotation as Action).successCallback;
+
                     if (EscapistsRuntime.getRuntime().application.objectDefs.size > action.objectInfo) {
                         val objectDef = EscapistsRuntime.getRuntime().application.objectDefs[action.objectInfo]
                         if (objectDef != null) {
-                            interpreter.callMethod(action.method, action.items,
+                            val response = interpreter.callMethod(action.method, action.items,
                                     action.objectInfo.toShort(), objectDef.handle.toInt())
+
+                            if (callback.length > 0) {
+                                eventCallbacks.add(Pair(callback, response.second));
+                            }
                             continue;
                         }
                     }
 
-                    interpreter.callMethod(action.method, action.items, action.objectInfo.toShort())
+                    val response = interpreter.callMethod(action.method, action.items, action.objectInfo.toShort())
+
+                    if (callback.length > 0) {
+                        eventCallbacks.add(Pair(callback, response.second));
+                    }
                 } catch (e : Exception) {
                     throw IllegalStateException("Interpreter error processing action: $action", e);
                 }
             }
+
+            callCallbacks(interpreter, scope);
         } finally {
             interpreter.functions[0].scope.clearScopeObjects();
         }
+    }
+
+    private fun callCallbacks(interpreter: Interpreter, scope: Scope) {
+        // A callback is in the format class:method name
+        for (callback in eventCallbacks) {
+            val args = callback.first.split(":");
+
+            val methodArgs = args[1].split("(");
+            val targetFunctionCollectionName = args[0];
+
+            val targetMethod = methodArgs[0];
+            val targetMethodArgs =
+                    if (methodArgs.size > 1)
+                        methodArgs[1].split(")")[0].split(",")
+                    else
+                        emptyList<String>();
+
+            val requiresArgs = if (targetMethodArgs.size > 0) targetMethodArgs[0].toBoolean() else false;
+
+            // Get the collection
+            var found = false;
+            for (group in interpreter.functions) {
+                if (group.javaClass.simpleName.equals(targetFunctionCollectionName)) {
+                    // We found our group
+                    for (method in group.javaClass.declaredMethods) {
+                        if (method.name.equals(targetMethod)) {
+                            if (requiresArgs) {
+                                method.invoke(group, *(callback.second));
+                            } else {
+                                method.invoke(group);
+                            }
+                            found = true;
+                            break;
+                        }
+                    }
+                    break;
+                }
+            }
+
+            if (!found) {
+                throw IllegalStateException("Unable to find group $targetFunctionCollectionName for method $targetMethod");
+            }
+        }
+
+        eventCallbacks.clear();
     }
 
     open fun runFastLoop(interpreter: Interpreter, scope: Scope, name: String) {

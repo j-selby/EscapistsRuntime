@@ -41,7 +41,7 @@ public class Logic extends FunctionCollection {
         return true;
     }
 
-    @Condition(subId = -1, id = -6, hasInstanceRef = true, successCallback = "OnceFinalize")
+    @Condition(subId = -1, id = -6, hasInstanceRef = true, successCallback = "Logic:OnceFinalize(true)")
     public boolean Once(int id) {
         return !scope.getScene().getVariables().containsKey("_env_once_" + id);
     }

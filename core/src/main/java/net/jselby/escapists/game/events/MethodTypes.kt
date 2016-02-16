@@ -8,7 +8,8 @@ package net.jselby.escapists.game.events
 @Retention(AnnotationRetention.RUNTIME)
 @MustBeDocumented
 @Repeatable
-annotation class Action(val subId : Int, val id : Int)
+annotation class Action(val subId : Int, val id : Int,
+                        val successCallback: String = "")
 
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)

@@ -61,7 +61,7 @@ public class Input extends FunctionCollection {
 
     }
 
-    @Condition(subId = -6, id = -7, successCallback = "Vibrate", requiresScopeCleanup = true)
+    @Condition(subId = -6, id = -7, successCallback = "Input:Vibrate", requiresScopeCleanup = true)
     public boolean ObjectClicked(int mouseButton, boolean doubleClicked,
                                  int object) {
         if (scope.getScene().firstFrame) {
@@ -105,7 +105,7 @@ public class Input extends FunctionCollection {
         return mouseOver;
     }
 
-    public void Vibrate(Object... ignored) {
+    public void Vibrate() {
         Gdx.input.vibrate(100);
     }
 

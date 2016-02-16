@@ -80,7 +80,7 @@ class Interpreter(events : Events, scope : Scope) : EventTicker(events) {
     fun callMethod(method: FunctionRegistration,
                            items: Array<Events.Parameter>,
                            identifier: Short,
-                           handle : Int = 0) : Any? {
+                           handle : Int = 0) : Pair<Any?, Array<Any>> {
         // Find parent collection
         for (collection in functions) {
             if (method.parent.isInstance(collection)) {
@@ -110,8 +110,10 @@ class Interpreter(events : Events, scope : Scope) : EventTicker(events) {
                     collection.withObjects(handle)
                 }
 
+                val argList = list.toTypedArray();
+
                 if (VERBOSE) println("Calling: ${method.method.name}, $list")
-                return method.method.invoke(collection, *(list.toTypedArray()));
+                return Pair(method.method.invoke(collection, *argList), argList);
             }
         }
 
