@@ -170,7 +170,11 @@ class ParsedStatement(val statement : Array<Expression>) {
             val oldValue = statement[i];
             if (oldValue is TokenFunction) {
                 val args = solveSimpleStatement(interpreter, expressionFunctions,
-                        expressionFunctions[oldValue.id], returnArray = true) as ArrayList<Any>;
+                        expressionFunctions[oldValue.id], returnArray = true);
+                if (args !is ArrayList<*>) {
+                    throw IllegalStateException("solveSimpleStatement() did not return a array.")
+                }
+
                 oldValue.callChild.openParams = args.toList();
                 statement[i] = interpreter.callMethod(oldValue.callChild.method, oldValue.callChild.parameters)
             } else if (oldValue is TokenChildFunction) {
