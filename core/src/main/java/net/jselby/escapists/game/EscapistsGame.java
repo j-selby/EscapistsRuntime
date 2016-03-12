@@ -28,7 +28,7 @@ public class EscapistsGame extends BasicGame {
     private String loadingText = "Loading...";
 
     private Application app;
-    private Scene currentFrame;
+    public Scene currentFrame;
     private AudioManager audio;
 
     private PlatformUtils utils;
@@ -43,7 +43,7 @@ public class EscapistsGame extends BasicGame {
     private double diff;
 
     private long tpsSwitch;
-    private int lastTPS;
+    public int lastTPS;
     private int tps;
 
     private short[] mouseClicked = new short[3];
@@ -130,6 +130,9 @@ public class EscapistsGame extends BasicGame {
     private void loadFrame(Scene scene) {
         currentFrame = scene;
         System.out.println("Launching frame: " + currentFrame.getName().trim());
+        if (getPlatformUtils().getDebugFrame() != null) {
+            getPlatformUtils().getDebugFrame().setScene(scene);
+        }
         scene.init();
     }
 
@@ -266,7 +269,7 @@ public class EscapistsGame extends BasicGame {
             int mouseX = getMouseX();
             int mouseY = getMouseY();
 
-            if (EscapistsRuntime.DEBUG) {
+            if (EscapistsRuntime.DEBUG && getPlatformUtils().getDebugFrame() == null) {
                 g.drawString("Mouse X: " + mouseX + ", Mouse Y: " + mouseY, 5, 35);
                 g.drawString("scaleX: " + scaleX + ", scaleY: " + scaleY, 5, 50);
                 g.drawString("Scene: " + currentFrame.getName(), 5, 65);
@@ -289,7 +292,7 @@ public class EscapistsGame extends BasicGame {
             }
         }
 
-        if (EscapistsRuntime.DEBUG) {
+        if (EscapistsRuntime.DEBUG && getPlatformUtils().getDebugFrame() == null) {
             int usedMem = (int) (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024 / 1024;
 
             g.drawString("Escapists Runtime v" + EscapistsRuntime.VERSION + " on " +

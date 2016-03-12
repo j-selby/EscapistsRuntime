@@ -1,16 +1,12 @@
 package net.jselby.escapists.game.desktop;
 
 import com.badlogic.gdx.Files;
+import com.badlogic.gdx.backends.lwjgl.DesktopMini2DxGame;
+import net.jselby.escapists.game.EscapistsGame;
 import org.mini2Dx.desktop.DesktopMini2DxConfig;
 
-import com.badlogic.gdx.backends.lwjgl.DesktopMini2DxGame;
-
-import net.jselby.escapists.game.EscapistsGame;
-
-import java.io.IOException;
-
 public class DesktopLauncher {
-    public final static boolean TO_SCALE = false;
+    public final static boolean TO_SCALE = true;
 
     public static void main(String[] args) {
         DesktopMini2DxConfig config = new DesktopMini2DxConfig(EscapistsGame.GAME_IDENTIFIER);
@@ -28,6 +24,10 @@ public class DesktopLauncher {
         config.addIcon("icon_32.png", Files.FileType.Internal);
         config.addIcon("icon_48.png", Files.FileType.Internal);
         config.addIcon("icon_256.png", Files.FileType.Internal);
-		new DesktopMini2DxGame(new EscapistsGame(new DesktopPlatformUtils()), config);
+
+        DesktopPlatformUtils utils = new DesktopPlatformUtils();
+        EscapistsGame game = new EscapistsGame(utils);
+        utils.setGame(game);
+		new DesktopMini2DxGame(game, config);
 	}
 }

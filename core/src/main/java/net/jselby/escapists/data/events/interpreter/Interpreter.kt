@@ -61,6 +61,10 @@ class Interpreter(events : Events, scope : Scope) : EventTicker(events) {
         //println(groupStack);
         groups.addAll(groupStack);
 
+        if (EscapistsRuntime.getRuntime().platformUtils.debugFrame != null) {
+            EscapistsRuntime.getRuntime().platformUtils.debugFrame.setEventsForScene(groups.toTypedArray())
+        }
+
         // Setup a queue for incoming event groups
         queue = ArrayList(groups.size);
     }

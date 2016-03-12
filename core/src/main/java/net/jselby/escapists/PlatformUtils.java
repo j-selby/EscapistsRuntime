@@ -43,6 +43,13 @@ public abstract class PlatformUtils {
     public abstract void hideMouse();
 
     /**
+     * Gets the debugging frame for this platform, if available
+     */
+    public DebugFrame getDebugFrame() {
+        return null;
+    }
+
+    /**
      * Gets the save location for this platform
      * @return A save location
      */

@@ -1,6 +1,7 @@
 package net.jselby.escapists.data.events.interpreter
 
 import net.jselby.escapists.EscapistsRuntime
+import net.jselby.escapists.NodeProxy
 import net.jselby.escapists.data.chunks.Events
 import net.jselby.escapists.game.events.Action
 import net.jselby.escapists.game.events.Condition
@@ -12,6 +13,9 @@ import java.util.*
  */
 open class InterpreterActionConditionGroup(val group: Events.EventGroup?) {
     private val eventCallbacks = ArrayList<Pair<String, Array<Any>>>();
+
+    // Debugging
+    val conditionNodes = HashMap<Events.Condition, NodeProxy>();
 
     open fun invokeIfPossible(interpreter: Interpreter, scope: Scope) {
         group!!
@@ -55,6 +59,10 @@ open class InterpreterActionConditionGroup(val group: Events.EventGroup?) {
                     } else {
                         response = interpreter.callMethod(condition.method, condition.items,
                                 condition.identifier);
+                    }
+
+                    if (conditionNodes[condition] != null) {
+                        conditionNodes[condition]!!.setState((response.first as Boolean) != condition.inverted())
                     }
 
                     if ((response.first as Boolean) == condition.inverted()) {
@@ -219,5 +227,9 @@ open class InterpreterActionConditionGroup(val group: Events.EventGroup?) {
         events += "end statement\n\n"
 
         return events;
+    }
+
+    fun addConditionNode(condition: Events.Condition, proxy: NodeProxy) {
+        conditionNodes.put(condition, proxy)
     }
 }

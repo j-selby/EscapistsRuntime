@@ -3,7 +3,10 @@ package net.jselby.escapists.game.desktop;
 import com.badlogic.gdx.Gdx;
 import com.codedisaster.steamworks.SteamID;
 import com.codedisaster.steamworks.SteamUser;
+import net.jselby.escapists.DebugFrame;
+import net.jselby.escapists.EscapistsRuntime;
 import net.jselby.escapists.PlatformUtils;
+import net.jselby.escapists.game.EscapistsGame;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Cursor;
@@ -17,9 +20,12 @@ import java.io.File;
  * PlatformUtils implementation for Desktop platforms.
  */
 public class DesktopPlatformUtils extends PlatformUtils {
+    private DesktopDebugFrame debugFrame;// = new DesktopDebugFrame();
+
     private SteamUser user;
     private SteamID steamId;
     private SteamID ownerSteamID;
+    private EscapistsGame game;
 
     public DesktopPlatformUtils() {
         // Write the game ID to the filesystem
@@ -61,6 +67,14 @@ public class DesktopPlatformUtils extends PlatformUtils {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Keep the game so we can access raw info
+     * @param game
+     */
+    public void setGame(EscapistsGame game) {
+        this.game = game;
     }
 
     /**
@@ -120,6 +134,13 @@ public class DesktopPlatformUtils extends PlatformUtils {
      */
     @Override
     public void tick() {
+        if (EscapistsRuntime.DEBUG && debugFrame != null) {
+            try {
+                debugFrame.tick(game);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         //SteamAPI.runCallbacks();
     }
 
@@ -131,6 +152,11 @@ public class DesktopPlatformUtils extends PlatformUtils {
         } catch (LWJGLException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public DebugFrame getDebugFrame() {
+        return debugFrame;
     }
 
     @Override
