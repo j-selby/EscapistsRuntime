@@ -3,6 +3,7 @@ package net.jselby.escapists.game.events.functions;
 import net.jselby.escapists.game.ObjectInstance;
 import net.jselby.escapists.game.events.Action;
 import net.jselby.escapists.game.events.Condition;
+import net.jselby.escapists.game.events.Expression;
 import net.jselby.escapists.game.events.FunctionCollection;
 import net.jselby.escapists.game.objects.Text;
 
@@ -52,6 +53,16 @@ public class Graphics extends FunctionCollection {
         for (ObjectInstance object : scope.getObjects()) {
             object.setImageAlpha(256 - value);
         }
+    }
+
+    @Expression(subId = 2, id = 27)
+    public int GetAlphaCoefficient(int id) {
+        for (ObjectInstance instance : scope.getScene().getObjects()) {
+            if (instance.getObjectInfo() == id) {
+                return 256 - instance.getImageAlpha();
+            }
+        }
+        return 0;
     }
 
     @Action(subId = 3, id = 52)

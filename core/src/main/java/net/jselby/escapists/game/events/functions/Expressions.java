@@ -53,40 +53,40 @@ public class Expressions extends FunctionCollection {
     }
 
     @Expression(subId = 2, id = 11, requiresArg1 = true, requiresArg2 = true)
-    public double GetX(int id, int extra) {
+    public int GetX(int id, int extra) {
         for (ObjectInstance instance : scope.getScene().getObjects()) {
             if (instance.getObjectInfo() == id) {
-                return instance.getX();
+                return (int) instance.getX();
             }
         }
         return 0;
     }
 
     @Expression(subId = 3, id = 11, requiresArg1 = true, requiresArg2 = true)
-    public double GetX3(int id, int extra) {
+    public int GetX3(int id, int extra) {
         for (ObjectInstance instance : scope.getScene().getObjects()) {
             if (instance.getObjectInfo() == id) {
-                return instance.getX();
+                return (int) instance.getX();
             }
         }
         return 0;
     }
 
     @Expression(subId = 2, id = 1, requiresArg1 = true, requiresArg2 = true)
-    public double GetY(int id, int extra) {
+    public int GetY(int id, int extra) {
         for (ObjectInstance instance : scope.getScene().getObjects()) {
             if (instance.getObjectInfo() == id) {
-                return instance.getY();
+                return (int) instance.getY();
             }
         }
         return 0;
     }
 
     @Expression(subId = 3, id = 1, requiresArg1 = true, requiresArg2 = true)
-    public double GetY3(int id, int extra) {
+    public int GetY3(int id, int extra) {
         for (ObjectInstance instance : scope.getScene().getObjects()) {
             if (instance.getObjectInfo() == id) {
-                return instance.getY();
+                return (int) instance.getY();
             }
         }
         return 0;
@@ -192,6 +192,40 @@ public class Expressions extends FunctionCollection {
         return "";
     }
 
+    @Expression(subId = 63, id = 83, requiresArg1 = true, openEnded = true)
+    public int GroupItemValue(int id, String category, String key) {
+        for (ObjectInstance instance : scope.getScene().getObjects()) {
+            if (instance.getObjectInfo() == id) {
+                if (instance.getConfigVariables().containsKey(category + ":" + key)) {
+                    return Integer.parseInt((String) instance.getConfigVariables().get(category + ":" + key));
+                }
+            }
+        }
+        return 0;
+    }
+
+    @Expression(subId = 2, id = 16, requiresArg1 = true, requiresArg2 = true)
+    public int getAlterableValue(int id, int id2) {
+        System.out.println("getAlterableValue(" + id + "," + id2 + ") STUBBED!");
+        return 1;
+        /*for (ObjectInstance instance : scope.getScene().getObjects()) {
+            if (instance.getObjectInfo() == id && instance instanceof Text) {
+                String str = (String) ((Text) instance).getString();
+                // Filter for Chowdren flags
+                if (str.startsWith("Chowdren:")) {
+                    String flagName = str.substring(str.indexOf(":") + 1).trim();
+                    if (flagName.equalsIgnoreCase("Platform")) {
+                        str = "jselby's runtime on " + System.getProperty("os.name");
+                    } else {
+                        System.out.printf("Unknown Chowdren flag: %s.\n", flagName);
+                    }
+                }
+                return str;
+            }
+        }
+        return "";*/
+    }
+
     @Expression(subId = 34, id = 81, requiresArg1 = true, openEnded = true)
     public String Element(int id, int element) {
         if (element < 0) {
@@ -223,7 +257,7 @@ public class Expressions extends FunctionCollection {
     public String Select(int id) {
         for (ObjectInstance instance : scope.getScene().getObjects()) {
             if (instance.getObjectInfo() == id) {
-                if (instance.getListElements().size() < instance.getSelectedLine()) {
+                if (instance.getListElements().size() < instance.getSelectedLine() || instance.getSelectedLine() == 0) {
                     return "";
                 }
                 return instance.getListElements().get(instance.getSelectedLine() - 1);

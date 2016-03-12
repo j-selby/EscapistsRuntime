@@ -2,10 +2,7 @@ package net.jselby.escapists.game.events.functions;
 
 import net.jselby.escapists.game.Layer;
 import net.jselby.escapists.game.ObjectInstance;
-import net.jselby.escapists.game.events.Action;
-import net.jselby.escapists.game.events.Actions;
-import net.jselby.escapists.game.events.Condition;
-import net.jselby.escapists.game.events.FunctionCollection;
+import net.jselby.escapists.game.events.*;
 
 /**
  * Functions that directly modify layers/objects in some visual way.
@@ -25,7 +22,10 @@ public class WorldInteraction extends FunctionCollection {
         }
     }
 
-    @Condition(subId = 2, id = -28, requiresScopeCleanup = true)
+    @Conditions({
+            @Condition(subId = 2, id = -28, requiresScopeCleanup = true),
+            @Condition(subId = 3, id = -28, requiresScopeCleanup = true)
+    })
     public boolean IsObjectInvisible() {
         boolean isInvisible = false;
         for (ObjectInstance instance : scope.getObjects()) {
@@ -37,7 +37,10 @@ public class WorldInteraction extends FunctionCollection {
         return isInvisible;
     }
 
-    @Condition(subId = 2, id = -29, requiresScopeCleanup = true)
+    @Conditions({
+            @Condition(subId = 2, id = -29, requiresScopeCleanup = true),
+            @Condition(subId = 3, id = -29, requiresScopeCleanup = true)
+    })
     public boolean IsObjectVisible() {
         boolean isVisible = false;
         for (ObjectInstance instance : scope.getObjects()) {

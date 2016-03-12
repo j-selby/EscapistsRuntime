@@ -82,6 +82,11 @@ public class Input extends FunctionCollection {
             return false;
         }
 
+        if (object == 32796) {
+            System.out.println("32796 ObjectClicked STUBBED!");
+            return true;
+        }
+
         // Find all objects which correspond to this
         int mouseX = scope.getGame().getMouseX();
         int mouseY = scope.getGame().getMouseY();

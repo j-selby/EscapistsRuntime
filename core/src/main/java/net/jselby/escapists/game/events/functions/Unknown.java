@@ -49,11 +49,11 @@ public class Unknown extends FunctionCollection {
         return true;
     }
 
-    @Condition(subId = 3, id = -29)
+    /*@Condition(subId = 3, id = -29)
     public boolean unknown8(int id, int value) {
         // TODO: Unknown value
         return true;
-    }
+    }*/
 
     @Condition(subId = 59, id = -81)
     public boolean unknown10(int id, int value) {
@@ -61,17 +61,17 @@ public class Unknown extends FunctionCollection {
         return true;
     }
 
-    @Condition(subId = 3, id = -28)
+    /*@Condition(subId = 3, id = -28)
     public boolean unknown11(int id, int value) {
         // TODO: Unknown value
         return true;
-    }
+    }*/
 
-    @Condition(subId = 66, id = -96)
+    /*@Condition(subId = 66, id = -96)
     public boolean unknown12(int id, int value) {
         // TODO: Unknown value
         return true;
-    }
+    }*/
 
     @Condition(subId = 66, id = -88)
     public boolean unknown13(int id, int value) {

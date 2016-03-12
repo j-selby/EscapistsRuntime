@@ -405,6 +405,11 @@ public abstract class ParameterValue {
         public void read(ByteReader buffer) {
             value = buffer.getString();
         }
+
+        @Override
+        public java.lang.String toString() {
+            return "\"" + value + "\"";
+        }
     }
 
     public static class Filename extends ParameterValue {
