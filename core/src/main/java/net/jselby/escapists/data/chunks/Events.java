@@ -196,8 +196,8 @@ public class Events extends Chunk {
         @Override
         public String toString() {
             // DefType = 0? always? Identifier = uniqueId for object
-            return "Condition:" + identifier + ":" + (name == null ? (objectType + "." + num) : name)
-                    + ":inverted=" + inverted() + ":c=" + Arrays.toString(items);
+            return "Condition:" + identifier + ":" + (name == null ? "?" : name)
+                    + ":" + (objectType + "." + num) + ":inverted=" + inverted() + ":c=" + Arrays.toString(items);
         }
     }
 

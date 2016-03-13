@@ -17,4 +17,9 @@ public class Steamworks extends FunctionCollection {
         // TODO
         return false;
     }
+
+    @Condition(subId = 39, id = -81)
+    public boolean onSteamConnected() {
+        return false;
+    }
 }

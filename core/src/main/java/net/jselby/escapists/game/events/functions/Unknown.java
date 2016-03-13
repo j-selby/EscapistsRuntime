@@ -74,25 +74,19 @@ public class Unknown extends FunctionCollection {
     }*/
 
     @Condition(subId = 66, id = -88)
-    public boolean unknown13(int id, int value) {
+    public boolean OnFileWhileBrowsingLoop() {
         // TODO: Unknown value
-        return true;
+        return false;
     }
 
     @Condition(subId = 66, id = -89)
-    public boolean unknown14(int id, int value) {
+    public boolean OnBrowsingLoopEnd() {
         // TODO: Unknown value
-        return true;
+        return false;
     }
 
     @Condition(subId = 61, id = -32)
     public boolean unknown15(int id, int value) {
-        // TODO: Unknown value
-        return true;
-    }
-
-    @Condition(subId = 39, id = -81)
-    public boolean unknown16(int id, int value) {
         // TODO: Unknown value
         return true;
     }
@@ -212,8 +206,8 @@ public class Unknown extends FunctionCollection {
     }
 
     @Condition(subId = -1, id = -4)
-    public boolean RestrictFor(int val1, int vale2) {
+    public boolean RestrictFor(int val1 /*time?*/) {
         // TODO: I am so totally screwed
-        return true;
+        return val1 > (scope.getScene().getFrameCount() * 60);
     }
 }

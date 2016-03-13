@@ -1,7 +1,6 @@
 package net.jselby.escapists.game.events.functions;
 
 import net.jselby.escapists.game.events.Condition;
-import net.jselby.escapists.game.events.Conditions;
 import net.jselby.escapists.game.events.FunctionCollection;
 
 /**
@@ -13,10 +12,7 @@ public class Timers extends FunctionCollection {
         return scope.getScene().firstFrame;
     }
 
-    @Conditions({
-            @Condition(subId = -4, id = -8, hasInstanceRef = true),
-            @Condition(subId = -4, id = -4, hasInstanceRef = true)
-    })
+    @Condition(subId = -4, id = -4, hasInstanceRef = true)
     public boolean Every(int id, int every) {
         // TODO: Proper implementation of this
         String key = "_env_every_" + every;
@@ -34,6 +30,12 @@ public class Timers extends FunctionCollection {
         }
 
         return false;
+    }
+
+    @Condition(subId = -4, id = -8, hasInstanceRef = true)
+    public boolean EveryWithUnknown(int id, int every, int unknown) {
+        // TODO: Find out what "unknown" does
+        return Every(id, every);
     }
 
     @Condition(subId = -4, id = -7)
