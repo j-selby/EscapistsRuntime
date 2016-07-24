@@ -87,10 +87,10 @@ public class EscapistsRuntime {
         }
 
         if (DEBUG) {
-            DebugFrame frame = getPlatformUtils().getDebugFrame();
+            /*DebugFrame frame = getPlatformUtils().getDebugFrame();
             if (frame != null) {
                 frame.start();
-            }
+            }*/
         }
 
         File escapistsFile = new File(escapistsDirectory, "TheEscapists_eur.exe");

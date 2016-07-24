@@ -83,10 +83,13 @@ public class Scene {
         for (Events.EventGroup group : events.groups) {
             if (group.conditions.length != 0 && group.conditions[0].name != null
                     && group.conditions[0].name.equalsIgnoreCase("GroupStart")) {
-                groupCount++;
+                ParameterValue.Group selectedGroup = ((ParameterValue.Group) group.conditions[0].items[0].value);
+
+                groupCount = Math.max(groupCount, selectedGroup.id + 1);
             }
         }
 
+        System.out.println("Allocating group array of " + groupCount + " elements");
         groupActivated = new Boolean[groupCount];
         groupJustActivated = new Boolean[groupCount];
 

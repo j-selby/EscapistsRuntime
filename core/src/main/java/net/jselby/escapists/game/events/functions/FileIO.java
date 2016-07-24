@@ -13,12 +13,16 @@ import java.io.File;
 public class FileIO extends FunctionCollection {
     @Condition(subId = 42, id = -86)
     public boolean doesDirectoryExist(String name) {
-        return new File(name).exists();
+        return new File(name).exists() && isDirectory(name);
+    }
+
+    private boolean isDirectory(String name) {
+        return new File(name).isDirectory();
     }
 
     @Condition(subId = 66, id = -96)
     public boolean doesFileExist(String name) {
-        return new File(name).exists();
+        return new File(name).exists() && !isDirectory(name);
     }
 
     @Condition(subId = 42, id = -83)

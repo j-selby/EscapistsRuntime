@@ -12,7 +12,7 @@ public class Windows extends FunctionCollection {
     @Action(subId = 53, id = 81)
     public void SetWindowed() {
         if (Gdx.graphics.supportsDisplayModeChange()) {
-            Gdx.graphics.setDisplayMode(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
+            Gdx.graphics.setWindowedMode(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         } else {
             System.out.println("Platform rejected SetWindowed()");
         }
@@ -25,8 +25,8 @@ public class Windows extends FunctionCollection {
 
     @Action(subId = 38, id = 83)
     public void SetWindowWidth(int width) {
-        if (Gdx.graphics.supportsDisplayModeChange()) {
-            Gdx.graphics.setDisplayMode(width, Gdx.graphics.getHeight(), Gdx.graphics.isFullscreen());
+        if (Gdx.graphics.supportsDisplayModeChange() && !Gdx.graphics.isFullscreen()) {
+            Gdx.graphics.setWindowedMode(width, Gdx.graphics.getHeight());
         } else {
             System.out.println("Platform rejected SetWindowWidth()");
         }
@@ -34,8 +34,8 @@ public class Windows extends FunctionCollection {
 
     @Action(subId = 38, id = 84)
     public void SetWindowHeight(int height) {
-        if (Gdx.graphics.supportsDisplayModeChange()) {
-            Gdx.graphics.setDisplayMode(Gdx.graphics.getWidth(), height, Gdx.graphics.isFullscreen());
+        if (Gdx.graphics.supportsDisplayModeChange() && !Gdx.graphics.isFullscreen()) {
+            Gdx.graphics.setWindowedMode(Gdx.graphics.getWidth(), height);
         } else {
             System.out.println("Platform rejected SetWindowHeight()");
         }

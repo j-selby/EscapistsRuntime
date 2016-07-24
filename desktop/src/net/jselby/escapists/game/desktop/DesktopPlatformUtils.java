@@ -20,7 +20,7 @@ import java.io.File;
  * PlatformUtils implementation for Desktop platforms.
  */
 public class DesktopPlatformUtils extends PlatformUtils {
-    private DesktopDebugFrame debugFrame;// = new DesktopDebugFrame();
+    private DesktopDebugFrame debugFrame = null;//new DesktopDebugFrame();
 
     private SteamUser user;
     private SteamID steamId;

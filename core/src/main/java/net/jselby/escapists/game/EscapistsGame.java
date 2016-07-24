@@ -241,21 +241,21 @@ public class EscapistsGame extends BasicGame {
         if (currentFrame == null) {
             // Display loading logo
             g.drawSprite(loadingLogo,
-                    g.getCurrentWidth() / 2 - loadingLogo.getWidth() / 2,
-                    g.getCurrentHeight() / 2 - loadingLogo.getHeight() / 2 - 100);
+                    g.getViewportWidth() / 2 - loadingLogo.getWidth() / 2,
+                    g.getViewportHeight() / 2 - loadingLogo.getHeight() / 2 - 100);
 
             g.setFont(loadingFont);
             g.setColor(Color.WHITE);
             g.drawString(loadingText,
-                    g.getCurrentWidth() / 2 - loadingTextWidth / 2,
-                    g.getCurrentHeight() / 2 + loadingLogo.getHeight() / 2 + 10);
+                    g.getViewportWidth() / 2 - loadingTextWidth / 2,
+                    g.getViewportHeight() / 2 + loadingLogo.getHeight() / 2 + 10);
             g.setFont(baseFont);
         } else {
 
             g.setColor(currentFrame.getBackground());
-            g.fillRect(0, 0, g.getCurrentWidth(), g.getCurrentHeight());
-            g.scale(g.getCurrentWidth() / ((float) app.getWindowWidth()),
-                    g.getCurrentHeight() / ((float) app.getWindowHeight()));
+            g.fillRect(0, 0, g.getViewportWidth(), g.getViewportHeight());
+            g.scale(g.getViewportWidth() / ((float) app.getWindowWidth()),
+                    g.getViewportHeight() / ((float) app.getWindowHeight()));
             float scaleX = g.getScaleX();
             float scaleY = g.getScaleY();
 
